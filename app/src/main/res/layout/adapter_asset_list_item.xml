@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="5dp"
+    android:paddingBottom="0dp"
+    android:background="#000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp">
+
+        <TextView
+            android:text="@string/asset_search_list_serial_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingTop="10dp"
+            android:paddingBottom="2dp"
+            android:paddingLeft="10dp"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_serial_number"
+            android:layout_weight="0.02"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingTop="10dp"
+            android:paddingBottom="2dp"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:textStyle="normal|bold"
+            android:paddingLeft="5dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/asset_search_list_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_asset_code"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingLeft="5dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/asset_search_list_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"/>
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_asset_name"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingLeft="5dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/asset_search_list_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"/>
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_asset_type"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingLeft="5dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/asset_search_list_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView5"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingTop="2dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"/>
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_asset_place"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:textColor="@color/bright_foreground_inverse_material_dark"
+            android:paddingTop="2dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
