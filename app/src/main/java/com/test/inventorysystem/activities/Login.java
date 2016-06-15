@@ -106,6 +106,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
                 JsonObject org = jsonObject.get("org").getAsJsonObject();
@@ -143,13 +144,14 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
                 JsonArray organListString = jsonObject.get("organList").getAsJsonArray();
                 JsonArray typeListString = jsonObject.get("typeList").getAsJsonArray();
                 JsonArray matchTypeListString = jsonObject.get("matchTypeList").getAsJsonArray();
                 JsonArray completeTypeListString = jsonObject.get("completeTypeList").getAsJsonArray();
-                List<OrganModel> currOrganlist = null;
+//                List<OrganModel> currOrganlist = null;
 
                 if (success == 1) {
                     try {

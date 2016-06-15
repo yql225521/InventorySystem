@@ -1,5 +1,6 @@
 package com.test.inventorysystem.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -68,12 +69,14 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> {
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startQRcodeScanner();
+                startCodeScanner();
             }
         });
     }
 
-    private void startQRcodeScanner() {
-
+    private void startCodeScanner() {
+        System.out.println("开始扫描....");
+        Intent intent = new Intent(this, CaptureActivity.class);
+        startActivity(intent);
     }
 }

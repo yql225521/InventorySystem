@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.CAMERA"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+    <uses-permission android:name="android.permission.FLASHLIGHT"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -25,7 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.AssetInventory"></activity>
+        <activity android:name=".activities.AssetInventory" />
+        <activity android:name=".activities.CaptureActivity"></activity>
     </application>
 
 </manifest>
