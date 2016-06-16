@@ -57,7 +57,7 @@ public class InactivityTimer {
     /**
      * 首先终止之前的监控任务，然后新起一个监控任务
      */
-    synchronized void onActivity() {
+    public synchronized void onActivity() {
         cancel();
         inactivityTask = new InactivityAsyncTask();
 //        Runnable.execAsync(inactivityTask);

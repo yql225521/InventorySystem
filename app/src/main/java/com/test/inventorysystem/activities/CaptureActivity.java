@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
@@ -149,15 +150,10 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_capture);
 
-        hasSurface = true;
+        hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         // Check whether CAMERA permission is already granted.
         // After Android SDK 6.0, you have to grant CAMERA permission to users
@@ -170,6 +166,13 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
                     new String[] {Manifest.permission.CAMERA},
                     Config.USER_PERMISSIONS_REQUEST_CAMERA);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
 
     }
 
@@ -273,7 +276,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        System.out.println("surface!@#$%^&*(*&^%$#@");
         if (holder == null) {
             Log.e(TAG,
                     "*** WARNING *** surfaceCreated() gave us a null surface!");
@@ -324,6 +326,41 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         }
     }
 
+    /**
+     * A valid barcode has been found, so give an indication of success and show
+     * the results.
+     *
+     * @param rawResult
+     *            The contents of the barcode.
+     * @param scaleFactor
+     *            amount by which thumbnail was scaled
+     * @param barcode
+     *            A greyscale bitmap of the camera data which was decoded.
+     */
+    public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
+
+        // 重新计时
+        inactivityTimer.onActivity();
+
+        lastResult = rawResult;
+
+        // 把图片画到扫描框
+        viewfinderView.drawResultBitmap(barcode);
+
+        beepManager.playBeepSoundAndVibrate();
+
+//		Toast.makeText(this,
+//				"识别结果:" + ResultParser.parseResult(rawResult).toString()+"\n"
+//				+ "编码格式为："+rawResult.getBarcodeFormat().toString()+"\n"
+//				+ "Result=："+rawResult.getClass().getName(),
+//				Toast.LENGTH_LONG).show();
+        Intent intent=new Intent();
+        intent.putExtra("barcode",rawResult.getText());//点击按钮后的返回参数，提示显示
+        setResult(RESULT_CODE, intent);//RESULT_CODE是一个整型变量
+        this.finish();
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -333,6 +370,14 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
     @Override
     protected void onPause() {
+        super.onPause();
+        System.out.println("Capture Activity onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("Capture Activity onStop");
         if (handler != null) {
             handler.quitSynchronously();
             handler = null;
@@ -348,12 +393,12 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             SurfaceHolder surfaceHolder = surfaceView.getHolder();
             surfaceHolder.removeCallback(this);
         }
-        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        inactivityTimer.shutdown();
         super.onDestroy();
+        System.out.println("Capture Activity onDestroy");
+        inactivityTimer.shutdown();
     }
 }

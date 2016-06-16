@@ -76,6 +76,7 @@ public class CameraManager {
                 return null;
             }
             Point screenResolution = configManager.getScreenResolution();
+            System.out.println(screenResolution);
             if (screenResolution == null) {
                 // Called early, before init even finished
                 return null;

@@ -39,6 +39,22 @@ public class CameraConfigurationManager {
         this.context = context;
     }
 
+
+    /**
+     * Reads, one time, values from the camera that are needed by the app.
+     */
+    public void initFromCameraParameters(Camera paramCamera) {
+
+        Camera.Parameters localParameters = paramCamera.getParameters();
+
+        Display localDisplay = ((WindowManager) this.context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        this.screenResolution = new Point(localDisplay.getWidth(), localDisplay.getHeight());
+        Log.d(TAG, "Screen resolution: " + this.screenResolution);
+        this.cameraResolution = getCameraResolution(localParameters, this.screenResolution);
+        Log.d(TAG, "Camera resolution: " + this.screenResolution);
+    }
+
+
     public Point getScreenResolution() {
         return screenResolution;
     }
@@ -175,20 +191,6 @@ public class CameraConfigurationManager {
             }
         }
         return result;
-    }
-
-    /**
-     * Reads, one time, values from the camera that are needed by the app.
-     */
-    public void initFromCameraParameters(Camera paramCamera) {
-
-        Camera.Parameters localParameters = paramCamera.getParameters();
-
-        Display localDisplay = ((WindowManager) this.context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        this.screenResolution = new Point(localDisplay.getWidth(), localDisplay.getHeight());
-        Log.d(TAG, "Screen resolution: " + this.screenResolution);
-        this.cameraResolution = getCameraResolution(localParameters, this.screenResolution);
-        Log.d(TAG, "Camera resolution: " + this.screenResolution);
     }
 
     public void setDesiredCameraParameters(Camera camera, boolean safeMode) {

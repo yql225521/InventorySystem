@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -50,6 +51,20 @@ public class BeepManager implements MediaPlayer.OnCompletionListener,
             // so we now play on the music stream.
             activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
             mediaPlayer = buildMediaPlayer(activity);
+        }
+    }
+
+    /**
+     * 根据配置播放提示音和震动
+     */
+    public synchronized void playBeepSoundAndVibrate() {
+        if (playBeep && mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+        if (vibrate) {
+            Vibrator vibrator = (Vibrator) activity
+                    .getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(VIBRATE_DURATION);
         }
     }
 
