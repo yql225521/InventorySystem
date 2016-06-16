@@ -29,7 +29,7 @@ public class SOAPActions {
 
     // http services parameters
     private String soapAction = "";
-    private String serviceUrl = "http://192.168.0.175:8080/assetmgr/ws/DataAccess?wsdl";
+    private String serviceUrl = "http://192.168.0.188:8080/assetmgr/ws/DataAccess?wsdl";
     private String nameSpace = "http://ws.assetmgr.rstco.com/";
     //final response get from server side
     private String response = "";

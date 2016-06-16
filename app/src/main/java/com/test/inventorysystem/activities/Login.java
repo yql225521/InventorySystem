@@ -192,6 +192,6 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
             toMainPage.putExtra("currUser", currentUser);
         }
         startActivity(toMainPage);
-//        this.finish();
+        this.finish();
     }
 }

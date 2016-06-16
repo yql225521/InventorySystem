@@ -19,7 +19,7 @@ public class OpenCameraInterface {
     }
 
     /**
-     * Opens a rear-facing camera with {@link Camera#open(int)}, if one exists,
+     * Opens a rear-facing camera with {@linkCamera#open(int)}, if one exists,
      * or opens camera 0.
      */
 //    @SuppressLint("NewApi")
@@ -37,7 +37,6 @@ public class OpenCameraInterface {
             Camera.getCameraInfo(index, cameraInfo);
             // CAMERA_FACING_BACK：手机背面的摄像头
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                System.out.println("finding camera...........");
                 break;
             }
             index++;

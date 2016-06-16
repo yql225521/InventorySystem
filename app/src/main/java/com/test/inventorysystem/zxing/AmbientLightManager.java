@@ -46,6 +46,16 @@ public class AmbientLightManager implements SensorEventListener {
         }
     }
 
+    public void stop() {
+        if (lightSensor != null) {
+            SensorManager sensorManager = (SensorManager) context
+                    .getSystemService(Context.SENSOR_SERVICE);
+            sensorManager.unregisterListener(this);
+            cameraManager = null;
+            lightSensor = null;
+        }
+    }
+
     /**
      * 该方法会在周围环境改变后回调，然后根据设置好的临界值决定是否打开闪光灯
      */

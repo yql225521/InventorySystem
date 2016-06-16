@@ -64,6 +64,17 @@ public class InactivityTimer {
         inactivityTask.execute();
     }
 
+    public synchronized void onPause() {
+        cancel();
+        if (registered) {
+            activity.unregisterReceiver(powerStatusReceiver);
+            registered = false;
+        }
+        else {
+            Log.w(TAG, "PowerStatusReceiver was never registered?");
+        }
+    }
+
     /**
      * 取消监控任务
      */
@@ -73,6 +84,10 @@ public class InactivityTimer {
             task.cancel(true);
             inactivityTask = null;
         }
+    }
+
+    public void shutdown() {
+        cancel();
     }
 
     public synchronized void onResume() {

@@ -1,10 +1,15 @@
 package com.test.inventorysystem.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +32,7 @@ import com.test.inventorysystem.zxing.InactivityTimer;
 import com.test.inventorysystem.zxing.IntentSource;
 import com.test.inventorysystem.zxing.decode.CaptureActivityHandler;
 import com.test.inventorysystem.zxing.view.ViewfinderView;
+import com.test.inventorysystem.zxing.Config;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -73,7 +79,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private CaptureActivityHandler handler;
     private Result lastResult;
     private boolean isFlashlightOpen;
-    private IntentSource source;
 
     /**
      * 【辅助解码的参数(用作MultiFormatReader的参数)】 编码类型，该参数告诉扫描器采用何种编码方式解码，即EAN-13，QR
@@ -99,6 +104,8 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private String characterSet;
 
     private Result savedResultToShow;
+
+    private IntentSource source;
 
     /**
      * 图片的路径
@@ -142,7 +149,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_capture);
 
-        hasSurface = false;
+        hasSurface = true;
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
@@ -152,6 +159,40 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     protected void onResume() {
         super.onResume();
 
+        // Check whether CAMERA permission is already granted.
+        // After Android SDK 6.0, you have to grant CAMERA permission to users
+        // when your app wants to open camera on device. Because CAMERA permission
+        // is dangerous permission.
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == 0) {
+            openCamera();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.CAMERA},
+                    Config.USER_PERMISSIONS_REQUEST_CAMERA);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        System.out.println("requestCode: " + requestCode);
+
+        switch (requestCode) {
+            case Config.USER_PERMISSIONS_REQUEST_CAMERA: {
+                System.out.println(grantResults[0]);
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamera();
+                } else {
+                    System.out.println("CAMERA permission denied......");
+                }
+                return;
+            }
+        }
+
+    }
+
+    private void openCamera () {
         // CameraManager must be initialized here, not in onCreate(). This is
         // necessary because we don't
         // want to open the camera driver and measure the screen size if we're
@@ -180,11 +221,13 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             // The activity was paused but not stopped, so the surface still
             // exists. Therefore
             // surfaceCreated() won't be called, so init the camera here.
+            System.out.println("init");
             initCamera(surfaceHolder);
 
         }
         else {
             // 防止sdk8的设备初始化预览异常
+            System.out.println("init else");
             surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
             // Install the callback and wait for surfaceCreated() to init the
@@ -206,7 +249,54 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         characterSet = null;
     }
 
+
+    public synchronized boolean isOpen() {
+        return camera != null;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public CameraManager getCameraManager() {
+        return cameraManager;
+    }
+
+    public ViewfinderView getViewfinderView() {
+        return viewfinderView;
+    }
+
+    public void drawViewfinder() {
+        viewfinderView.drawViewfinder();
+    }
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        System.out.println("surface!@#$%^&*(*&^%$#@");
+        if (holder == null) {
+            Log.e(TAG,
+                    "*** WARNING *** surfaceCreated() gave us a null surface!");
+        }
+        if (!hasSurface) {
+            hasSurface = true;
+            initCamera(holder);
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                               int height) {
+        hasSurface = false;
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
     private void initCamera(SurfaceHolder surfaceHolder) {
+        System.out.println("start camera~~~~~~~~~~~~~~~~");
         if (surfaceHolder == null) {
             throw new IllegalStateException("No SurfaceHolder provided");
         }
@@ -234,54 +324,36 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         }
     }
 
-    public synchronized boolean isOpen() {
-        return camera != null;
-    }
-
-    public Handler getHandler() {
-        return handler;
-    }
-
-    public CameraManager getCameraManager() {
-        return cameraManager;
-    }
-
-    public ViewfinderView getViewfinderView() {
-        return viewfinderView;
-    }
-
-    public void drawViewfinder() {
-        viewfinderView.drawViewfinder();
-    }
-
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        if (holder == null) {
-            Log.e(TAG,
-                    "*** WARNING *** surfaceCreated() gave us a null surface!");
-        }
-        if (!hasSurface) {
-            hasSurface = true;
-            initCamera(holder);
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
-        hasSurface = false;
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        if (handler != null) {
+            handler.quitSynchronously();
+            handler = null;
+        }
+        inactivityTimer.onPause();
+        ambientLightManager.stop();
+        beepManager.close();
+
+        // 关闭摄像头
+        cameraManager.closeDriver();
+        if (!hasSurface) {
+            SurfaceView surfaceView = (SurfaceView) findViewById(R.id.capture_preview_view);
+            SurfaceHolder surfaceHolder = surfaceView.getHolder();
+            surfaceHolder.removeCallback(this);
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        inactivityTimer.shutdown();
+        super.onDestroy();
     }
 }

@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Created by youmengli on 6/12/16.
  */
 
-@DatabaseTable(tableName = "organ")
+@DatabaseTable(tableName = "asset")
 public class AssetModel {
 
     @DatabaseField(id = true)

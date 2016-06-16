@@ -1,6 +1,7 @@
 package com.test.inventorysystem.zxing.decode;
 
 import android.os.Handler;
+import android.os.Message;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -84,6 +85,26 @@ public class CaptureActivityHandler extends Handler {
                     R.id.decode);
             activity.drawViewfinder();
         }
+    }
+
+    public void quitSynchronously() {
+        state = State.DONE;
+        cameraManager.stopPreview();
+        Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
+        quit.sendToTarget();
+
+        try {
+            // Wait at most half a second; should be enough time, and onPause()
+            // will timeout quickly
+            decodeThread.join(500L);
+        }
+        catch (InterruptedException e) {
+            // continue
+        }
+
+        // Be absolutely sure we don't send any queued up messages
+        removeMessages(R.id.decode_succeeded);
+        removeMessages(R.id.decode_failed);
     }
 
 }

@@ -206,6 +206,21 @@ public class CameraManager {
     }
 
     /**
+     * Closes the camera driver if still in use.
+     */
+    public synchronized void closeDriver() {
+        if (camera != null) {
+            camera.release();
+            camera = null;
+            // Make sure to clear these each time we close the camera, so that
+            // any scanning rect
+            // requested by intent is forgotten.
+            framingRect = null;
+            framingRectInPreview = null;
+        }
+    }
+
+    /**
      * Allows third party apps to specify the scanning rectangle dimensions,
      * rather than determine them automatically based on screen resolution.
      *
@@ -330,6 +345,21 @@ public class CameraManager {
 
             // 绑定相机回调函数，当预览界面准备就绪后会回调Camera.PreviewCallback.onPreviewFrame
             theCamera.setOneShotPreviewCallback(previewCallback);
+        }
+    }
+
+    /**
+     * Tells the camera to stop drawing preview frames.
+     */
+    public synchronized void stopPreview() {
+        if (autoFocusManager != null) {
+            autoFocusManager.stop();
+            autoFocusManager = null;
+        }
+        if (camera != null && previewing) {
+            camera.stopPreview();
+            previewCallback.setHandler(null, 0);
+            previewing = false;
         }
     }
 
