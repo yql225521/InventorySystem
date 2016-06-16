@@ -1,10 +1,15 @@
 package com.test.inventorysystem.zxing;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorListener;
+import android.hardware.SensorManager;
+import android.preference.PreferenceManager;
+
+import com.test.inventorysystem.zxing.camera.FrontLightMode;
 
 /**
  * Created by youmengli on 6/15/16.
@@ -24,6 +29,21 @@ public class AmbientLightManager implements SensorEventListener {
 
     public AmbientLightManager(Context context) {
         this.context = context;
+    }
+
+    public void start(CameraManager cameraManager) {
+        this.cameraManager = cameraManager;
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        if (FrontLightMode.readPref(sharedPrefs) == FrontLightMode.AUTO) {
+            SensorManager sensorManager = (SensorManager) context
+                    .getSystemService(Context.SENSOR_SERVICE);
+            lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+            if (lightSensor != null) {
+                sensorManager.registerListener(this, lightSensor,
+                        SensorManager.SENSOR_DELAY_NORMAL);
+            }
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.util.Log;
@@ -72,6 +73,18 @@ public class InactivityTimer {
             task.cancel(true);
             inactivityTask = null;
         }
+    }
+
+    public synchronized void onResume() {
+        if (registered) {
+            Log.w(TAG, "PowerStatusReceiver was already registered?");
+        }
+        else {
+            activity.registerReceiver(powerStatusReceiver, new IntentFilter(
+                    Intent.ACTION_BATTERY_CHANGED));
+            registered = true;
+        }
+        onActivity();
     }
 
     /**

@@ -39,7 +39,7 @@ public class BeepManager implements MediaPlayer.OnCompletionListener,
     /**
      * 扫描成功后可以播放提示音并震动，这两种功能都是用户自定义的 在Barcode Scanner中点击菜单键，点设置即可看到这两项的设置
      */
-    synchronized void updatePrefs() {
+    public synchronized void updatePrefs() {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(activity);
         playBeep = shouldBeep(prefs, activity);

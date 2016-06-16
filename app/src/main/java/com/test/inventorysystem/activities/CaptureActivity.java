@@ -1,10 +1,15 @@
 package com.test.inventorysystem.activities;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -19,14 +24,16 @@ import com.test.inventorysystem.zxing.AmbientLightManager;
 import com.test.inventorysystem.zxing.BeepManager;
 import com.test.inventorysystem.zxing.CameraManager;
 import com.test.inventorysystem.zxing.InactivityTimer;
+import com.test.inventorysystem.zxing.IntentSource;
 import com.test.inventorysystem.zxing.decode.CaptureActivityHandler;
 import com.test.inventorysystem.zxing.view.ViewfinderView;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Map;
 
-public class CaptureActivity extends AppCompatActivity {
+public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.Callback{
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -35,6 +42,7 @@ public class CaptureActivity extends AppCompatActivity {
     private static final int PARSE_BARCODE_FAIL = 300;
     public final static int RESULT_CODE = 1;
 
+    private Camera camera;
     /**
      * 是否有预览
      */
@@ -62,12 +70,10 @@ public class CaptureActivity extends AppCompatActivity {
      * 扫描区域
      */
     private ViewfinderView viewfinderView;
-
     private CaptureActivityHandler handler;
-
     private Result lastResult;
-
     private boolean isFlashlightOpen;
+    private IntentSource source;
 
     /**
      * 【辅助解码的参数(用作MultiFormatReader的参数)】 编码类型，该参数告诉扫描器采用何种编码方式解码，即EAN-13，QR
@@ -140,5 +146,142 @@ public class CaptureActivity extends AppCompatActivity {
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // CameraManager must be initialized here, not in onCreate(). This is
+        // necessary because we don't
+        // want to open the camera driver and measure the screen size if we're
+        // going to show the help on
+        // first launch. That led to bugs where the scanning rectangle was the
+        // wrong size and partially
+        // off screen.
+
+        // 相机初始化的动作需要开启相机并测量屏幕大小，这些操作
+        // 不建议放到onCreate中，因为如果在onCreate中加上首次启动展示帮助信息的代码的 话，
+        // 会导致扫描窗口的尺寸计算有误的bug
+        cameraManager = new CameraManager(getApplication());
+
+        viewfinderView = (ViewfinderView) findViewById(R.id.capture_viewfinder_view);
+        viewfinderView.setCameraManager(cameraManager);
+
+        handler = null;
+        lastResult = null;
+
+        // 摄像头预览功能必须借助SurfaceView，因此也需要在一开始对其进行初始化
+        // 如果需要了解SurfaceView的原理
+        // 参考:http://blog.csdn.net/luoshengyang/article/details/8661317
+        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.capture_preview_view); // 预览
+        SurfaceHolder surfaceHolder = surfaceView.getHolder();
+        if (hasSurface) {
+            // The activity was paused but not stopped, so the surface still
+            // exists. Therefore
+            // surfaceCreated() won't be called, so init the camera here.
+            initCamera(surfaceHolder);
+
+        }
+        else {
+            // 防止sdk8的设备初始化预览异常
+            surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+            // Install the callback and wait for surfaceCreated() to init the
+            // camera.
+            surfaceHolder.addCallback(this);
+        }
+
+        // 加载声音配置，其实在BeemManager的构造器中也会调用该方法，即在onCreate的时候会调用一次
+        beepManager.updatePrefs();
+
+        // 启动闪光灯调节器
+        ambientLightManager.start(cameraManager);
+
+        // 恢复活动监控器
+        inactivityTimer.onResume();
+
+        source = IntentSource.NONE;
+        decodeFormats = null;
+        characterSet = null;
+    }
+
+    private void initCamera(SurfaceHolder surfaceHolder) {
+        if (surfaceHolder == null) {
+            throw new IllegalStateException("No SurfaceHolder provided");
+        }
+
+        if (cameraManager.isOpen()) {
+            return;
+        }
+        try {
+            cameraManager.openDriver(surfaceHolder);
+            // Creating the handler starts the preview, which can also throw a
+            // RuntimeException.
+            if (handler == null) {
+                handler = new CaptureActivityHandler(this, decodeFormats,
+                        decodeHints, characterSet, cameraManager);
+            }
+//            decodeOrStoreSavedBitmap(null, null);
+        }
+        catch (IOException ioe) {
+//            displayFrameworkBugMessageAndExit();
+        }
+        catch (RuntimeException e) {
+            // Barcode Scanner has seen crashes in the wild of this variety:
+            // java.?lang.?RuntimeException: Fail to connect to camera service
+//            displayFrameworkBugMessageAndExit();
+        }
+    }
+
+    public synchronized boolean isOpen() {
+        return camera != null;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public CameraManager getCameraManager() {
+        return cameraManager;
+    }
+
+    public ViewfinderView getViewfinderView() {
+        return viewfinderView;
+    }
+
+    public void drawViewfinder() {
+        viewfinderView.drawViewfinder();
+    }
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        if (holder == null) {
+            Log.e(TAG,
+                    "*** WARNING *** surfaceCreated() gave us a null surface!");
+        }
+        if (!hasSurface) {
+            hasSurface = true;
+            initCamera(holder);
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                               int height) {
+        hasSurface = false;
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
     }
 }
