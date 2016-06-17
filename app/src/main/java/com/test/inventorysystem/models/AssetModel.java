@@ -43,6 +43,8 @@ public class AssetModel {
     private String organName;
     @DatabaseField
     private String cateName;
+    @DatabaseField
+    private String invMsg;
 
     public AssetModel () { super(); }
 
@@ -61,6 +63,24 @@ public class AssetModel {
         setAssetTypeName(jsonObject.get("assetTypeName").getAsString());
         setAssetId(jsonObject.get("assetID").getAsString());
         setCateId(jsonObject.get("cateId").getAsString());
+        setOrganName(jsonObject.get("organName").getAsString());
+        setCateName(jsonObject.get("cateName").getAsString());
+    }
+
+    // if current object is inventory result
+    public AssetModel (JsonObject jsonObject, String string) {
+        super();
+        setAssetName(jsonObject.get("assetName").getAsString());
+        setEnableDateString(jsonObject.get("enableDateString").getAsString());
+        setStatus(jsonObject.get("status").getAsString());
+        setUseAge(jsonObject.get("useAge").getAsInt());
+        setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
+        setOriginalValue(jsonObject.get("originalValue").getAsDouble());
+        setAssetCode(jsonObject.get("assetCode").getAsString());
+        setStorageDescr(jsonObject.get("storageDescr").getAsString());
+        setOperator(jsonObject.get("operator").getAsString());
+        setFindCode(jsonObject.get("finCode").getAsString());
+        setAssetTypeName(jsonObject.get("assetTypeName").getAsString());
         setOrganName(jsonObject.get("organName").getAsString());
         setCateName(jsonObject.get("cateName").getAsString());
     }
@@ -191,5 +211,13 @@ public class AssetModel {
 
     public String getCateName() {
         return cateName;
+    }
+
+    public void setInvMsg(String invMsg) {
+        this.invMsg = invMsg;
+    }
+
+    public String getInvMsg() {
+        return invMsg;
     }
 }

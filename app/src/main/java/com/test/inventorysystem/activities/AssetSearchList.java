@@ -82,7 +82,7 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AssetModel assetModel = (AssetModel) listView.getItemAtPosition(i);
                 DialogFragment dialogFragment = AssetInfoDialogUtil.newInstance(assetModel);
-                dialogFragment.show(getFragmentManager(), "asset_info");
+                dialogFragment.show(getFragmentManager(), "dialog_asset_info");
             }
         });
 

@@ -3,6 +3,11 @@ package com.test.inventorysystem.utils;
 import android.content.Context;
 import com.test.inventorysystem.R;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by youmengli on 2016-05-31.
@@ -142,5 +147,35 @@ public class Sysconfig {
         PreferencesUtil pu = new PreferencesUtil(_context);
         areaID= "";
         return areaID;
+    }
+
+    public static String[] getCodes(String barcode) {
+        if (!"".equals(barcode)) {
+            if(StringUtils.indexOf(barcode, "\n")>-1){//晋中标签问题
+                String[]  tas=barcode.split("\n");
+                if(tas.length>=2&&"晋中市烟草公司".equals(tas[0])) {
+                    List<String> tlst=new ArrayList();
+                    tlst.add(tas[2]);//0
+                    if(tas.length>3){
+                        tlst.add(tas[3]);//1
+                    }else{
+                        tlst.add("");//1
+                    }
+                    if(tas.length>4){
+                        tlst.add(tas[4]);//1
+                    }else{
+                        tlst.add("");//1
+                    }
+                    tlst.add(tas[1]);
+                    System.out.println("asset:"+StringUtils.join(tlst,","));
+                    return tlst.toArray(new String[tlst.size()]);
+                }
+                return tas;
+            }else{
+                return barcode.split("\t");
+            }
+        }
+
+        return null;
     }
 }

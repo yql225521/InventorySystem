@@ -43,6 +43,7 @@
 
     <!-- Strings related to asset info dialog -->
     <string name="asset_info_title">物品详情:</string>
+    <string name="inv_asset_info_title">盘点信息:</string>
     <string name="asset_info_code">资产编码:</string>
     <string name="asset_info_name">资产名称:</string>
     <string name="asset_info_specification">规格型号:</string>
@@ -56,6 +57,9 @@
     <string name="asset_info_date">使用日期:</string>
     <string name="asset_info_use_age">使用年限:</string>
     <string name="asset_info_status">当前状态:</string>
+    <string name="inv_asset_info_invMsg">盘点记录:</string>
+    <string name="inv_dialog_positive">确认盘点</string>
+    <string name="inv_dialog_negative">不符项目</string>
 
     <!-- Strings related to asset inventory -->
     <string name="asset_inventory_title">资产盘点</string>

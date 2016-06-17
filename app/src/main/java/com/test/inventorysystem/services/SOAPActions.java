@@ -23,7 +23,7 @@ public class SOAPActions {
     private String xmlRequest_header = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://ws.assetmgr.rstco.com/\">" +
             "<soapenv:Header/>" + "<soapenv:Body>";
     private String xmlRequest_body = "";
-    private String xmlRequest_tail = "</soapenv:Body>" + "</soapenv:Envelope>";
+    private String xmlRequest_rear = "</soapenv:Body>" + "</soapenv:Envelope>";
     private String xmlRequest = "";
     private String methodName = "";
 
@@ -49,6 +49,10 @@ public class SOAPActions {
                 break;
             case "searchAssetList":
                 this.searchAssetList(hashMap);
+                break;
+            case "getAssetInfoWithInv":
+                this.getAssetInfo(hashMap);
+                break;
         }
     }
 
@@ -59,13 +63,13 @@ public class SOAPActions {
         String simId = hashMap.get("simId").toString();
         this.xmlRequest_body = "<ws:doLogin><username>" + username + "</username><password>" + password + "</password><addr>" +
                 addr + "</addr><simId>" + simId + "</simId></ws:doLogin>";
-        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_tail);
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
     private void loadBaseData (HashMap hashMap) {
         String organCode = hashMap.get("organCode").toString();
         this.xmlRequest_body = "<ws:getAssetInventoryBase><organCode>" + organCode + "</organCode></ws:getAssetInventoryBase>";
-        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_tail);
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
     private void searchAssetList (HashMap hashMap) {
@@ -78,7 +82,13 @@ public class SOAPActions {
         this.xmlRequest_body = "<ws:searchAssetList><assetName>" + assetName + "</assetName><category>" + category + "</category><assetCode>" +
                 assetCode + "</assetCode><organCode>" + organCode + "</organCode><pageNo>" + pageNo + "</pageNo><pageSize>" + pageSize +
                 "</pageSize></ws:searchAssetList>";
-        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_tail);
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+    }
+
+    private void getAssetInfo (HashMap hashMap) {
+        String assetCode = hashMap.get("assetCode").toString();
+        this.xmlRequest_body = "<ws:getAssetInfoWithInv><assetCode>" + assetCode + "</assetCode></ws:getAssetInfoWithInv>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
     public void sendRequest (Context ctx, String xmlRequest, final CallbackInterface callback) {

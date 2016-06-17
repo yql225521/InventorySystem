@@ -2,12 +2,15 @@ package com.test.inventorysystem.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,13 +27,16 @@ import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
+import com.google.zxing.client.result.ResultParser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.test.inventorysystem.R;
 import com.test.inventorysystem.zxing.AmbientLightManager;
 import com.test.inventorysystem.zxing.BeepManager;
+import com.test.inventorysystem.zxing.BitmapUtils;
 import com.test.inventorysystem.zxing.CameraManager;
 import com.test.inventorysystem.zxing.InactivityTimer;
 import com.test.inventorysystem.zxing.IntentSource;
+import com.test.inventorysystem.zxing.decode.BitmapDecoder;
 import com.test.inventorysystem.zxing.decode.CaptureActivityHandler;
 import com.test.inventorysystem.zxing.view.ViewfinderView;
 import com.test.inventorysystem.zxing.Config;
@@ -349,13 +355,9 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         beepManager.playBeepSoundAndVibrate();
 
-//		Toast.makeText(this,
-//				"识别结果:" + ResultParser.parseResult(rawResult).toString()+"\n"
-//				+ "编码格式为："+rawResult.getBarcodeFormat().toString()+"\n"
-//				+ "Result=："+rawResult.getClass().getName(),
-//				Toast.LENGTH_LONG).show();
         Intent intent=new Intent();
         intent.putExtra("barcode",rawResult.getText());//点击按钮后的返回参数，提示显示
+        System.out.println(rawResult.getText());
         setResult(RESULT_CODE, intent);//RESULT_CODE是一个整型变量
         this.finish();
 
@@ -364,8 +366,50 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            final ProgressDialog progressDialog;
+            switch (requestCode) {
+                case REQUEST_CODE:
 
+                    // 获取选中图片的路径
+                    Cursor cursor = getContentResolver().query(
+                            data.getData(), null, null, null, null);
+                    if (cursor.moveToFirst()) {
+                        photoPath = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Images.Media.DATA));
+                    }
+                    cursor.close();
 
+                    new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Bitmap img = BitmapUtils
+                                    .getCompressedBitmap(photoPath);
+
+                            BitmapDecoder decoder = new BitmapDecoder(
+                                    CaptureActivity.this);
+                            Result result = decoder.getRawResult(img);
+
+                            if (result != null) {
+                                Message m = mHandler.obtainMessage();
+                                m.what = PARSE_BARCODE_SUC;
+                                m.obj = ResultParser.parseResult(result)
+                                        .toString();
+                                mHandler.sendMessage(m);
+                            }
+                            else {
+                                Message m = mHandler.obtainMessage();
+                                m.what = PARSE_BARCODE_FAIL;
+                                mHandler.sendMessage(m);
+                            }
+                        }
+                    }).start();
+
+                    break;
+
+            }
+        }
     }
 
     @Override
