@@ -29,7 +29,7 @@ public class SOAPActions {
 
     // http services parameters
     private String soapAction = "";
-    private String serviceUrl = "http://192.168.0.188:8080/assetmgr/ws/DataAccess?wsdl";
+    private String serviceUrl = "http://192.168.0.173:8080/assetmgr/ws/DataAccess?wsdl";
     private String nameSpace = "http://ws.assetmgr.rstco.com/";
     //final response get from server side
     private String response = "";
@@ -52,6 +52,9 @@ public class SOAPActions {
                 break;
             case "getAssetInfoWithInv":
                 this.getAssetInfo(hashMap);
+                break;
+            case "doInventory":
+                this.doInventory(hashMap);
                 break;
         }
     }
@@ -88,6 +91,20 @@ public class SOAPActions {
     private void getAssetInfo (HashMap hashMap) {
         String assetCode = hashMap.get("assetCode").toString();
         this.xmlRequest_body = "<ws:getAssetInfoWithInv><assetCode>" + assetCode + "</assetCode></ws:getAssetInfoWithInv>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+    }
+
+    private void doInventory (HashMap hashMap) {
+        String organCode = hashMap.get("organCode").toString();
+        String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
+        String username = hashMap.get("username").toString();
+        String assetCode = hashMap.get("assetCode").toString();
+        String addr = hashMap.get("addr").toString();
+        String simId = hashMap.get("simId").toString();
+        String disCodes = hashMap.get("disCodes").toString();
+        this.xmlRequest_body = "<ws:doInventory><organCode>" + organCode + "</organCode><mgrOrganCode>" + mgrOrganCode +
+                "</mgrOrganCode><username>" + username + "</username><assetCode>" + assetCode + "</assetCode><addr>" + addr +
+                "</addr><simId>" + simId + "</simId><disCodes>" + disCodes + "</disCodes></ws:doInventory>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 

@@ -68,6 +68,7 @@
     <string name="asset_inventory_btn_manual">手录</string>
     <string name="asset_inventory_btn_end">结束</string>
     <string name="asset_inventory_organ">使用部门</string>
+    <string name="asset_inventory_scan_progress">正在加载...</string>
 
     <!--<string name="main_page">主页</string>-->
 </resources>

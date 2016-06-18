@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.google.gson.JsonArray;
@@ -20,6 +21,7 @@ import com.test.inventorysystem.interfaces.CallbackInterface;
 import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.services.SOAPActions;
+import com.test.inventorysystem.utils.AppContext;
 import com.test.inventorysystem.utils.InvAssetInfoDialogUtil;
 import com.test.inventorysystem.utils.Sysconfig;
 import com.test.inventorysystem.utils.TransUtil;
@@ -31,7 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AssetInventory extends OrmLiteBaseActivity<DBHelper> {
+public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements InvAssetInfoDialogUtil.NoticeDialogListener {
     private final static int REQUEST_CODE=1;
     private Button scanBtn = null;
     private Button inventoryBtn = null;
@@ -40,9 +42,10 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> {
     private Spinner inventoryOrganSpinner = null;
     private ArrayAdapter<String> organSpinnerArrayAdapter = null;
     private ArrayList<OrganModel> organs = new ArrayList<OrganModel>();
+    private LinearLayout inventoryProgressBar = null;
     private DBManager dbManager = new DBManager();
 
-    private String userAccount;
+    private String currAssetCode;
     private String response;
 
     @Override
@@ -57,17 +60,15 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> {
         inventoryBtn = (Button) findViewById(R.id.button_inventory_inventory);
         manualBtn = (Button) findViewById(R.id.button_inventory_manual);
         endBtn = (Button) findViewById(R.id.button_inventory_end);
+        inventoryProgressBar = (LinearLayout) findViewById(R.id.linearLayout_progress_bar);
 
         inventoryOrganSpinner = (Spinner) findViewById(R.id.spinner_inventory_organ);
         organSpinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         organSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inventoryOrganSpinner.setAdapter(organSpinnerArrayAdapter);
 
-        Bundle extras = getIntent().getExtras();
-        userAccount = extras.getString("userAccount");
-
         try {
-            List<OrganModel> organList = dbManager.findOrgans(this.getHelper().getOrganDao(), userAccount, null);
+            List<OrganModel> organList = dbManager.findOrgans(this.getHelper().getOrganDao(), AppContext.currUser.getAccounts(), null);
             if (organList.isEmpty()) {
 
             } else {
@@ -124,14 +125,15 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> {
     }
 
     private void selectAssetInfo(String assetCode, final String pdfs) {
+        inventoryProgressBar.setVisibility(LinearLayout.VISIBLE);
         String methodName = "getAssetInfoWithInv";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put("methodName", methodName);
         hashMap.put("assetCode", assetCode);
-        loadAssetInfo(hashMap);
+        loadAssetInfo(hashMap, pdfs);
     }
 
-    private void loadAssetInfo(HashMap hashMap) {
+    private void loadAssetInfo(HashMap hashMap, final String pdfs) {
         final SOAPActions sa = new SOAPActions(hashMap);
         String xmlRequest = sa.getXmlRequest();
 
@@ -145,13 +147,60 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> {
                 int success = jsonObject.get("success").getAsInt();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
                 String invMsg = jsonObject.get("invMsg").getAsString();
+                currAssetCode = asset.get("assetCode").getAsString();
 
                 if (success == 1) {
                     AssetModel assetModel = new AssetModel(asset, "inv_asset");
                     assetModel.setInvMsg(invMsg);
+                    assetModel.setDisCode("");
+                    assetModel.setPdfs(pdfs);
+                    inventoryProgressBar.setVisibility(LinearLayout.GONE);
                     DialogFragment dialogFragment = InvAssetInfoDialogUtil.newInstance(assetModel);
                     dialogFragment.show(getFragmentManager(), "inv_asset_info");
                 }
+            }
+        });
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        doInventory(currAssetCode, "");
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+    }
+
+    public void doInventory (String assetCode, String disCodes) {
+        String methodName = "doInventory";
+        HashMap<String, String> hashMap = new HashMap<String, String>();
+        hashMap.put("methodName", methodName);
+//        System.out.println(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+        hashMap.put("organCode", organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
+        hashMap.put("username", AppContext.currUser.getAccounts());
+        hashMap.put("assetCode", assetCode);
+        hashMap.put("addr", AppContext.address);
+        hashMap.put("simId", AppContext.simId);
+        hashMap.put("disCodes", disCodes);
+//        System.out.println("doInventory: " + hashMap);
+        loadDoInventoryInfo(hashMap);
+    }
+
+    private void loadDoInventoryInfo (HashMap hashMap) {
+        final SOAPActions sa = new SOAPActions(hashMap);
+        String xmlRequest = sa.getXmlRequest();
+
+        sa.sendRequest(this, xmlRequest, new CallbackInterface() {
+            @Override
+            public void callBackFunction() {
+                response = TransUtil.decode(sa.getResponse());
+                JsonParser jsonParser = new JsonParser();
+                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+
+                System.out.println("rrrrrr " + response);
             }
         });
     }

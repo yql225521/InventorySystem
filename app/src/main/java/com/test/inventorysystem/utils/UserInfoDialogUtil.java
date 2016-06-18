@@ -22,12 +22,12 @@ public class UserInfoDialogUtil extends DialogFragment {
     private TextView userName;
     private TextView userDepartmentId;
 
-    public static UserInfoDialogUtil newInstance(String account, String username, String departmentId) {
+    public static UserInfoDialogUtil newInstance(UserModel userModel) {
 
         Bundle args = new Bundle();
-        args.putString("account", account);
-        args.putString("username", username);
-        args.putString("departmentId", departmentId);
+        args.putString("account", userModel.getAccounts());
+        args.putString("username", userModel.getUsername());
+        args.putString("departmentId", userModel.getDepartmentId());
         UserInfoDialogUtil frag = new UserInfoDialogUtil();
         frag.setArguments(args);
 

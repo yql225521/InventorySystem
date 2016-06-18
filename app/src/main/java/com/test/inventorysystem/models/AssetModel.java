@@ -45,6 +45,10 @@ public class AssetModel {
     private String cateName;
     @DatabaseField
     private String invMsg;
+    @DatabaseField
+    private String pdfs;
+    @DatabaseField
+    private String disCode;
 
     public AssetModel () { super(); }
 
@@ -219,5 +223,21 @@ public class AssetModel {
 
     public String getInvMsg() {
         return invMsg;
+    }
+
+    public void setPdfs(String pdfs) {
+        this.pdfs = pdfs;
+    }
+
+    public String getPdfs() {
+        return pdfs;
+    }
+
+    public void setDisCode(String disCode) {
+        this.disCode = disCode;
+    }
+
+    public String getDisCode() {
+        return disCode;
     }
 }

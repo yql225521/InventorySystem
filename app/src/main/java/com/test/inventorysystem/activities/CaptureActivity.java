@@ -54,6 +54,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private static final int PARSE_BARCODE_SUC = 200;
     private static final int PARSE_BARCODE_FAIL = 300;
     public final static int RESULT_CODE = 1;
+    private boolean firstInitCamera = true;
 
     private Camera camera;
     /**
@@ -160,13 +161,12 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
-
         // Check whether CAMERA permission is already granted.
         // After Android SDK 6.0, you have to grant CAMERA permission to users
         // when your app wants to open camera on device. Because CAMERA permission
         // is dangerous permission.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == 0) {
-            openCamera();
+                openCamera();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[] {Manifest.permission.CAMERA},
@@ -177,9 +177,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     @Override
     protected void onResume() {
         super.onResume();
-
-
-
+        System.out.println("Activity OnResume~~~!!");
     }
 
     @Override
@@ -202,6 +200,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     }
 
     private void openCamera () {
+        System.out.println("open~~!!");
         // CameraManager must be initialized here, not in onCreate(). This is
         // necessary because we don't
         // want to open the camera driver and measure the screen size if we're
@@ -283,12 +282,12 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         if (holder == null) {
-            Log.e(TAG,
-                    "*** WARNING *** surfaceCreated() gave us a null surface!");
+            System.out.println("*** WARNING *** surfaceCreated() gave us a null surface!");
         }
         if (!hasSurface) {
             hasSurface = true;
             initCamera(holder);
+            System.out.println("surface created and init camera");
         }
     }
 

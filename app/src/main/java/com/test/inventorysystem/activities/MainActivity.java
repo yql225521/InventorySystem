@@ -12,6 +12,7 @@ import android.widget.GridView;
 
 import com.test.inventorysystem.R;
 import com.test.inventorysystem.adapters.MainListAdapter;
+import com.test.inventorysystem.utils.AppContext;
 import com.test.inventorysystem.utils.UserInfoDialogUtil;
 
 import java.util.ArrayList;
@@ -39,17 +40,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Initialization() {
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String currUser = extras.getString("currUser");
-            String[] userInfo = currUser.split(",");
-            userAccount = userInfo[0].substring(10, userInfo[0].length());
-            userName = userInfo[1].substring(11, userInfo[1].length());
-            userDepartmentId = userInfo[3].substring(15, userInfo[3].length());
-            System.out.println(userDepartmentId);
-        }
-
         GridView gridview = (GridView) findViewById(R.id.grid_view);
         gridview.setAdapter(new MainListAdapter(this, this.mainGridTitles, this.mainGridIcons));
 
@@ -69,13 +59,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToAssetSearch () {
         Intent intent = new Intent(this, AssetSearch.class);
-        intent.putExtra("userAccount", userAccount);
+//        intent.putExtra("userAccount", userAccount);
         startActivity(intent);
     }
 
     private void goToAssetInventory () {
         Intent intent = new Intent(this, AssetInventory.class);
-        intent.putExtra("userAccount", userAccount);
+//        intent.putExtra("userAccount", userAccount);
         startActivity(intent);
     }
 
@@ -99,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showUserInfo () {
-        UserInfoDialogUtil userInfo = UserInfoDialogUtil.newInstance(userAccount, userName, userDepartmentId);
+        System.out.println(AppContext.currUser.getAccounts());
+        UserInfoDialogUtil userInfo = UserInfoDialogUtil.newInstance(AppContext.currUser);
         userInfo.show(getFragmentManager(), "user_info");
     }
 }

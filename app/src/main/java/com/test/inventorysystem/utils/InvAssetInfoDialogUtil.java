@@ -1,5 +1,6 @@
 package com.test.inventorysystem.utils;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.test.inventorysystem.R;
+import com.test.inventorysystem.activities.AssetInventory;
 import com.test.inventorysystem.models.AssetModel;
 
 /**
@@ -34,6 +36,13 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
     private TextView assetStatus;
     private TextView assetInvMsg;
 
+    public interface NoticeDialogListener {
+        public void onDialogPositiveClick(DialogFragment dialog);
+        public void onDialogNegativeClick(DialogFragment dialog);
+    }
+
+    NoticeDialogListener mListener;
+
     public static InvAssetInfoDialogUtil newInstance(AssetModel assetModel) {
         InvAssetInfoDialogUtil frag = new InvAssetInfoDialogUtil();
         Bundle args = new Bundle();
@@ -50,13 +59,27 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         args.putInt("use_age", assetModel.getUseAge());
         args.putString("status", assetModel.getStatus());
         args.putString("invMsg", assetModel.getInvMsg());
+        args.putString("disCodes", assetModel.getDisCode());
         frag.setArguments(args);
         return frag;
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            mListener = (NoticeDialogListener) activity;
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(activity.toString()
+                    + " must implement NoticeDialogListener");
+        }
+    }
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String asset_code = getArguments().getString("code");
+        final String asset_code = getArguments().getString("code");
         String asset_name = getArguments().getString("name");
         String asset_type = getArguments().getString("type");
         String asset_category = getArguments().getString("category");
@@ -69,6 +92,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         int asset_use_age = getArguments().getInt("use_age");
         String asset_status = getArguments().getString("status");
         String asset_invMsg = getArguments().getString("invMsg");
+        final String asset_disCodes = getArguments().getString("disCodes");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
@@ -93,11 +117,13 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         builder.setView(view)
                 .setPositiveButton(R.string.inv_dialog_positive, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        mListener.onDialogPositiveClick(InvAssetInfoDialogUtil.this);
                     }
                 })
                 .setNegativeButton(R.string.inv_dialog_negative, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
+                        mListener.onDialogNegativeClick(InvAssetInfoDialogUtil.this);
                     }
                 });
         return builder.create();

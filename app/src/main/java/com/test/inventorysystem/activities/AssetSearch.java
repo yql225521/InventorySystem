@@ -16,6 +16,7 @@ import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.db.DBManager;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.models.TypeModel;
+import com.test.inventorysystem.utils.AppContext;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,11 +57,11 @@ public class AssetSearch extends OrmLiteBaseActivity<DBHelper> {
         typeSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         assetTypeSpinner.setAdapter(typeSpinnerArrayAdapter);
 
-        Bundle extras = getIntent().getExtras();
-        String userAccount = extras.getString("userAccount");
+//        Bundle extras = getIntent().getExtras();
+//        String userAccount = extras.getString("userAccount");
 
         try {
-            List<OrganModel> organList = dbManager.findOrgans(this.getHelper().getOrganDao(), userAccount, null);
+            List<OrganModel> organList = dbManager.findOrgans(this.getHelper().getOrganDao(), AppContext.currUser.getAccounts(), null);
             if (organList.isEmpty()) {
 
             } else {
@@ -70,7 +71,7 @@ public class AssetSearch extends OrmLiteBaseActivity<DBHelper> {
                 }
             }
 
-            List<TypeModel> typeList = dbManager.findTypes(this.getHelper().getTypeDao(), userAccount, "001");
+            List<TypeModel> typeList = dbManager.findTypes(this.getHelper().getTypeDao(), AppContext.currUser.getAccounts(), "001");
             for (TypeModel typeModel : typeList) {
                 types.add(typeModel);
                 typeSpinnerArrayAdapter.add(typeModel.getTypeName());
