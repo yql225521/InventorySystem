@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:text="@string/asset_inventory_continue_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textView"
+            android:gravity="center"
+            android:textColor="@color/bright_foreground_inverse_material_light"
+            android:paddingLeft="10dp"
+            android:textSize="@dimen/abc_text_size_medium_material" />
+
+        <!--<TextView-->
+            <!--android:text="TextView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/textView_asset_info_title"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="left|center"-->
+            <!--android:textColor="@color/bright_foreground_inverse_material_light"-->
+            <!--android:paddingBottom="2dp"-->
+            <!--android:paddingTop="2dp"-->
+            <!--android:textSize="@dimen/abc_text_size_medium_material"-->
+            <!--android:paddingLeft="5dp" />-->
+
+    </LinearLayout>
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_continue_dialog"
+        android:textColor="@android:color/black"
+        android:padding="10dp" />
+
+
+</LinearLayout>

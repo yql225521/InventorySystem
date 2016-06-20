@@ -18,6 +18,7 @@
 
     <!-- Strings related to login user -->
     <string name="dialog_confirm">确定</string>
+    <string name="dialog_cancel">取消</string>
     <string name="dialog_user_info_title">用户信息</string>
     <string name="dialog_user_account">用户账号</string>
     <string name="dialog_user_name">用户名</string>
@@ -57,6 +58,8 @@
     <string name="asset_info_date">使用日期:</string>
     <string name="asset_info_use_age">使用年限:</string>
     <string name="asset_info_status">当前状态:</string>
+    <string name="asset_info_starbar">星级</string>
+    <string name="asset_info_note">备注</string>
     <string name="inv_asset_info_invMsg">盘点记录:</string>
     <string name="inv_dialog_positive">确认盘点</string>
     <string name="inv_dialog_negative">不符项目</string>
@@ -69,6 +72,10 @@
     <string name="asset_inventory_btn_end">结束</string>
     <string name="asset_inventory_organ">使用部门</string>
     <string name="asset_inventory_scan_progress">正在加载...</string>
+    <string name="asset_inventory_continue_title">盘点成功</string>
+    <string name="continue_dialog_continue">继续盘点</string>
+    <string name="continue_dialog_stop">终止盘点</string>
+    <string name="asset_update_title">资产盘点信息更新</string>
 
     <!--<string name="main_page">主页</string>-->
 </resources>

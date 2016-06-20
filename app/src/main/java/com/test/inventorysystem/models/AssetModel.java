@@ -4,12 +4,14 @@ import com.google.gson.JsonObject;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
+
 /**
  * Created by youmengli on 6/12/16.
  */
 
 @DatabaseTable(tableName = "asset")
-public class AssetModel {
+public class AssetModel implements Serializable {
 
     @DatabaseField(id = true)
     private String pid;

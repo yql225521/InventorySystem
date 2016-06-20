@@ -1,6 +1,7 @@
 package com.test.inventorysystem.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +43,31 @@ public class AssetListAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void add(AssetModel assetModel){
+        this.assetList.add(assetModel);
+        this.notifyDataSetChanged();
+    }
+
     public void addAll(List<AssetModel> items){
         this.assetList.addAll(items);
+        this.notifyDataSetChanged();
+    }
+
+    public void replace(AssetModel assetModel) {
+        int i=0;
+        boolean bz=false;
+        for (AssetModel item : assetList) {
+            if(item.getAssetCode().equals(assetModel.getAssetCode())){
+                Log.i("","  "+ item.getAssetCode()+"----"+item.getAssetCode());
+                this.assetList.set(i, assetModel);
+                bz=true;
+                break;
+            }
+            i++;
+        }
+        if(!bz){
+            this.add(assetModel);
+        }
         this.notifyDataSetChanged();
     }
 
