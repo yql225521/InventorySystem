@@ -46,8 +46,8 @@ public class MainListAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = this.mainInflater.inflate(R.layout.adapter_main_grid_item, null);
-            holder.icon = (ImageView) convertView.findViewById(R.id.main_grid_item_icon);
             holder.title = (TextView) convertView.findViewById(R.id.main_grid_item_title);
+            holder.icon = (ImageView) convertView.findViewById(R.id.main_grid_item_icon);
             convertView.setTag(holder);
         }
         else {

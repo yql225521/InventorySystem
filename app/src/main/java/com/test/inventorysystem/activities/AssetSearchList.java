@@ -45,10 +45,10 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_search_list);
-        Initialization();
+        initialization();
     }
 
-    private void Initialization() {
+    private void initialization() {
         Bundle bundle = getIntent().getExtras();
         final HashMap hashMap = new HashMap();
         hashMap.put("methodName", "searchAssetList");

@@ -30,6 +30,8 @@ public class AssetModel implements Serializable {
     @DatabaseField
     private String assetCode;
     @DatabaseField
+    private String storage;
+    @DatabaseField
     private String storageDescr;
     @DatabaseField
     private String operator;
@@ -51,6 +53,8 @@ public class AssetModel implements Serializable {
     private String pdfs;
     @DatabaseField
     private String disCode;
+    @DatabaseField
+    private Double starNum;
 
     public AssetModel () { super(); }
 
@@ -83,6 +87,7 @@ public class AssetModel implements Serializable {
         setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
         setOriginalValue(jsonObject.get("originalValue").getAsDouble());
         setAssetCode(jsonObject.get("assetCode").getAsString());
+        setStorage(jsonObject.get("storage").getAsString());
         setStorageDescr(jsonObject.get("storageDescr").getAsString());
         setOperator(jsonObject.get("operator").getAsString());
         setFindCode(jsonObject.get("finCode").getAsString());
@@ -153,6 +158,14 @@ public class AssetModel implements Serializable {
 
     public String getAssetCode() {
         return assetCode;
+    }
+
+    public void setStorage(String storage) {
+        this.storage = storage;
+    }
+
+    public String getStorage() {
+        return storage;
     }
 
     public void setStorageDescr(String storageDescr) {
@@ -241,5 +254,13 @@ public class AssetModel implements Serializable {
 
     public String getDisCode() {
         return disCode;
+    }
+
+    public void setStarNum(Double starNum) {
+        this.starNum = starNum;
+    }
+
+    public Double getStarNum() {
+        return starNum;
     }
 }

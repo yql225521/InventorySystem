@@ -53,7 +53,6 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
 
     private String currAssetCode;
     private String response;
-    private Boolean isInventoryDialog = true;
     private AssetModel currAssetModel;
 
     @Override
@@ -173,27 +172,30 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         });
     }
 
+    //对应不同的dialog去判断他们的tag,以正确触发当前dialog的相应事件
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
-        if (isInventoryDialog) {
-            isInventoryDialog = false;
-            doInventory(currAssetCode, "");
-        } else {
-            isInventoryDialog = true;
-            startCodeScanner();
+        System.out.println(dialog.getTag());
+        switch (dialog.getTag()) {
+            case "inv_asset_info" :
+                doInventory(currAssetCode, "");
+                break;
+            case "continue" :
+                startCodeScanner();
         }
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
-        if (isInventoryDialog) {
-            isInventoryDialog = false;
-            updateInventory(currAssetModel);
-        } else {
-
+        switch (dialog.getTag()) {
+            case "inv_asset_info" :
+                updateInventory(currAssetModel);
+                break;
+            case "continue" :
+                break;
         }
+
     }
 
     public void doInventory(String assetCode, String disCodes) {
