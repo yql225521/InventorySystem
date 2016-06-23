@@ -2,20 +2,18 @@ package com.test.inventorysystem.activities;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.j256.ormlite.stmt.query.In;
 import com.test.inventorysystem.R;
 import com.test.inventorysystem.adapters.AssetListAdapter;
 import com.test.inventorysystem.db.DBHelper;
@@ -25,6 +23,7 @@ import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.services.SOAPActions;
 import com.test.inventorysystem.utils.AppContext;
+import com.test.inventorysystem.utils.AssetInfoDialogUtil;
 import com.test.inventorysystem.utils.InvAssetInfoDialogUtil;
 import com.test.inventorysystem.utils.InvContinueDialogUtil;
 import com.test.inventorysystem.utils.Sysconfig;
@@ -78,6 +77,15 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         assetListAdapter = new AssetListAdapter(this, new ArrayList<AssetModel>());
         listView.setAdapter(assetListAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AssetModel assetModel = (AssetModel) listView.getItemAtPosition(i);
+                DialogFragment dialogFragment = AssetInfoDialogUtil.newInstance(assetModel);
+                dialogFragment.show(getFragmentManager(), "inv_asset_update_info");
+            }
+        });
+
         try {
             List<OrganModel> organList = dbManager.findOrgans(this.getHelper().getOrganDao(), AppContext.currUser.getAccounts(), null);
             if (organList.isEmpty()) {
@@ -98,11 +106,34 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 startCodeScanner();
             }
         });
+
+        inventoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inventorySearch();
+            }
+        });
+
+        manualBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                assetMaunal();
+            }
+        });
     }
 
     private void startCodeScanner() {
-        System.out.println("开始扫描....");
         Intent intent = new Intent(this, CaptureActivity.class);
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    private void inventorySearch() {
+        Intent intent = new Intent(this, InventorySearch.class);
+        startActivity(intent);
+    }
+
+    private void assetMaunal() {
+        Intent intent = new Intent(this, AssetManual.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -116,22 +147,20 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 String[] codes = Sysconfig.getCodes(barcode);
                 selectAssetInfo(codes[0], "1");
             }
+        } else if (resultCode == InventoryUpdate.RESULT_CODE) {
+            Bundle bundle = data.getExtras();
+            AssetModel asset = (AssetModel) bundle.get("asset");
+            if (null != asset) {
+                doInventory(asset.getAssetCode(), asset.getDisCode());
+            }
+        } else if (resultCode == AssetManual.RESULT_CODE) {
+            Bundle bundle = data.getExtras();
+            String code = bundle.getString("code");
+            String name = bundle.getString("name");
+            if (StringUtils.isNotBlank(code)) {
+                selectAssetInfo(code, "2");
+            }
         }
-//        } else if (resultCode==AssetManual.RESULT_CODE){
-//            Bundle bundle=data.getExtras();
-//            String code=bundle.getString("code");
-//            String name=bundle.getString("name");
-//            if (StringUtils.isNotBlank(code)) {
-//                selectAssetInfo(code,"2");
-//            }
-//        }else if (resultCode==InventoryChgSel.RESULT_CODE){
-//            Bundle bundle=data.getExtras();
-//            AssetEntity asset=(AssetEntity)bundle.get("asset");
-//            if (null!=asset) {
-//                doInventory(asset);
-//                //assetListViewAdapter.notifyDataSetChanged();
-//            }
-//        }
     }
 
     private void selectAssetInfo(String assetCode, final String pdfs) {
@@ -153,11 +182,13 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                System.out.println(jsonObject);
 
                 int success = jsonObject.get("success").getAsInt();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
                 String invMsg = jsonObject.get("invMsg").getAsString();
                 currAssetCode = asset.get("assetCode").getAsString();
+                System.out.println("assetCode " + currAssetCode);
 
                 if (success == 1) {
                     currAssetModel = new AssetModel(asset, "inv_asset");
@@ -177,10 +208,10 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     public void onDialogPositiveClick(DialogFragment dialog) {
         System.out.println(dialog.getTag());
         switch (dialog.getTag()) {
-            case "inv_asset_info" :
+            case "inv_asset_info":
                 doInventory(currAssetCode, "");
                 break;
-            case "continue" :
+            case "continue":
                 startCodeScanner();
         }
     }
@@ -189,10 +220,10 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
         switch (dialog.getTag()) {
-            case "inv_asset_info" :
+            case "inv_asset_info":
                 updateInventory(currAssetModel);
                 break;
-            case "continue" :
+            case "continue":
                 break;
         }
 
@@ -222,13 +253,13 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println("DoInventory back msg : " + jsonObject);
 
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
 
                 AssetModel assetModel = new AssetModel(asset, "inv_asset");
+                System.out.println("DoInventory back msg : " + assetModel.getStarNum());
 
                 if (success == 1) {
                     assetListAdapter.replace(assetModel);

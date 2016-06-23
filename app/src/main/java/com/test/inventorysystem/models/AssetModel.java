@@ -55,6 +55,8 @@ public class AssetModel implements Serializable {
     private String disCode;
     @DatabaseField
     private Double starNum;
+    @DatabaseField
+    private String invNote;
 
     public AssetModel () { super(); }
 
@@ -262,5 +264,13 @@ public class AssetModel implements Serializable {
 
     public Double getStarNum() {
         return starNum;
+    }
+
+    public void setInvNote(String invNote) {
+        this.invNote = invNote;
+    }
+
+    public String getInvNote() {
+        return invNote;
     }
 }

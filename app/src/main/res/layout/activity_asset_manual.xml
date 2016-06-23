@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_asset_manual"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.test.inventorysystem.activities.AssetManual">
+
+    <TextView
+        android:text="@string/asset_search_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView32"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_asset_manual"
+        android:layout_marginStart="32dp"
+        app:layout_constraintTop_toTopOf="@+id/activity_asset_manual"
+        android:layout_marginTop="48dp"
+        android:textColor="@android:color/black"
+        android:textStyle="normal|bold" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editText_asset_manual_code"
+        app:layout_constraintLeft_toRightOf="@+id/textView32"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="@+id/textView32"
+        app:layout_constraintRight_toRightOf="@+id/activity_asset_manual"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView32"
+        android:hint="输入资产编码" />
+
+    <TextView
+        android:text="@string/asset_search_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView34"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_asset_manual"
+        android:layout_marginStart="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView32"
+        android:layout_marginTop="48dp"
+        android:textColor="@android:color/black"
+        android:textStyle="normal|bold" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editText_asset_manual_name"
+        app:layout_constraintLeft_toRightOf="@+id/textView34"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="@+id/textView34"
+        app:layout_constraintRight_toRightOf="@+id/activity_asset_manual"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView34"
+        android:hint="输入资产名称" />
+
+    <Button
+        android:text="@string/dialog_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_asset_manual_confirm"
+        app:layout_constraintTop_toBottomOf="@+id/editText_asset_manual_name"
+        android:layout_marginTop="24dp"
+        app:layout_constraintRight_toRightOf="@+id/editText_asset_manual_name" />
+
+    <Button
+        android:text="@string/dialog_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_asset_manual_cancel"
+        app:layout_constraintTop_toTopOf="@+id/button_asset_manual_confirm"
+        app:layout_constraintRight_toLeftOf="@+id/button_asset_manual_confirm"
+        android:layout_marginEnd="8dp" />
+</android.support.constraint.ConstraintLayout>

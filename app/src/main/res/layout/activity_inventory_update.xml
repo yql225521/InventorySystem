@@ -112,7 +112,7 @@
             android:layout_height="71dp"
             android:inputType="textPersonName"
             android:ems="10"
-            android:id="@+id/editText3"
+            android:id="@+id/editText_inv_note"
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
             android:background="@color/background_floating_material_light" />
@@ -139,47 +139,5 @@
                 android:layout_weight="1" />
         </LinearLayout>
     </LinearLayout>
-
-    <!--<TextView-->
-        <!--android:text="@string/asset_info_note"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/textView26"-->
-        <!--android:textColor="@android:color/black"-->
-        <!--app:layout_constraintLeft_toLeftOf="@+id/activity_inventory_update"-->
-        <!--android:layout_marginStart="24dp"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/editText"-->
-        <!--android:layout_marginBottom="8dp" />-->
-
-    <!--<EditText-->
-        <!--android:layout_width="339dp"-->
-        <!--android:layout_height="89dp"-->
-        <!--android:inputType="textPersonName"-->
-        <!--android:ems="10"-->
-        <!--android:id="@+id/editText"-->
-        <!--android:background="@drawable/back"-->
-        <!--android:padding="10dp"-->
-        <!--app:layout_constraintLeft_toLeftOf="@+id/listView"-->
-        <!--app:layout_constraintRight_toRightOf="@+id/listView"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/button"-->
-        <!--android:layout_marginBottom="8dp" />-->
-
-    <!--<Button-->
-        <!--android:text="@string/dialog_cancel"-->
-        <!--android:layout_width="169dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/button"-->
-        <!--app:layout_constraintLeft_toLeftOf="@+id/editText"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/activity_inventory_update"-->
-        <!--android:layout_marginBottom="16dp" />-->
-
-    <!--<Button-->
-        <!--android:text="@string/dialog_confirm"-->
-        <!--android:layout_width="168dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/button2"-->
-        <!--app:layout_constraintRight_toRightOf="@+id/editText"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/activity_inventory_update"-->
-        <!--android:layout_marginBottom="16dp" />-->
 
 </android.support.constraint.ConstraintLayout>

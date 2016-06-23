@@ -19,6 +19,7 @@
     <!-- Strings related to login user -->
     <string name="dialog_confirm">确定</string>
     <string name="dialog_cancel">取消</string>
+    <string name="dialog_search">查询</string>
     <string name="dialog_user_info_title">用户信息</string>
     <string name="dialog_user_account">用户账号</string>
     <string name="dialog_user_name">用户名</string>
@@ -66,6 +67,7 @@
 
     <!-- Strings related to asset inventory -->
     <string name="asset_inventory_title">资产盘点</string>
+    <string name="asset_inventory_scan_title">扫描二维码</string>
     <string name="asset_inventory_btn_scan">扫描</string>
     <string name="asset_inventory_btn_inventory">情况</string>
     <string name="asset_inventory_btn_manual">手录</string>
@@ -77,5 +79,18 @@
     <string name="continue_dialog_stop">终止盘点</string>
     <string name="asset_update_title">资产盘点信息更新</string>
 
-    <!--<string name="main_page">主页</string>-->
+    <!-- Strings related to asset inventory records -->
+    <string name="asset_inv_records_title">资产盘点记录查询</string>
+    <string name="asset_inv_records_cate">资产类别</string>
+    <string name="asset_inv_records_status">盘点情况</string>
+    <string name="asset_inv_records_match">匹配类型</string>
+    <string name="asset_inv_records_place">存放地点</string>
+
+    <!-- Strings related to asset inventory records -->
+    <string name="asset_manual_title">手动录入</string>
+
+    <!-- Strings related to QR show -->
+    <string name="QR_scan_title">扫描二维码</string>
+    <string name="QR_scan_continue">继续</string>
+    <string name="QR_scan_cancel">停止</string>
 </resources>

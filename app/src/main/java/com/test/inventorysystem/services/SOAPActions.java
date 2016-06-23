@@ -38,7 +38,7 @@ public class SOAPActions {
         this.checkSOAPActions(hashMap);
     }
 
-    public void checkSOAPActions (HashMap hashMap) {
+    public void checkSOAPActions(HashMap hashMap) {
         this.methodName = hashMap.get("methodName").toString();
         switch (this.methodName) {
             case "doLogin":
@@ -56,10 +56,13 @@ public class SOAPActions {
             case "doInventory":
                 this.doInventory(hashMap);
                 break;
+            case "searchInventoryAssetList":
+                this.inventorySearchList(hashMap);
+                break;
         }
     }
 
-    private void doLogin (HashMap hashMap) {
+    private void doLogin(HashMap hashMap) {
         String username = hashMap.get("username").toString();
         String password = hashMap.get("password").toString();
         String addr = hashMap.get("addr").toString();
@@ -69,13 +72,13 @@ public class SOAPActions {
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
-    private void loadBaseData (HashMap hashMap) {
+    private void loadBaseData(HashMap hashMap) {
         String organCode = hashMap.get("organCode").toString();
         this.xmlRequest_body = "<ws:getAssetInventoryBase><organCode>" + organCode + "</organCode></ws:getAssetInventoryBase>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
-    private void searchAssetList (HashMap hashMap) {
+    private void searchAssetList(HashMap hashMap) {
         String assetName = hashMap.get("assetName").toString();
         String assetCode = hashMap.get("assetCode").toString();
         String organCode = hashMap.get("organCode").toString();
@@ -88,13 +91,13 @@ public class SOAPActions {
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
-    private void getAssetInfo (HashMap hashMap) {
+    private void getAssetInfo(HashMap hashMap) {
         String assetCode = hashMap.get("assetCode").toString();
         this.xmlRequest_body = "<ws:getAssetInfoWithInv><assetCode>" + assetCode + "</assetCode></ws:getAssetInfoWithInv>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
-    private void doInventory (HashMap hashMap) {
+    private void doInventory(HashMap hashMap) {
         String organCode = hashMap.get("organCode").toString();
         String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
         String username = hashMap.get("username").toString();
@@ -108,7 +111,21 @@ public class SOAPActions {
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
-    public void sendRequest (Context ctx, String xmlRequest, final CallbackInterface callback) {
+    private void inventorySearchList(HashMap hashMap) {
+        String organCode = hashMap.get("organCode").toString();
+        String category = hashMap.get("category").toString();
+        String storage = hashMap.get("storage").toString();
+        String complete = hashMap.get("complete").toString();
+        String storageMatchType = hashMap.get("storageMatchType").toString();
+        String pageNo = hashMap.get("pageNo").toString();
+        String pageSize = hashMap.get("pageSize").toString();
+        this.xmlRequest_body = "<ws:searchInventoryAssetList><category>" + category + "</category><organCode>" + organCode +
+                "</organCode><storage>" + storage + "</storage><storageMatchType>" + storageMatchType + "</storageMatchType><complete>" +
+                complete + "</complete><pageNo>" + pageNo + "</pageNo><pageSize>" + pageSize + "</pageSize></ws:searchInventoryAssetList>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+    }
+
+    public void sendRequest(Context ctx, String xmlRequest, final CallbackInterface callback) {
 
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -137,16 +154,16 @@ public class SOAPActions {
         });
     }
 
-    private void setHttpRequest (String nameSpace, String methodName, String xmlRequest_header, String xmlRequest_body, String xmlRequest_tail) {
+    private void setHttpRequest(String nameSpace, String methodName, String xmlRequest_header, String xmlRequest_body, String xmlRequest_tail) {
         this.soapAction = nameSpace + ":" + methodName;
         this.xmlRequest = xmlRequest_header + xmlRequest_body + xmlRequest_tail;
     }
 
-    public String getXmlRequest () {
+    public String getXmlRequest() {
         return this.xmlRequest;
     }
 
-    public String getResponse () {
+    public String getResponse() {
         return this.response;
     }
 

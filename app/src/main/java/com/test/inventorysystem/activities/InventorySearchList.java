@@ -1,4 +1,3 @@
-
 package com.test.inventorysystem.activities;
 
 import android.app.DialogFragment;
@@ -17,7 +16,6 @@ import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
 import com.test.inventorysystem.adapters.AssetListAdapter;
-import com.test.inventorysystem.adapters.MainListAdapter;
 import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.interfaces.CallbackInterface;
 import com.test.inventorysystem.models.AssetModel;
@@ -28,42 +26,45 @@ import com.test.inventorysystem.utils.TransUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
+public class InventorySearchList extends OrmLiteBaseActivity<DBHelper> {
 
     private int pageSize = 15;
     private int currPageIndex = 0;
     private int recordCount = 0;
     private int totalCount = 0;
     private String response = "";
+
     private HashMap<String, String> hashMap;
+    private ListView listView;
     private AssetListAdapter listAdapter;
     private ArrayList<AssetModel> assetList;
-    private ListView listView;
     private TextView countInfo;
+    private LinearLayout mProgressBar;
+
     private boolean isLoading = false;
     private boolean isFirstLoad = true;
     private boolean endLoading = false;
-    private LinearLayout mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_asset_search_list);
+        setContentView(R.layout.activity_inventory_search_list);
         initialization();
     }
 
     private void initialization() {
         Bundle bundle = getIntent().getExtras();
-        hashMap = new HashMap();
-        hashMap.put("methodName", "searchAssetList");
-        hashMap.put("assetName", bundle.getString("assetName"));
-        hashMap.put("assetCode", bundle.getString("assetCode"));
+        hashMap = new HashMap<>();
+        hashMap.put("methodName", "searchInventoryAssetList");
         hashMap.put("organCode", bundle.getString("organCode"));
         hashMap.put("category", bundle.getString("category"));
+        hashMap.put("storage", bundle.getString("storage"));
+        hashMap.put("complete", bundle.getString("complete"));
+        hashMap.put("storageMatchType", bundle.getString("storageMatchType"));
 
-        mProgressBar = (LinearLayout) findViewById(R.id.asset_search_list_progress_layout);
-        countInfo = (TextView) findViewById(R.id.textView_asset_search_list_count);
-        listView = (ListView) findViewById(R.id.asset_search_list_view);
+        mProgressBar = (LinearLayout) findViewById(R.id.inv_search_list_progress_layout);
+        countInfo = (TextView) findViewById(R.id.textView_inv_search_list_count);
+        listView = (ListView) findViewById(R.id.inv_search_list_view);
         assetList = new ArrayList<>();
         listAdapter = new AssetListAdapter(this, assetList);
         listView.setAdapter(listAdapter);
@@ -90,9 +91,7 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
                 dialogFragment.show(getFragmentManager(), "dialog_asset_info");
             }
         });
-
         loadMoreAssets(hashMap);
-
     }
 
     private void loadMoreAssets(HashMap<String, String> hashMap) {
@@ -110,10 +109,10 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                System.out.println(jsonObject);
                 int success = jsonObject.get("success").getAsInt();
                 JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
                 recordCount = jsonObject.get("recordcount").getAsInt();
-
                 if (success == 1) {
                     if (assetListString.size() != 0) {
                         assetList.clear();
@@ -127,12 +126,12 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
                         }
                         mProgressBar.setVisibility(LinearLayout.GONE);
                         isLoading = false;
-                        totalCount = AssetSearchList.this.getListAdapter().getCount();
+                        totalCount = InventorySearchList.this.getListAdapter().getCount();
                         countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
                     } else {
                         mProgressBar.setVisibility(LinearLayout.GONE);
                         endLoading = true;
-                        Toast.makeText(AssetSearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
+                        Toast.makeText(InventorySearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                     }
                 }
             }

@@ -2,10 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_asset_search_list"
+    android:id="@+id/activity_inventory_search_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.test.inventorysystem.activities.AssetSearchList">
+    tools:context="com.test.inventorysystem.activities.InventorySearchList">
 
     <TextView
         android:id="@+id/textView11"
@@ -14,37 +14,36 @@
         android:background="@color/colorPrimary"
         android:elevation="10dp"
         android:padding="16dp"
-        android:text="@string/asset_search_list_title"
+        android:text="@string/asset_inv_records_title"
         android:textColor="@color/background_material_light"
         android:textSize="20dp"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_asset_search_list"
-        app:layout_constraintTop_toTopOf="@+id/activity_asset_search_list"
-        app:layout_constraintRight_toRightOf="@+id/activity_asset_search_list"
-        app:layout_constraintHorizontal_bias="1.0" />
+        app:layout_constraintLeft_toLeftOf="@+id/activity_inventory_search_list"
+        app:layout_constraintTop_toTopOf="@+id/activity_inventory_search_list"
+        app:layout_constraintRight_toRightOf="@+id/activity_inventory_search_list"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
         android:layout_width="140dp"
         android:layout_height="30dp"
-        android:id="@+id/textView_asset_search_list_count"
+        android:id="@+id/textView_inv_search_list_count"
         android:textColor="@android:color/background_light"
         android:elevation="10dp"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="@+id/textView11"
-        app:layout_constraintRight_toRightOf="@+id/activity_asset_search_list"
+        app:layout_constraintRight_toRightOf="@+id/activity_inventory_search_list"
         android:layout_marginEnd="16dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView11" />
 
     <ListView
-        android:id="@+id/asset_search_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
+        android:id="@+id/inv_search_list_view"
         android:dividerHeight="8dp"
         android:paddingTop="56dp"
+        android:layout_marginBottom="10dp"
         android:verticalScrollbarPosition="right" />
 
     <LinearLayout
-        android:id="@+id/asset_search_list_progress_layout"
+        android:id="@+id/inv_search_list_progress_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -52,16 +51,16 @@
         android:elevation="11dp"
         android:layout_centerInParent="true"
         android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_asset_search_list"
-        app:layout_constraintTop_toTopOf="@+id/activity_asset_search_list"
-        app:layout_constraintRight_toRightOf="@+id/activity_asset_search_list"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_asset_search_list">
+        app:layout_constraintLeft_toLeftOf="@+id/activity_inventory_search_list"
+        app:layout_constraintTop_toTopOf="@+id/activity_inventory_search_list"
+        app:layout_constraintRight_toRightOf="@+id/activity_inventory_search_list"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_inventory_search_list">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressBar2"
+            android:id="@+id/progressBar_inv_search_list"
             android:layout_weight="1" />
 
         <TextView
@@ -73,4 +72,5 @@
             android:textSize="14sp"
             android:paddingLeft="2dp" />
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

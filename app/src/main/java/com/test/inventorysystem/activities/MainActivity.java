@@ -52,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         goToAssetInventory();
+                        break;
+                    case 2:
+                        goToInventorySearch();
+                        break;
+                    case 3:
+                        goToCodeScanner();
+                        break;
                 }
             }
         });
@@ -68,6 +75,18 @@ public class MainActivity extends AppCompatActivity {
 //        intent.putExtra("userAccount", userAccount);
         startActivity(intent);
     }
+
+    private void goToInventorySearch() {
+        Intent intent = new Intent(this, InventorySearch.class);
+        startActivity(intent);
+    }
+
+    private void goToCodeScanner() {
+        Intent intent = new Intent(this, AssetQRShow.class);
+        startActivity(intent);
+    }
+
+
 
 
     @Override

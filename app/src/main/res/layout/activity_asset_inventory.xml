@@ -45,7 +45,8 @@
         app:layout_constraintLeft_toLeftOf="@+id/activity_asset_inventory"
         android:layout_marginStart="32dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:textStyle="normal|bold" />
 
     <Spinner
         android:layout_width="234dp"

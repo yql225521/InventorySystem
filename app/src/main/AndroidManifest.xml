@@ -32,10 +32,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.AssetInventory" />
-        <activity android:name=".activities.CaptureActivity" />
-        <activity android:name=".activities.InventoryUpdate"
-            android:windowSoftInputMode="stateHidden"
-            android:label="@string/asset_update_title"></activity>
+        <activity
+            android:name=".activities.CaptureActivity"
+            android:label="@string/asset_inventory_scan_title"/>
+        <activity
+            android:name=".activities.InventoryUpdate"
+            android:label="@string/asset_update_title"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activities.InventorySearch" />
+        <activity android:name=".activities.InventorySearchList" />
+        <activity
+            android:name=".activities.AssetManual"
+            android:label="@string/asset_manual_title" />
+        <activity
+            android:name=".activities.AssetQRShow"
+            android:label="@string/QR_scan_title"/>
     </application>
 
 </manifest>
