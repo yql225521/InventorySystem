@@ -12,5 +12,7 @@ public class AppContext {
     public static OrganModel currOrgan = null;
     public static String address = null;
     public static String simId = null;
+
+    public static Boolean offlineLogin = false;
 }
 

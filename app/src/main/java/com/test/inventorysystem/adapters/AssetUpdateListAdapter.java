@@ -21,11 +21,11 @@ import java.util.ArrayList;
 public class AssetUpdateListAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater layoutInflater;
-    private String[] titleList;
+    private ArrayList<String> titleList;
     private ArrayList<String> infoList;
     private ArrayList<String> checkedList = new ArrayList<>();
 
-    public AssetUpdateListAdapter(Context ctx, String[] titles, ArrayList<String> infos) {
+    public AssetUpdateListAdapter(Context ctx, ArrayList<String> titles, ArrayList<String> infos) {
         mContext = ctx;
         this.titleList = titles;
         this.infoList = infos;
@@ -33,12 +33,12 @@ public class AssetUpdateListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return this.titleList.length;
+        return this.titleList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return this.titleList[i];
+        return this.titleList.get(i);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class AssetUpdateListAdapter extends BaseAdapter {
             }
         });
 
-        holder.title.setText(this.titleList[position]);
+        holder.title.setText(this.titleList.get(position));
         holder.info.setText(this.infoList.get(position));
 
         return convertView;

@@ -3,6 +3,7 @@ package com.test.inventorysystem.db;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.models.TypeModel;
 import com.test.inventorysystem.models.UserModel;
@@ -31,15 +32,14 @@ public class DBManager {
         userDao.createOrUpdate(user);
     }
 
-    public String findUser (Dao<UserModel, String> userDao, String userId) throws SQLException {
-        System.out.println("搜索用户....");
+    public UserModel findUser (Dao<UserModel, String> userDao, String userId) throws SQLException {
         QueryBuilder<UserModel,String> queryBuilder = userDao.queryBuilder();
         queryBuilder.where().eq("accounts", userId);
         UserModel u1 = queryBuilder.queryForFirst();
         if (u1 == null) {
-            return "no query result";
+            return null;
         } else {
-            return u1.toString();
+            return u1;
         }
     }
 
@@ -58,6 +58,13 @@ public class DBManager {
             organModel.setPid(userAccount + "_" + organModel.getOrganId());
             organDao.createOrUpdate(organModel);
         }
+    }
+
+    public OrganModel findOrgan(Dao<OrganModel, String> organDao, String organCode) throws SQLException {
+        QueryBuilder<OrganModel, String> queryBuilder = organDao.queryBuilder();
+        queryBuilder.where().eq("organCode", organCode);
+        OrganModel organModel = queryBuilder.queryForFirst();
+        return organModel;
     }
 
     public List<OrganModel> findOrgans(Dao<OrganModel, String> organDao, String userAccount, String organType) throws SQLException{
@@ -92,4 +99,33 @@ public class DBManager {
         fmap.put("typeType", typeType);
         return typeDao.queryForFieldValues(fmap);
      }
-}
+
+    public void deleteAsset(Dao<AssetModel, String> assetDao) throws SQLException {
+        DeleteBuilder<AssetModel, String> deleteBuilder = assetDao.deleteBuilder();
+        deleteBuilder.delete();
+    }
+
+    public void saveOfflineAsset(Dao<AssetModel, String> assetDao, AssetModel assetModel, String assetCode, String assetName, String operator, String organName) throws SQLException {
+        this.deleteAsset(assetDao);
+        assetModel.setAssetCode(assetCode);
+        assetModel.setAssetName(assetName);
+        assetModel.setOperator(operator);
+        assetModel.setOrganName(organName);
+        assetModel.setOfflineInv(true);
+        assetDao.createOrUpdate(assetModel);
+    }
+
+    public AssetModel findAsset(Dao<AssetModel, String> assetDao, String assetCode) throws SQLException {
+        QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
+        queryBuilder.where().eq("assetCode", assetCode);
+        AssetModel assetModel = queryBuilder.queryForFirst();
+        return assetModel;
+    }
+
+    public List<AssetModel> findOfflineInvAssets(Dao<AssetModel, String> assetDao, String organName, Boolean offline) throws SQLException{
+        Map<String, Object> fmap = new HashMap<>();
+        fmap.put("organName", organName);
+        fmap.put("offlineInv", offline);
+        return assetDao.queryForFieldValues(fmap);
+    }
+ }

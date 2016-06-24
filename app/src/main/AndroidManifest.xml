@@ -34,7 +34,7 @@
         <activity android:name=".activities.AssetInventory" />
         <activity
             android:name=".activities.CaptureActivity"
-            android:label="@string/asset_inventory_scan_title"/>
+            android:label="@string/asset_inventory_scan_title" />
         <activity
             android:name=".activities.InventoryUpdate"
             android:label="@string/asset_update_title"
@@ -46,7 +46,11 @@
             android:label="@string/asset_manual_title" />
         <activity
             android:name=".activities.AssetQRShow"
-            android:label="@string/QR_scan_title"/>
+            android:label="@string/QR_scan_title" />
+        <activity
+            android:name=".activities.OfflineAssetInventory"
+            android:label="@string/offline_asset_inventory_title" />
+        <activity android:name=".activities.OfflineInventoryManager"></activity>
     </application>
 
 </manifest>

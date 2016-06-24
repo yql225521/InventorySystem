@@ -27,6 +27,8 @@ public class InventoryUpdate extends AppCompatActivity {
 
     String[] titles = {"使用部门", "使用人", "存放地点", "资产状态"};
 
+    private ArrayList<String> updateTitles;
+
     private ListView listView;
     AssetUpdateListAdapter assetUpdateListAdapter;
     AssetModel asset;
@@ -52,6 +54,12 @@ public class InventoryUpdate extends AppCompatActivity {
         textViewCode.setText(asset.getAssetCode());
         textViewName.setText(asset.getAssetName());
 
+        updateTitles = new ArrayList<>();
+        updateTitles.add("使用部门");
+        updateTitles.add("使用人");
+        updateTitles.add("存放地点");
+        updateTitles.add("资产状态");
+
         ArrayList<String> updateInfo = new ArrayList<>();
         updateInfo.add(asset.getOrganName());
         updateInfo.add(asset.getOperator());
@@ -59,7 +67,7 @@ public class InventoryUpdate extends AppCompatActivity {
         updateInfo.add(asset.getStatus());
 
         listView = (ListView) findViewById(R.id.listView_asset_update_list);
-        assetUpdateListAdapter = new AssetUpdateListAdapter(this, this.titles, updateInfo);
+        assetUpdateListAdapter = new AssetUpdateListAdapter(this,updateTitles, updateInfo);
         if (listView != null) {
             listView.setAdapter(assetUpdateListAdapter);
         } else {

@@ -83,12 +83,9 @@ public class CaptureActivityHandler extends Handler {
         cameraManager.startPreview();
 
         restartPreviewAndDecode();
-        System.out.println(R.id.restart_preview + " | " + R.id.decode_succeeded + " | " + R.id.decode_failed + " | " +
-        R.id.return_scan_result + " | " + R.id.launch_product_query);
     }
     @Override
     public void handleMessage(Message message) {
-        System.out.println(message.what);
         switch (message.what) {
             case R.id.restart_preview: // 准备进行下一次扫描
                 Log.d(TAG, "Got restart preview message");

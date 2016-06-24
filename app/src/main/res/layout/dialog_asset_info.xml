@@ -284,7 +284,6 @@
             android:textColor="@android:color/black"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView_asset_info_original_value"
@@ -336,7 +335,6 @@
             android:textColor="@android:color/black"/>
 
         <TextView
-            android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView_asset_info_use_age"

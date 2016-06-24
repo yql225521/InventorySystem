@@ -23,7 +23,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
     private TextView assetTitle;
     private TextView assetCode;
     private TextView assetName;
-//    private TextView assetSpecification;
+    //    private TextView assetSpecification;
     private TextView assetType;
     private TextView assetCategory;
     private TextView assetMgrOrgan;
@@ -35,7 +35,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
     private TextView assetUseAge;
     private TextView assetStatus;
 
-    public static AssetInfoDialogUtil newInstance (AssetModel assetModel) {
+    public static AssetInfoDialogUtil newInstance(AssetModel assetModel) {
         AssetInfoDialogUtil frag = new AssetInfoDialogUtil();
         Bundle args = new Bundle();
         args.putString("code", assetModel.getAssetCode());
@@ -50,6 +50,17 @@ public class AssetInfoDialogUtil extends DialogFragment {
         args.putString("date", assetModel.getEnableDateString());
         args.putInt("use_age", assetModel.getUseAge());
         args.putString("status", assetModel.getStatus());
+        frag.setArguments(args);
+        return frag;
+    }
+
+    public static AssetInfoDialogUtil newInstace(AssetModel assetModel, String offline) {
+        AssetInfoDialogUtil frag = new AssetInfoDialogUtil();
+        Bundle args = new Bundle();
+        args.putString("code", assetModel.getAssetCode());
+        args.putString("name", assetModel.getAssetName());
+        args.putString("organ", assetModel.getOrganName());
+        args.putString("operator", assetModel.getOperator());
         frag.setArguments(args);
         return frag;
     }
@@ -83,9 +94,13 @@ public class AssetInfoDialogUtil extends DialogFragment {
         assetOrgan.setText(asset_organ);
         assetPlace.setText(asset_place);
         assetOperator.setText(asset_operator);
-        assetOriginalValue.setText(String.valueOf(asset_original_value));
+        if (asset_original_value != 0) {
+            assetOriginalValue.setText(String.valueOf(asset_original_value));
+        }
         assetDate.setText(asset_date);
-        assetUseAge.setText(String.valueOf(asset_use_age));
+        if (asset_use_age != 0) {
+            assetUseAge.setText(String.valueOf(asset_use_age));
+        }
         assetStatus.setText(asset_status);
 
         builder.setView(view)
@@ -96,7 +111,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
         return builder.create();
     }
 
-    private void Initialization (View view) {
+    private void Initialization(View view) {
         assetTitle = (TextView) view.findViewById(R.id.textView_asset_info_title);
         assetCode = (TextView) view.findViewById(R.id.textView_asset_info_code);
         assetName = (TextView) view.findViewById(R.id.textView_asset_info_name);

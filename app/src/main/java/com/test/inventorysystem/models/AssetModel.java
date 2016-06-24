@@ -57,6 +57,8 @@ public class AssetModel implements Serializable {
     private Double starNum;
     @DatabaseField
     private String invNote;
+    @DatabaseField
+    private Boolean offlineInv;
 
     public AssetModel () { super(); }
 
@@ -272,5 +274,13 @@ public class AssetModel implements Serializable {
 
     public String getInvNote() {
         return invNote;
+    }
+
+    public void setOfflineInv(Boolean offlineInv) {
+        this.offlineInv = offlineInv;
+    }
+
+    public Boolean getOfflineInv() {
+        return offlineInv;
     }
 }

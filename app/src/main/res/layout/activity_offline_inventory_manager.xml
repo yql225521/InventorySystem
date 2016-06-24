@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_offline_inventory_manager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.test.inventorysystem.activities.OfflineInventoryManager">
+
+    <TextView
+        android:text="@string/offline_asset_inventory_title"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:textSize="20dp"
+        android:padding="16dp"
+        android:background="@color/colorPrimary"
+        android:elevation="10dp"
+        android:textColor="@color/background_material_light"
+        android:id="@+id/textView11"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
+        app:layout_constraintTop_toTopOf="@+id/activity_offline_inventory_manager"
+        app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout3"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView11"
+        android:layout_marginTop="8dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginEnd="16dp">
+
+        <Button
+            android:text="@string/offline_asset_invenotry_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_offline_inv_upload"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="@string/offline_asset_invenotry_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_offline_inv_delete"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/offline_inv_bottom_bar"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginStart="16dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_offline_inventory_manager">
+
+        <Button
+            android:text="@string/offline_asset_inventory_check_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_offline_inv_check_all"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="@string/offline_asset_invenotry_check_reverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_offline_inv_check_reverse"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="@string/dialog_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_offline_inv_cancel"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="352dp"
+        android:layout_height="330dp"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        android:layout_marginTop="16dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/offline_inv_bottom_bar"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/listView_offline_inv" />
+
+</android.support.constraint.ConstraintLayout>

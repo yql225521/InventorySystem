@@ -93,4 +93,11 @@
     <string name="QR_scan_title">扫描二维码</string>
     <string name="QR_scan_continue">继续</string>
     <string name="QR_scan_cancel">停止</string>
+
+    <!-- Strings related to offline inventory -->
+    <string name="offline_asset_inventory_title">离线资产盘点</string>
+    <string name="offline_asset_invenotry_upload">数据上传</string>
+    <string name="offline_asset_invenotry_delete">数据删除</string>
+    <string name="offline_asset_inventory_check_all">全选</string>
+    <string name="offline_asset_invenotry_check_reverse">反选</string>
 </resources>

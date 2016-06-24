@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.ic_camera_alt_black_24dp, R.drawable.ic_format_list_numbered_black_24dp,
             R.drawable.ic_info_black_24dp};
 
+    String[] offlineMainGridTitle = {"离线盘点", "离线扫描", "离线盘点管理", "帮助"};
+    int[] offlineMainGridIcons = {R.drawable.ic_local_atm_black_24dp, R.drawable.ic_crop_free_black_24dp,
+            R.drawable.ic_format_list_numbered_black_24dp, R.drawable.ic_info_black_24dp};
+
     List<String> mainItems = new ArrayList<String>();
 
     @Override
@@ -41,32 +45,53 @@ public class MainActivity extends AppCompatActivity {
 
     private void Initialization() {
         GridView gridview = (GridView) findViewById(R.id.grid_view);
-        gridview.setAdapter(new MainListAdapter(this, this.mainGridTitles, this.mainGridIcons));
-
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                switch (position) {
-                    case 0:
-                        goToAssetSearch();
-                        break;
-                    case 1:
-                        goToAssetInventory();
-                        break;
-                    case 2:
-                        goToInventorySearch();
-                        break;
-                    case 3:
-                        goToCodeScanner();
-                        break;
+        if (!AppContext.offlineLogin) {
+            gridview.setAdapter(new MainListAdapter(this, this.mainGridTitles, this.mainGridIcons));
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v,
+                                        int position, long id) {
+                    switch (position) {
+                        case 0:
+                            goToAssetSearch();
+                            break;
+                        case 1:
+                            goToAssetInventory();
+                            break;
+                        case 2:
+                            goToInventorySearch();
+                            break;
+                        case 3:
+                            goToCodeScanner();
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            gridview.setAdapter(new MainListAdapter(this, this.offlineMainGridTitle, this.offlineMainGridIcons));
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v,
+                                        int position, long id) {
+                    switch (position) {
+                        case 0:
+                            goToOfflineAssetInventory();
+                            break;
+                        case 1:
+//                            goToOfflineAssetInventory();
+                            break;
+                        case 2:
+                            goToInventorySearch();
+                            break;
+                        case 3:
+                            goToCodeScanner();
+                            break;
+                    }
+                }
+            });
+        }
     }
 
     private void goToAssetSearch () {
         Intent intent = new Intent(this, AssetSearch.class);
-//        intent.putExtra("userAccount", userAccount);
         startActivity(intent);
     }
 
@@ -83,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToCodeScanner() {
         Intent intent = new Intent(this, AssetQRShow.class);
+        startActivity(intent);
+    }
+
+    private void goToOfflineAssetInventory() {
+        Intent intent = new Intent(this, OfflineAssetInventory.class);
         startActivity(intent);
     }
 

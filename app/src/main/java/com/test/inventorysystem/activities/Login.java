@@ -58,6 +58,8 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
     }
 
     private void Initialization() {
+
+        AppContext.offlineLogin = false;
         this.loginUsr = (EditText) findViewById(R.id.editText_usr);
         this.loginPwd = (EditText) findViewById(R.id.editText_pwd);
         this.loginTips = (TextView) findViewById(R.id.textView_login_tips);
@@ -82,6 +84,28 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 doLogin(hashMap);
             }
         });
+
+        this.loginOffBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginProgressBar.setVisibility(View.VISIBLE);
+                loginTips.setVisibility(View.VISIBLE);
+                try {
+                    UserModel loginUser = dbManager.findUser(getHelper().getUserDao(), loginUsr.getText().toString());
+                    System.out.println(loginUser);
+                    if (loginUser != null) {
+                        OrganModel loginOrgan = dbManager.findOrgan(getHelper().getOrganDao(), loginUser.getDepartmentId());
+                        AppContext.offlineLogin = true;
+                        AppContext.currUser = loginUser;
+                        AppContext.currOrgan = loginOrgan;
+                        buildMainFunction();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         this.deleteUsrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,9 +226,6 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
 
     private void buildMainFunction() {
         Intent toMainPage = new Intent(this, MainActivity.class);
-//        if (currentUser != null) {
-//            toMainPage.putExtra("currUser", currentUser);
-//        }
         startActivity(toMainPage);
         this.finish();
     }
