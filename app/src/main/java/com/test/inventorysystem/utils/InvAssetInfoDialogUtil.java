@@ -56,7 +56,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         args.putString("operator", assetModel.getOperator());
         args.putDouble("original_value", assetModel.getOriginalValue());
         args.putString("date", assetModel.getEnableDateString());
-        args.putInt("use_age", assetModel.getUseAge());
+        args.putString("use_age", assetModel.getUseAge());
         args.putString("status", assetModel.getStatus());
         args.putString("invMsg", assetModel.getInvMsg());
         args.putString("disCodes", assetModel.getDisCode());
@@ -89,7 +89,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         String asset_operator = getArguments().getString("operator");
         double asset_original_value = getArguments().getDouble("original_value");
         String asset_date = getArguments().getString("date");
-        int asset_use_age = getArguments().getInt("use_age");
+        String asset_use_age = getArguments().getString("use_age");
         String asset_status = getArguments().getString("status");
         String asset_invMsg = getArguments().getString("invMsg");
         final String asset_disCodes = getArguments().getString("disCodes");
@@ -110,7 +110,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         assetOperator.setText(asset_operator);
         assetOriginalValue.setText(String.valueOf(asset_original_value));
         assetDate.setText(asset_date);
-        assetUseAge.setText(String.valueOf(asset_use_age));
+        assetUseAge.setText(asset_use_age);
         assetStatus.setText(asset_status);
         assetInvMsg.setText(asset_invMsg);
 

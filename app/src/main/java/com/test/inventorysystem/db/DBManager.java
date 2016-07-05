@@ -105,12 +105,13 @@ public class DBManager {
         deleteBuilder.delete();
     }
 
-    public void saveOfflineAsset(Dao<AssetModel, String> assetDao, AssetModel assetModel, String assetCode, String assetName, String operator, String organName) throws SQLException {
-        this.deleteAsset(assetDao);
+    public void saveOfflineInvAssets(Dao<AssetModel, String> assetDao, AssetModel assetModel, String assetCode, String assetName, String organName, String organCode) throws SQLException {
+//        this.deleteAsset(assetDao);
         assetModel.setAssetCode(assetCode);
         assetModel.setAssetName(assetName);
-        assetModel.setOperator(operator);
+//        assetModel.setOperator(operator);
         assetModel.setOrganName(organName);
+        assetModel.setOrganCode(organCode);
         assetModel.setOfflineInv(true);
         assetDao.createOrUpdate(assetModel);
     }
@@ -122,9 +123,9 @@ public class DBManager {
         return assetModel;
     }
 
-    public List<AssetModel> findOfflineInvAssets(Dao<AssetModel, String> assetDao, String organName, Boolean offline) throws SQLException{
+    public List<AssetModel> findOfflineInvAssets(Dao<AssetModel, String> assetDao, String organCode, Boolean offline) throws SQLException{
         Map<String, Object> fmap = new HashMap<>();
-        fmap.put("organName", organName);
+        fmap.put("organCode", organCode);
         fmap.put("offlineInv", offline);
         return assetDao.queryForFieldValues(fmap);
     }

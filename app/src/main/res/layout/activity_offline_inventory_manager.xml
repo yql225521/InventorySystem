@@ -57,7 +57,8 @@
         android:layout_marginStart="16dp"
         app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_offline_inventory_manager">
+        app:layout_constraintBottom_toBottomOf="@+id/activity_offline_inventory_manager"
+        android:layout_marginBottom="8dp">
 
         <Button
             android:text="@string/offline_asset_inventory_check_all"
@@ -84,6 +85,7 @@
     <ListView
         android:layout_width="352dp"
         android:layout_height="330dp"
+        android:id="@+id/listView_offline_inv"
         app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
         android:layout_marginStart="16dp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
@@ -91,7 +93,6 @@
         app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toTopOf="@+id/offline_inv_bottom_bar"
-        android:layout_marginBottom="16dp"
-        android:id="@+id/listView_offline_inv" />
+        android:layout_marginBottom="16dp" />
 
 </android.support.constraint.ConstraintLayout>

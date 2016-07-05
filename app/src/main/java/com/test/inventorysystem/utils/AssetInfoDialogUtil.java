@@ -48,7 +48,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
         args.putString("operator", assetModel.getOperator());
         args.putDouble("original_value", assetModel.getOriginalValue());
         args.putString("date", assetModel.getEnableDateString());
-        args.putInt("use_age", assetModel.getUseAge());
+        args.putString("use_age", assetModel.getUseAge());
         args.putString("status", assetModel.getStatus());
         frag.setArguments(args);
         return frag;
@@ -60,7 +60,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
         args.putString("code", assetModel.getAssetCode());
         args.putString("name", assetModel.getAssetName());
         args.putString("organ", assetModel.getOrganName());
-        args.putString("operator", assetModel.getOperator());
+//        args.putString("operator", assetModel.getOperator());
         frag.setArguments(args);
         return frag;
     }
@@ -77,7 +77,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
         String asset_operator = getArguments().getString("operator");
         double asset_original_value = getArguments().getDouble("original_value");
         String asset_date = getArguments().getString("date");
-        int asset_use_age = getArguments().getInt("use_age");
+        String asset_use_age = getArguments().getString("use_age");
         String asset_status = getArguments().getString("status");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -98,9 +98,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
             assetOriginalValue.setText(String.valueOf(asset_original_value));
         }
         assetDate.setText(asset_date);
-        if (asset_use_age != 0) {
-            assetUseAge.setText(String.valueOf(asset_use_age));
-        }
+        assetUseAge.setText(asset_use_age);
         assetStatus.setText(asset_status);
 
         builder.setView(view)

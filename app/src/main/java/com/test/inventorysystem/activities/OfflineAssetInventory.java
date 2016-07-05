@@ -115,6 +115,13 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                 assetMaunal();
             }
         });
+
+        endBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                endOfflineInventory();
+            }
+        });
     }
 
     private void startCodeScanner() {
@@ -125,6 +132,16 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     private void assetMaunal() {
         Intent intent = new Intent(this, AssetManual.class);
         startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    private void endOfflineInventory() {
+        try {
+            List<AssetModel> list = dbManager.findOfflineInvAssets(getHelper().getAssetDao(), AppContext.currOrgan.getOrganCode(), true);
+            System.out.println("listttttt " + list.size());
+            System.out.println("listttttt " + list.get(0).getAssetCode());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -138,10 +155,12 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                 AssetModel assetModel = new AssetModel();
                 String assetCode = codes[0];
                 String assetName = codes[1];
-                String operator = codes[2];
-                String organName = codes[3];
+//                String operator = codes[2];
+                String organName = codes[2].substring(2, codes[2].length());
+                String organCode = AppContext.currOrgan.getOrganCode();
+
                 try {
-                    dbManager.saveOfflineAsset(getHelper().getAssetDao(), assetModel, assetCode, assetName, operator, organName);
+                    dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel, assetCode, assetName, organName, organCode);
                     assetListAdapter.add(assetModel);
                     DialogFragment dialogFragment = new AssetInfoDialogUtil().newInstace(assetModel, "offline");
                     dialogFragment.show(getFragmentManager(), "inv_asset_info");

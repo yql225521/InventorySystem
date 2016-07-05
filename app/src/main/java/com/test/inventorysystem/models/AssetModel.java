@@ -14,45 +14,81 @@ import java.io.Serializable;
 public class AssetModel implements Serializable {
 
     @DatabaseField(id = true)
-    private String pid;
+    private String pid = "";
     @DatabaseField
-    private String assetName;
+    private String dt = "";
     @DatabaseField
-    private String enableDateString;
+    private String inventoryInfo = "";
     @DatabaseField
-    private String status;
+    private String pdate = "";
     @DatabaseField
-    private int useAge;
+    private String userId = "";
     @DatabaseField
-    private String mgrOrganName;
+    private String assetParentID = "";
+    @DatabaseField
+    private String assetType = "";
+    @DatabaseField
+    private String cateID = "";
+    @DatabaseField
+    private String createdBy = "";
+    @DatabaseField
+    private String deprType = "";
+    @DatabaseField
+    private String lastUpdateBy = "";
+    @DatabaseField
+    private String liablePerson = "";
+    @DatabaseField
+    private String mgrOrganID = "";
+    @DatabaseField
+    private String organID = "";
+    @DatabaseField
+    private String spec = "";
+    @DatabaseField
+    private String unit = "";
+    @DatabaseField
+    private String assetName = "";
+    @DatabaseField
+    private String enableDateString = "";
+    @DatabaseField
+    private String status = "";
+    @DatabaseField
+    private String useAge;
+    @DatabaseField
+    private String mgrOrganName = "";
+    @DatabaseField
+    private String mgrOrganCode = "";
+    @DatabaseField
+    private String addr = "";
+    @DatabaseField
+    private String simId = "";
     @DatabaseField
     private Double originalValue;
     @DatabaseField
-    private String assetCode;
+    private String assetCode = "";
     @DatabaseField
-    private String storage;
+    private String storage = "";
     @DatabaseField
-    private String storageDescr;
+    private String storageDescr = "";
     @DatabaseField
-    private String operator;
+    private String operator = "";
     @DatabaseField
     private String findCode;
     @DatabaseField
-    private String assetTypeName;
+    private String finCode;
     @DatabaseField
-    private String assetId;
+    private String assetTypeName = "";
     @DatabaseField
-    private String cateId;
+    private String organName = "";
     @DatabaseField
-    private String organName;
+    private String organCode = "";
     @DatabaseField
-    private String cateName;
+    private String cateName = "";
     @DatabaseField
     private String invMsg;
     @DatabaseField
-    private String pdfs;
+    private String pdfs = "";
     @DatabaseField
-    private String disCode;
+    private String disCodes = "";
     @DatabaseField
     private Double starNum;
     @DatabaseField
@@ -67,7 +103,7 @@ public class AssetModel implements Serializable {
         setAssetName(jsonObject.get("assetName").getAsString());
         setEnableDateString(jsonObject.get("enableDateString").getAsString());
         setStatus(jsonObject.get("status").getAsString());
-        setUseAge(jsonObject.get("useAge").getAsInt());
+        setUseAge(jsonObject.get("useAge").getAsString());
         setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
         setOriginalValue(jsonObject.get("originalValue").getAsDouble());
         setAssetCode(jsonObject.get("assetCode").getAsString());
@@ -75,8 +111,8 @@ public class AssetModel implements Serializable {
         setOperator(jsonObject.get("operator").getAsString());
         setFindCode(jsonObject.get("findCode").getAsString());
         setAssetTypeName(jsonObject.get("assetTypeName").getAsString());
-        setAssetId(jsonObject.get("assetID").getAsString());
-        setCateId(jsonObject.get("cateId").getAsString());
+//        setAssetId(jsonObject.get("assetID").getAsString());
+        setCateID(jsonObject.get("cateId").getAsString());
         setOrganName(jsonObject.get("organName").getAsString());
         setCateName(jsonObject.get("cateName").getAsString());
     }
@@ -87,17 +123,18 @@ public class AssetModel implements Serializable {
         setAssetName(jsonObject.get("assetName").getAsString());
         setEnableDateString(jsonObject.get("enableDateString").getAsString());
         setStatus(jsonObject.get("status").getAsString());
-        setUseAge(jsonObject.get("useAge").getAsInt());
+        setUseAge(jsonObject.get("useAge").getAsString());
         setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
         setOriginalValue(jsonObject.get("originalValue").getAsDouble());
         setAssetCode(jsonObject.get("assetCode").getAsString());
         setStorage(jsonObject.get("storage").getAsString());
         setStorageDescr(jsonObject.get("storageDescr").getAsString());
         setOperator(jsonObject.get("operator").getAsString());
-        setFindCode(jsonObject.get("finCode").getAsString());
+        setFinCode(jsonObject.get("finCode").getAsString());
         setAssetTypeName(jsonObject.get("assetTypeName").getAsString());
         setOrganName(jsonObject.get("organName").getAsString());
         setCateName(jsonObject.get("cateName").getAsString());
+        setSpec(jsonObject.get("spec").getAsString());
     }
 
     public void setPid(String pid) {
@@ -132,11 +169,11 @@ public class AssetModel implements Serializable {
         return status;
     }
 
-    public void setUseAge(int useAge) {
+    public void setUseAge(String useAge) {
         this.useAge = useAge;
     }
 
-    public int getUseAge() {
+    public String getUseAge() {
         return useAge;
     }
 
@@ -204,21 +241,13 @@ public class AssetModel implements Serializable {
         return assetTypeName;
     }
 
-    public void setAssetId(String assetId) {
-        this.assetId = assetId;
-    }
-
-    public String getAssetId() {
-        return assetId;
-    }
-
-    public void setCateId(String cateId) {
-        this.cateId = cateId;
-    }
-
-    public String getCateId() {
-        return cateId;
-    }
+//    public void setAssetId(String assetId) {
+//        this.assetId = assetId;
+//    }
+//
+//    public String getAssetId() {
+//        return assetId;
+//    }
 
     public void setOrganName(String organName) {
         this.organName = organName;
@@ -252,12 +281,12 @@ public class AssetModel implements Serializable {
         return pdfs;
     }
 
-    public void setDisCode(String disCode) {
-        this.disCode = disCode;
+    public void setDisCode(String disCodes) {
+        this.disCodes = disCodes;
     }
 
     public String getDisCode() {
-        return disCode;
+        return disCodes;
     }
 
     public void setStarNum(Double starNum) {
@@ -282,5 +311,165 @@ public class AssetModel implements Serializable {
 
     public Boolean getOfflineInv() {
         return offlineInv;
+    }
+
+    public void setAddr(String addr) {
+        this.addr = addr;
+    }
+
+    public String getAddr() {
+        return addr;
+    }
+
+    public void setMgrOrganCode(String mgrOrganCode) {
+        this.mgrOrganCode = mgrOrganCode;
+    }
+
+    public String getMgrOrganCode() {
+        return mgrOrganCode;
+    }
+
+    public void setOrganCode(String organCode) {
+        this.organCode = organCode;
+    }
+
+    public String getOrganCode() {
+        return organCode;
+    }
+
+    public void setSimId(String simId) {
+        this.simId = simId;
+    }
+
+    public String getSimId() {
+        return simId;
+    }
+
+    public void setAssetParentID(String assetParentID) {
+        this.assetParentID = assetParentID;
+    }
+
+    public String getAssetParentID() {
+        return assetParentID;
+    }
+
+    public void setAssetType(String assetType) {
+        this.assetType = assetType;
+    }
+
+    public String getAssetType() {
+        return assetType;
+    }
+
+    public void setCateID(String cateID) {
+        this.cateID = cateID;
+    }
+
+    public String getCateID() {
+        return cateID;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setDeprType(String deprType) {
+        this.deprType = deprType;
+    }
+
+    public String getDeprType() {
+        return deprType;
+    }
+
+    public void setDt(String dt) {
+        this.dt = dt;
+    }
+
+    public String getDt() {
+        return dt;
+    }
+
+    public void setInventoryInfo(String inventoryInfo) {
+        this.inventoryInfo = inventoryInfo;
+    }
+
+    public String getInventoryInfo() {
+        return inventoryInfo;
+    }
+
+    public void setLastUpdateBy(String lastUpdateBy) {
+        this.lastUpdateBy = lastUpdateBy;
+    }
+
+    public String getLastUpdateBy() {
+        return lastUpdateBy;
+    }
+
+    public void setLiablePerson(String liablePerson) {
+        this.liablePerson = liablePerson;
+    }
+
+    public String getLiablePerson() {
+        return liablePerson;
+    }
+
+    public void setMgrOrganID(String mgrOrganID) {
+        this.mgrOrganID = mgrOrganID;
+    }
+
+    public String getMgrOrganID() {
+        return mgrOrganID;
+    }
+
+    public void setOrganID(String organID) {
+        this.organID = organID;
+    }
+
+    public String getOrganID() {
+        return organID;
+    }
+
+    public void setPdate(String pdate) {
+        this.pdate = pdate;
+    }
+
+    public String getPdate() {
+        return pdate;
+    }
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
+
+    public String getSpec() {
+        return spec;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setFinCode(String finCode) {
+        this.finCode = finCode;
+    }
+
+    public String getFinCode() {
+        return finCode;
     }
 }

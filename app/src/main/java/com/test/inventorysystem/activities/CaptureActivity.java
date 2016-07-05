@@ -187,7 +187,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
 
         switch (requestCode) {
             case Config.USER_PERMISSIONS_REQUEST_CAMERA: {
-                System.out.println(grantResults[0]);
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
@@ -355,8 +354,8 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         beepManager.playBeepSoundAndVibrate();
 
         Intent intent=new Intent();
-        intent.putExtra("barcode",rawResult.getText());//点击按钮后的返回参数，提示显示
-        System.out.println(rawResult.getText());
+        intent.putExtra("barcode", rawResult.getText());//点击按钮后的返回参数，提示显示
+        System.out.println("rawR-----------> " + rawResult.getText());
         setResult(RESULT_CODE, intent);//RESULT_CODE是一个整型变量
         this.finish();
 

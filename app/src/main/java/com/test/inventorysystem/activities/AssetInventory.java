@@ -11,7 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
@@ -31,7 +37,9 @@ import com.test.inventorysystem.utils.TransUtil;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,7 +159,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             Bundle bundle = data.getExtras();
             AssetModel asset = (AssetModel) bundle.get("asset");
             if (null != asset) {
-                doInventory(asset.getAssetCode(), asset.getDisCode());
+                doInventory(asset);
             }
         } else if (resultCode == AssetManual.RESULT_CODE) {
             Bundle bundle = data.getExtras();
@@ -182,13 +190,12 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println(jsonObject);
 
                 int success = jsonObject.get("success").getAsInt();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
                 String invMsg = jsonObject.get("invMsg").getAsString();
-                currAssetCode = asset.get("assetCode").getAsString();
-                System.out.println("assetCode " + currAssetCode);
+//                currAssetCode = asset.get("assetCode").getAsString();
+                System.out.println("assetModel " + asset.toString());
 
                 if (success == 1) {
                     currAssetModel = new AssetModel(asset, "inv_asset");
@@ -209,7 +216,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         System.out.println(dialog.getTag());
         switch (dialog.getTag()) {
             case "inv_asset_info":
-                doInventory(currAssetCode, "");
+                doInventory(currAssetModel);
                 break;
             case "continue":
                 startCodeScanner();
@@ -229,17 +236,34 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
 
     }
 
-    public void doInventory(String assetCode, String disCodes) {
+    public String getAssetJson(AssetModel assetModel){
+        String json="";
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson g=gsonBuilder.create();
+        json=g.toJson(assetModel);
+        return json;
+    }
+
+    public void doInventory(AssetModel assetModel) {
         String methodName = "doInventory";
         HashMap<String, String> hashMap = new HashMap<String, String>();
+        assetModel.setSimId(AppContext.simId);
+        assetModel.setAddr(AppContext.address);
+        assetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+        assetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+
         hashMap.put("methodName", methodName);
         hashMap.put("organCode", organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
-        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
+//        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
         hashMap.put("username", AppContext.currUser.getAccounts());
-        hashMap.put("assetCode", assetCode);
-        hashMap.put("addr", AppContext.address);
-        hashMap.put("simId", AppContext.simId);
-        hashMap.put("disCodes", disCodes);
+//        String asset1 = "{\"addr\":\"none\",\"assetTypeName\":\"房屋\",\"cateName\":\"固定资产\",\"disCodes\":\"\",\"dt\":\"\",\"enableDateString\":\"2008.12.19\",\"inventoryInfo\":\"\",\"mgrOrganCode\":\"0112\",\"organCode\":\"011201\",\"pdate\":\"\",\"pdfs\":\"1\",\"pid\":\"\",\"simId\":\"460024065533470\",\"useAge\":\"0\",\"userId\":\"\",\"assetCode\":\"1114070101010000020124\",\"assetName\":\"景尚服务大厅\",\"assetParentID\":\"\",\"assetType\":\"\",\"cateID\":\"\",\"createdBy\":\"\",\"deprType\":\"\",\"finCode\":\"1114070101010000020124\",\"lastUpdateBy\":\"\",\"liablePerson\":\"\",\"mgrOrganID\":\"\",\"mgrOrganName\":\"寿阳营销部\",\"operator\":\"崔俊明\",\"organID\":\"\",\"organName\":\"寿阳营销部景尚服务大厅\",\"originalValue\":624786.69,\"spec\":\"S-1049\",\"status\":\"在用\",\"storage\":\"寿阳营销部景尚大厅\",\"storageDescr\":\"寿阳营销部景尚大厅\",\"unit\":\"\"}";
+        hashMap.put("asset", this.getAssetJson(assetModel));
+        System.out.println(this.getAssetJson(assetModel));
+//        System.out.println(asset1);
+//        hashMap.put("assetCode", assetCode);
+//        hashMap.put("addr", AppContext.address);
+//        hashMap.put("simId", AppContext.simId);
+//        hashMap.put("disCodes", disCodes);
         loadDoInventoryInfo(hashMap);
     }
 
@@ -253,7 +277,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-
+                System.out.println("new response " + jsonObject);
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();

@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 //                            goToOfflineAssetInventory();
                             break;
                         case 2:
-                            goToInventorySearch();
+                            goToOfflineInventoryMgr();
                             break;
                         case 3:
                             goToCodeScanner();
@@ -113,6 +113,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToOfflineAssetInventory() {
         Intent intent = new Intent(this, OfflineAssetInventory.class);
+        startActivity(intent);
+    }
+
+    private void goToOfflineInventoryMgr() {
+        Intent intent = new Intent(this, OfflineInventoryManager.class);
         startActivity(intent);
     }
 
