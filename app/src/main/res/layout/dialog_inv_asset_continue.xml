@@ -15,21 +15,8 @@
             android:id="@+id/textView"
             android:gravity="center"
             android:textColor="@color/bright_foreground_inverse_material_light"
-            android:paddingLeft="10dp"
+            android:paddingLeft="20dp"
             android:textSize="@dimen/abc_text_size_medium_material" />
-
-        <!--<TextView-->
-            <!--android:text="TextView"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:id="@+id/textView_asset_info_title"-->
-            <!--android:layout_weight="1"-->
-            <!--android:gravity="left|center"-->
-            <!--android:textColor="@color/bright_foreground_inverse_material_light"-->
-            <!--android:paddingBottom="2dp"-->
-            <!--android:paddingTop="2dp"-->
-            <!--android:textSize="@dimen/abc_text_size_medium_material"-->
-            <!--android:paddingLeft="5dp" />-->
 
     </LinearLayout>
 
@@ -39,7 +26,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView_continue_dialog"
         android:textColor="@android:color/black"
-        android:padding="10dp" />
+        android:paddingLeft="20dp"
+        android:paddingTop="18dp"
+        android:paddingRight="10dp" />
 
 
 </LinearLayout>

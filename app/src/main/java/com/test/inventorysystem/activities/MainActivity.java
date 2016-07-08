@@ -76,13 +76,13 @@ public class MainActivity extends AppCompatActivity {
                             goToOfflineAssetInventory();
                             break;
                         case 1:
-//                            goToOfflineAssetInventory();
+                            goToCodeScanner();
                             break;
                         case 2:
                             goToOfflineInventoryMgr();
                             break;
                         case 3:
-                            goToCodeScanner();
+//                            goToCodeScanner();
                             break;
                     }
                 }

@@ -283,7 +283,6 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
 
                 AssetModel assetModel = new AssetModel(asset, "inv_asset");
-                System.out.println("DoInventory back msg : " + assetModel.getStarNum());
 
                 if (success == 1) {
                     assetListAdapter.replace(assetModel);

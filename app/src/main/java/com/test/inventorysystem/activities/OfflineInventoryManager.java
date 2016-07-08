@@ -28,6 +28,7 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
     private ListView listView;
 
     private DBManager dbManager;
+    private ArrayList<OrganModel> organList;
     private ArrayList<List> offlineInvAsset;
 
     @Override
@@ -44,15 +45,14 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
         btnCheckReverse = (Button) findViewById(R.id.button_offline_inv_check_reverse);
         btnCancel = (Button) findViewById(R.id.button_offline_inv_cancel);
 
-        offlineInvAsset = new ArrayList<>();
+        organList = new ArrayList<>();
         dbManager = new DBManager();
         try {
-            List<OrganModel> organList = dbManager.findOrgans(this.getHelper().getOrganDao(), AppContext.currUser.getAccounts(), null);
-            for (int i = 1; i < organList.size(); i++) {
-                String organName = organList.get(i).getOrganName();
-                List<AssetModel> invAssetList = dbManager.findOfflineInvAssets(this.getHelper().getAssetDao(), organName, true);
-                offlineInvAsset.add(invAssetList);
+            List<OrganModel> list = dbManager.findOrgans(this.getHelper().getOrganDao(), AppContext.currUser.getAccounts(), null);
+            for (int i = 1; i < list.size(); i++) {
+                organList.add(list.get(i));
             }
+                System.out.println(organList.size());
         } catch (SQLException e) {
             e.printStackTrace();
         }

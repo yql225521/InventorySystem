@@ -64,6 +64,17 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         return frag;
     }
 
+    public static InvAssetInfoDialogUtil newInstance(AssetModel assetModel, String offline) {
+        InvAssetInfoDialogUtil frag = new InvAssetInfoDialogUtil();
+        Bundle args = new Bundle();
+        args.putString("code", assetModel.getAssetCode());
+        args.putString("name", assetModel.getAssetName());
+        args.putString("organ", assetModel.getOrganName());
+//        args.putString("operator", assetModel.getOperator());
+        frag.setArguments(args);
+        return frag;
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

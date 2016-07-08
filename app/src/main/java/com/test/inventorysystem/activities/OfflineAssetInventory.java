@@ -18,6 +18,7 @@ import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
 import com.test.inventorysystem.adapters.AssetListAdapter;
+import com.test.inventorysystem.adapters.OfflineInvListAdapter;
 import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.db.DBManager;
 import com.test.inventorysystem.interfaces.CallbackInterface;
@@ -28,6 +29,7 @@ import com.test.inventorysystem.utils.AppContext;
 import com.test.inventorysystem.utils.AssetInfoDialogUtil;
 import com.test.inventorysystem.utils.InvAssetInfoDialogUtil;
 import com.test.inventorysystem.utils.InvContinueDialogUtil;
+import com.test.inventorysystem.utils.OfflineInvExistedAssetDialogUtil;
 import com.test.inventorysystem.utils.Sysconfig;
 import com.test.inventorysystem.utils.TransUtil;
 
@@ -38,17 +40,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> implements InvAssetInfoDialogUtil.NoticeDialogListener, InvContinueDialogUtil.NoticeDialogListener {
+public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> implements InvAssetInfoDialogUtil.NoticeDialogListener, OfflineInvExistedAssetDialogUtil.NoticeDialogListener {
 
     private final static int REQUEST_CODE = 1;
     private Button scanBtn = null;
     private Button manualBtn = null;
     private Button endBtn = null;
     private Spinner inventoryOrganSpinner = null;
-    private ArrayAdapter<String> organSpinnerArrayAdapter = null;
+    private ArrayAdapter<String> organSpinnerArrayAdapter;
     private ArrayList<OrganModel> organs = new ArrayList<OrganModel>();
     private ListView listView;
-    private AssetListAdapter assetListAdapter;
+//    private AssetListAdapter assetListAdapter;
+    private OfflineInvListAdapter assetListAdapter = null;
     private LinearLayout inventoryProgressBar = null;
     private DBManager dbManager = new DBManager();
 
@@ -70,12 +73,30 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         inventoryProgressBar = (LinearLayout) findViewById(R.id.linearLayout_offline_progress_bar);
 
         inventoryOrganSpinner = (Spinner) findViewById(R.id.offline_spinner_inventory_organ);
-        organSpinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        organSpinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         organSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inventoryOrganSpinner.setAdapter(organSpinnerArrayAdapter);
+        inventoryOrganSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                assetListAdapter.clear();
+                try {
+                    List<AssetModel> list = dbManager.findOfflineInvAssets(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
+                    System.out.println("test");
+                    assetListAdapter.addAll(list);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         listView = (ListView) findViewById(R.id.listView_offline_asset_inventory);
-        assetListAdapter = new AssetListAdapter(this, new ArrayList<AssetModel>());
+        assetListAdapter = new OfflineInvListAdapter(this, new ArrayList<AssetModel>());
         listView.setAdapter(assetListAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,8 +125,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(OfflineAssetInventory.this, CaptureActivity.class);
-                OfflineAssetInventory.this.startActivityForResult(intent, REQUEST_CODE);
+                startCodeScanner();
             }
         });
 
@@ -135,13 +155,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     }
 
     private void endOfflineInventory() {
-        try {
-            List<AssetModel> list = dbManager.findOfflineInvAssets(getHelper().getAssetDao(), AppContext.currOrgan.getOrganCode(), true);
-            System.out.println("listttttt " + list.size());
-            System.out.println("listttttt " + list.get(0).getAssetCode());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.finish();
     }
 
     @Override
@@ -152,18 +166,25 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             String barcode = bundle.getString("barcode");
             if (!"".equals(barcode)) {
                 String[] codes = Sysconfig.getCodes(barcode);
-                AssetModel assetModel = new AssetModel();
-                String assetCode = codes[0];
-                String assetName = codes[1];
-//                String operator = codes[2];
-                String organName = codes[2].substring(2, codes[2].length());
-                String organCode = AppContext.currOrgan.getOrganCode();
-
+                currAssetModel = new AssetModel();
                 try {
-                    dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel, assetCode, assetName, organName, organCode);
-                    assetListAdapter.add(assetModel);
-                    DialogFragment dialogFragment = new AssetInfoDialogUtil().newInstace(assetModel, "offline");
-                    dialogFragment.show(getFragmentManager(), "inv_asset_info");
+                    Boolean isExisted = dbManager.findExistedOfflineInvAsset(getHelper().getAssetDao(), codes[0]);
+                    String msg = "该资产已经离线盘点";
+                    System.out.println(isExisted);
+                    if (isExisted) {
+                        DialogFragment dialogFragment = new OfflineInvExistedAssetDialogUtil().newInstance(msg);
+                        dialogFragment.show(getFragmentManager(), "inv_offline_existed_asset");
+                    } else {
+                        currAssetModel.setAssetCode(codes[0]);
+                        currAssetModel.setAssetName(codes[1]);
+                        currAssetModel.setOrganName(codes[2].substring(2, codes[2].length()));
+                        currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                        currAssetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                        currAssetModel.setUserId(AppContext.currUser.getAccounts());
+
+                        DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel, "offline");
+                        dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -172,7 +193,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             Bundle bundle = data.getExtras();
             AssetModel asset = (AssetModel) bundle.get("asset");
             if (null != asset) {
-//                doInventory(asset.getAssetCode(), asset.getDisCode());
+                doInventory(asset);
             }
         } else if (resultCode == AssetManual.RESULT_CODE) {
             Bundle bundle = data.getExtras();
@@ -189,11 +210,12 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     public void onDialogPositiveClick(DialogFragment dialog) {
         System.out.println(dialog.getTag());
         switch (dialog.getTag()) {
-            case "inv_asset_info":
-//                doInventory(currAssetCode, "");
+            case "inv_offline_asset_info":
+                doInventory(currAssetModel);
                 break;
-            case "continue":
+            case "inv_offline_existed_asset":
                 startCodeScanner();
+                break;
         }
     }
 
@@ -201,13 +223,31 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
         switch (dialog.getTag()) {
-            case "inv_asset_info":
+            case "inv_offline_asset_info":
                 updateInventory(currAssetModel);
                 break;
-            case "continue":
+            case "inv_offline_existed_asset":
+                replaceDuplicate(currAssetModel);
                 break;
         }
 
+    }
+
+    private void doInventory(AssetModel assetModel) {
+        try {
+            dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        assetListAdapter.add(assetModel);
+    }
+
+    private void replaceDuplicate(AssetModel assetModel) {
+        try {
+            dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateInventory(AssetModel assetModel) {

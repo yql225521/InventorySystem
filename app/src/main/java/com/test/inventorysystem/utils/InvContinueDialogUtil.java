@@ -55,7 +55,7 @@ public class InvContinueDialogUtil extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_inv_asset_continue, null);
-        Initialization(view);
+        initialization(view);
 
         inventoryMsg.setText(msg);
         builder.setView(view)
@@ -74,7 +74,7 @@ public class InvContinueDialogUtil extends DialogFragment {
         return builder.create();
     }
 
-    private void Initialization(View view) {
+    private void initialization(View view) {
         inventoryMsg = (TextView) view.findViewById(R.id.textView_continue_dialog);
     }
 }

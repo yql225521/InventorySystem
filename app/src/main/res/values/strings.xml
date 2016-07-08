@@ -100,4 +100,7 @@
     <string name="offline_asset_invenotry_delete">数据删除</string>
     <string name="offline_asset_inventory_check_all">全选</string>
     <string name="offline_asset_invenotry_check_reverse">反选</string>
+    <string name="offline_asset_inventory_existed_asset">重复盘点</string>
+    <string name="offline_asset_inventory_existed_replace">覆盖</string>
+    <string name="offline_asset_inventory_existed_continue">继续盘点其他资产</string>
 </resources>

@@ -3,6 +3,7 @@ package com.test.inventorysystem.db;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.test.inventorysystem.adapters.OfflineInvListAdapter;
 import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.models.TypeModel;
@@ -105,22 +106,26 @@ public class DBManager {
         deleteBuilder.delete();
     }
 
-    public void saveOfflineInvAssets(Dao<AssetModel, String> assetDao, AssetModel assetModel, String assetCode, String assetName, String organName, String organCode) throws SQLException {
-//        this.deleteAsset(assetDao);
-        assetModel.setAssetCode(assetCode);
-        assetModel.setAssetName(assetName);
-//        assetModel.setOperator(operator);
-        assetModel.setOrganName(organName);
-        assetModel.setOrganCode(organCode);
+    public void saveOfflineInvAssets(Dao<AssetModel, String> assetDao, AssetModel assetModel) throws SQLException {
         assetModel.setOfflineInv(true);
+        assetModel.setPid(assetModel.getUserId() + "_" + assetModel.getAssetCode());
         assetDao.createOrUpdate(assetModel);
     }
 
-    public AssetModel findAsset(Dao<AssetModel, String> assetDao, String assetCode) throws SQLException {
+//    public List<AssetModel> findOfflineInvAssetsByOrgan(Dao<AssetModel, String> assetDao, String organCode) throws SQLException {
+//        Map<String, Object> fmap = new HashMap<>();
+//        fmap.put("organCode", or)
+//    }
+
+    public Boolean findExistedOfflineInvAsset(Dao<AssetModel, String> assetDao, String assetCode) throws SQLException {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
         queryBuilder.where().eq("assetCode", assetCode);
         AssetModel assetModel = queryBuilder.queryForFirst();
-        return assetModel;
+        if (assetModel != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public List<AssetModel> findOfflineInvAssets(Dao<AssetModel, String> assetDao, String organCode, Boolean offline) throws SQLException{
