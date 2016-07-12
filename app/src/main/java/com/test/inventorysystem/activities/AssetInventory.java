@@ -99,9 +99,9 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             if (organList.isEmpty()) {
 
             } else {
-                for (OrganModel organModel : organList) {
-                    organs.add(organModel);
-                    organSpinnerArrayAdapter.add(organModel.getOrganName());
+                for (int i = 1; i < organList.size(); i++) {
+                    organs.add(organList.get(i));
+                    organSpinnerArrayAdapter.add(organList.get(i).getOrganName());
                 }
             }
         } catch (SQLException e) {
@@ -200,7 +200,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 if (success == 1) {
                     currAssetModel = new AssetModel(asset, "inv_asset");
                     currAssetModel.setInvMsg(invMsg);
-                    currAssetModel.setDisCode("");
+                    currAssetModel.setDisCodes("");
                     currAssetModel.setPdfs(pdfs);
                     inventoryProgressBar.setVisibility(LinearLayout.GONE);
                     DialogFragment dialogFragment = InvAssetInfoDialogUtil.newInstance(currAssetModel);
@@ -256,8 +256,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         hashMap.put("organCode", organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
 //        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
         hashMap.put("username", AppContext.currUser.getAccounts());
-//        String asset1 = "{\"addr\":\"none\",\"assetTypeName\":\"房屋\",\"cateName\":\"固定资产\",\"disCodes\":\"\",\"dt\":\"\",\"enableDateString\":\"2008.12.19\",\"inventoryInfo\":\"\",\"mgrOrganCode\":\"0112\",\"organCode\":\"011201\",\"pdate\":\"\",\"pdfs\":\"1\",\"pid\":\"\",\"simId\":\"460024065533470\",\"useAge\":\"0\",\"userId\":\"\",\"assetCode\":\"1114070101010000020124\",\"assetName\":\"景尚服务大厅\",\"assetParentID\":\"\",\"assetType\":\"\",\"cateID\":\"\",\"createdBy\":\"\",\"deprType\":\"\",\"finCode\":\"1114070101010000020124\",\"lastUpdateBy\":\"\",\"liablePerson\":\"\",\"mgrOrganID\":\"\",\"mgrOrganName\":\"寿阳营销部\",\"operator\":\"崔俊明\",\"organID\":\"\",\"organName\":\"寿阳营销部景尚服务大厅\",\"originalValue\":624786.69,\"spec\":\"S-1049\",\"status\":\"在用\",\"storage\":\"寿阳营销部景尚大厅\",\"storageDescr\":\"寿阳营销部景尚大厅\",\"unit\":\"\"}";
-        hashMap.put("asset", this.getAssetJson(assetModel));
+        hashMap.put("assetJson", this.getAssetJson(assetModel));
         System.out.println(this.getAssetJson(assetModel));
 //        System.out.println(asset1);
 //        hashMap.put("assetCode", assetCode);

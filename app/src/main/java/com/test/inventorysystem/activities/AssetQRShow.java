@@ -130,7 +130,7 @@ public class AssetQRShow extends AppCompatActivity implements AssetQRDialogUtil.
                     currAssetModel = new AssetModel(asset, "inv_asset");
                     assetListAdapter.add(currAssetModel);
                     currAssetModel.setInvMsg(invMsg);
-                    currAssetModel.setDisCode("");
+                    currAssetModel.setDisCodes("");
                     currAssetModel.setPdfs(pdfs);
                     inventoryProgressBar.setVisibility(LinearLayout.GONE);
                     DialogFragment dialogFragment = AssetQRDialogUtil.newInstance(currAssetModel);

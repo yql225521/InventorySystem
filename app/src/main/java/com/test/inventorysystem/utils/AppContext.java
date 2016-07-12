@@ -10,8 +10,8 @@ import com.test.inventorysystem.models.UserModel;
 public class AppContext {
     public static UserModel currUser = null;
     public static OrganModel currOrgan = null;
-    public static String address = null;
-    public static String simId = null;
+    public static String address = "none";
+    public static String simId = "460024065533470";
 
     public static Boolean offlineLogin = false;
 }

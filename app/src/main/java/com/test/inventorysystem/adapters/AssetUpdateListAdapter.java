@@ -66,10 +66,8 @@ public class AssetUpdateListAdapter extends BaseAdapter {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     checkedList.add(getCheckedItem(position));
-                    System.out.println(checkedList);
                 } else {
                     checkedList.remove(getCheckedItem(position));
-                    System.out.println(checkedList);
                 }
             }
         });

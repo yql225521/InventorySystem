@@ -29,7 +29,7 @@ public class SOAPActions {
 
     // http services parameters
     private String soapAction = "";
-    private String serviceUrl = "http://110.177.78.140:8088/assetmgr/ws/DataAccess?wsdl";
+    private String serviceUrl = "http://192.168.0.3:8088/assetmgr/ws/DataAccess?wsdl";
     private String nameSpace = "http://ws.assetmgr.rstco.com/";
     //final response get from server side
     private String response = "";
@@ -45,6 +45,7 @@ public class SOAPActions {
                 this.doLogin(hashMap);
                 break;
             case "getAssetInventoryBase":
+                // 获取当前用户下所有部门,资产类型,匹配类型等信息
                 this.loadBaseData(hashMap);
                 break;
             case "searchAssetList":
@@ -58,6 +59,9 @@ public class SOAPActions {
                 break;
             case "searchInventoryAssetList":
                 this.inventorySearchList(hashMap);
+                break;
+            case "doUpLoadInventory":
+                this.doUploadInventory(hashMap);
                 break;
         }
     }
@@ -105,7 +109,7 @@ public class SOAPActions {
 //        String addr = hashMap.get("addr").toString();
 //        String simId = hashMap.get("simId").toString();
 //        String disCodes = hashMap.get("disCodes").toString();
-        String asset = hashMap.get("asset").toString();
+        String asset = hashMap.get("assetJson").toString();
 //        this.xmlRequest_body = "<ws:doInventory><organCode>" + organCode + "</organCode><mgrOrganCode>" + mgrOrganCode +
 //                "</mgrOrganCode><username>" + username + "</username><assetCode>" + assetCode + "</assetCode><addr>" + addr +
 //                "</addr><simId>" + simId + "</simId><disCodes>" + disCodes + "</disCodes></ws:doInventory>";
@@ -125,6 +129,15 @@ public class SOAPActions {
         this.xmlRequest_body = "<ws:searchInventoryAssetList><category>" + category + "</category><organCode>" + organCode +
                 "</organCode><storage>" + storage + "</storage><storageMatchType>" + storageMatchType + "</storageMatchType><complete>" +
                 complete + "</complete><pageNo>" + pageNo + "</pageNo><pageSize>" + pageSize + "</pageSize></ws:searchInventoryAssetList>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+    }
+
+    private void doUploadInventory(HashMap hashMap) {
+        String username = hashMap.get("username").toString();
+        String organCode = hashMap.get("organCode").toString();
+        String asset = hashMap.get("assetJson").toString();
+        this.xmlRequest_body = "<ws:doUpLoadInventory><username>" + username + "</username><organCode>" + organCode + "</organCode><assetJson>" + asset +
+                "</assetJson></ws:doUpLoadInventory>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 

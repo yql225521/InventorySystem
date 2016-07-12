@@ -65,9 +65,9 @@ public class AssetSearch extends OrmLiteBaseActivity<DBHelper> {
             if (organList.isEmpty()) {
 
             } else {
-                for (OrganModel organModel : organList) {
-                    organs.add(organModel);
-                    organSpinnerArrayAdapter.add(organModel.getOrganName());
+                for (int i = 1; i < organList.size(); i++) {
+                    organs.add(organList.get(i));
+                    organSpinnerArrayAdapter.add(organList.get(i).getOrganName());
                 }
             }
 

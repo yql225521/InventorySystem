@@ -6,8 +6,10 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="228dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp">
 
         <TextView
             android:text="TextView"
@@ -15,8 +17,6 @@
             android:layout_height="30dp"
             android:id="@+id/asset_update_list_title"
             android:textColor="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
             android:textStyle="normal|bold" />
 
         <TextView
@@ -24,16 +24,17 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:id="@+id/asset_update_list_info"
-            android:textColor="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp" />
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="right|center"
-        android:paddingRight="20dp">
+        android:paddingRight="20dp"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"
+        android:id="@+id/linearLayout_with_checkbox">
 
         <CheckBox
             android:layout_width="wrap_content"

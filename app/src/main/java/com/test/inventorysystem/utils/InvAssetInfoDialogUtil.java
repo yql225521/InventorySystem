@@ -59,7 +59,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
         args.putString("use_age", assetModel.getUseAge());
         args.putString("status", assetModel.getStatus());
         args.putString("invMsg", assetModel.getInvMsg());
-        args.putString("disCodes", assetModel.getDisCode());
+        args.putString("disCodes", assetModel.getDisCodes());
         frag.setArguments(args);
         return frag;
     }

@@ -81,9 +81,9 @@ public class InventorySearch extends OrmLiteBaseActivity<DBHelper> {
             if (organList.isEmpty()) {
 
             } else {
-                for (OrganModel organModel : organList) {
-                    organs.add(organModel);
-                    spinnerOrganAdapter.add(organModel.getOrganName());
+                for (int i = 1; i < organList.size(); i++) {
+                    organs.add(organList.get(i));
+                    spinnerOrganAdapter.add(organList.get(i).getOrganName());
                 }
             }
         } catch (SQLException e) {

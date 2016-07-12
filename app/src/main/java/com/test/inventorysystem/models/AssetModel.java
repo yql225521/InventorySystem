@@ -88,6 +88,8 @@ public class AssetModel implements Serializable {
     @DatabaseField
     private String pdfs = "";
     @DatabaseField
+    private String upid = "";
+    @DatabaseField
     private String disCodes = "";
     @DatabaseField
     private Double starNum;
@@ -281,11 +283,11 @@ public class AssetModel implements Serializable {
         return pdfs;
     }
 
-    public void setDisCode(String disCodes) {
+    public void setDisCodes(String disCodes) {
         this.disCodes = disCodes;
     }
 
-    public String getDisCode() {
+    public String getDisCodes() {
         return disCodes;
     }
 
@@ -472,4 +474,13 @@ public class AssetModel implements Serializable {
     public String getFinCode() {
         return finCode;
     }
+
+    public void setUpid(String upid) {
+        this.upid = upid;
+    }
+
+    public String getUpid() {
+        return upid;
+    }
+
 }

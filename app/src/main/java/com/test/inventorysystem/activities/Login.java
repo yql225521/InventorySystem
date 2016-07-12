@@ -79,8 +79,8 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 hashMap.put("methodName", "doLogin");
                 hashMap.put("username", loginUsr.getText().toString());
                 hashMap.put("password", loginPwd.getText().toString());
-                hashMap.put("addr", "none");
-                hashMap.put("simId", "460024065533470");
+                hashMap.put("addr", AppContext.address);
+                hashMap.put("simId", AppContext.simId);
                 doLogin(hashMap);
             }
         });

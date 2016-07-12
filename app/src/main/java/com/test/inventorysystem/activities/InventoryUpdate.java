@@ -67,7 +67,7 @@ public class InventoryUpdate extends AppCompatActivity {
         updateInfo.add(asset.getStatus());
 
         listView = (ListView) findViewById(R.id.listView_asset_update_list);
-        assetUpdateListAdapter = new AssetUpdateListAdapter(this,updateTitles, updateInfo);
+        assetUpdateListAdapter = new AssetUpdateListAdapter(this, updateTitles, updateInfo);
         if (listView != null) {
             listView.setAdapter(assetUpdateListAdapter);
         } else {
@@ -89,7 +89,7 @@ public class InventoryUpdate extends AppCompatActivity {
                     checkedItems = checkedItems.substring(1);
                 }
                 asset.setInvNote(editTextNote.getText().toString().trim());
-                asset.setDisCode(checkedItems);
+                asset.setDisCodes(checkedItems);
                 asset.setStarNum(Double.parseDouble(String.valueOf(ratingBar.getRating())));
                 bundleBack.putSerializable("asset", asset);
                 intent.putExtras(bundleBack);

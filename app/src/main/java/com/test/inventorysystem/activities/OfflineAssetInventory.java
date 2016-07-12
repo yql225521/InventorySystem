@@ -27,6 +27,7 @@ import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.services.SOAPActions;
 import com.test.inventorysystem.utils.AppContext;
 import com.test.inventorysystem.utils.AssetInfoDialogUtil;
+import com.test.inventorysystem.utils.ExtDate;
 import com.test.inventorysystem.utils.InvAssetInfoDialogUtil;
 import com.test.inventorysystem.utils.InvContinueDialogUtil;
 import com.test.inventorysystem.utils.OfflineInvExistedAssetDialogUtil;
@@ -81,8 +82,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 assetListAdapter.clear();
                 try {
-                    List<AssetModel> list = dbManager.findOfflineInvAssets(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
-                    System.out.println("test");
+                    List<AssetModel> list = dbManager.findOfflineInvAssetsByOrgan(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
                     assetListAdapter.addAll(list);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -113,9 +113,9 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             if (organList.isEmpty()) {
 
             } else {
-                for (OrganModel organModel : organList) {
-                    organs.add(organModel);
-                    organSpinnerArrayAdapter.add(organModel.getOrganName());
+                for (int i = 1; i < organList.size(); i++) {
+                    organs.add(organList.get(i));
+                    organSpinnerArrayAdapter.add(organList.get(i).getOrganName());
                 }
             }
         } catch (SQLException e) {
@@ -181,6 +181,13 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                         currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
                         currAssetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
                         currAssetModel.setUserId(AppContext.currUser.getAccounts());
+                        currAssetModel.setAddr(AppContext.address);
+                        currAssetModel.setSimId(AppContext.simId);
+                        ExtDate nowdate = new ExtDate();
+                        currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                        if (StringUtils.isBlank(currAssetModel.getPdfs())) {
+                            currAssetModel.setPdfs("1");
+                        }
 
                         DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel, "offline");
                         dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
@@ -193,7 +200,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             Bundle bundle = data.getExtras();
             AssetModel asset = (AssetModel) bundle.get("asset");
             if (null != asset) {
-                doInventory(asset);
+                doInventory(asset, asset.getOrganCode());
             }
         } else if (resultCode == AssetManual.RESULT_CODE) {
             Bundle bundle = data.getExtras();
@@ -201,6 +208,28 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             String name = bundle.getString("name");
             if (StringUtils.isNotBlank(code)) {
 //                selectAssetInfo(code, "2");
+                try {
+                    Boolean isExisted = dbManager.findExistedOfflineInvAsset(getHelper().getAssetDao(), code);
+                    if (!isExisted) {
+                        AssetModel assetModel = new AssetModel();
+                        assetModel.setAddr(AppContext.address);
+                        assetModel.setSimId(AppContext.simId);
+                        assetModel.setUserId(AppContext.currUser.getAccounts());
+                        assetModel.setAssetCode(code);
+                        assetModel.setAssetName(name);
+                        assetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                        assetModel.setOrganName(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganName());
+                        assetModel.setOfflineInv(true);
+                        ExtDate nowdate = new ExtDate();
+                        assetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                        assetModel.setPdfs("2");
+                        doInventory(assetModel, organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                    } else {
+                        System.out.println("覆盖?");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -211,7 +240,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         System.out.println(dialog.getTag());
         switch (dialog.getTag()) {
             case "inv_offline_asset_info":
-                doInventory(currAssetModel);
+                doInventory(currAssetModel, currAssetModel.getOrganCode());
                 break;
             case "inv_offline_existed_asset":
                 startCodeScanner();
@@ -227,24 +256,24 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                 updateInventory(currAssetModel);
                 break;
             case "inv_offline_existed_asset":
-                replaceDuplicate(currAssetModel);
+                replaceDuplicate(currAssetModel, currAssetModel.getOrganCode());
                 break;
         }
 
     }
 
-    private void doInventory(AssetModel assetModel) {
+    private void doInventory(AssetModel assetModel, String organCode) {
         try {
-            dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel);
+            dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel, organCode);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         assetListAdapter.add(assetModel);
     }
 
-    private void replaceDuplicate(AssetModel assetModel) {
+    private void replaceDuplicate(AssetModel assetModel, String organCode) {
         try {
-            dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel);
+            dbManager.saveOfflineInvAssets(getHelper().getAssetDao(), assetModel, organCode);
         } catch (SQLException e) {
             e.printStackTrace();
         }

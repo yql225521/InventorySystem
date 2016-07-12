@@ -50,7 +50,8 @@
         <activity
             android:name=".activities.OfflineAssetInventory"
             android:label="@string/offline_asset_inventory_title" />
-        <activity android:name=".activities.OfflineInventoryManager"></activity>
+        <activity android:name=".activities.OfflineInventoryManager" />
+        <activity android:name=".activities.DownloadOfflineData"></activity>
     </application>
 
 </manifest>
