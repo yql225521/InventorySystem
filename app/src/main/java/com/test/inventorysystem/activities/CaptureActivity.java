@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
@@ -152,7 +153,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_capture);
@@ -177,7 +177,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("Activity OnResume~~~!!");
+        openCamera();
     }
 
     @Override
@@ -199,7 +199,6 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     }
 
     private void openCamera () {
-        System.out.println("open~~!!");
         // CameraManager must be initialized here, not in onCreate(). This is
         // necessary because we don't
         // want to open the camera driver and measure the screen size if we're
@@ -228,9 +227,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             // The activity was paused but not stopped, so the surface still
             // exists. Therefore
             // surfaceCreated() won't be called, so init the camera here.
-            System.out.println("init");
             initCamera(surfaceHolder);
-
         }
         else {
             // 防止sdk8的设备初始化预览异常
@@ -286,23 +283,19 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         if (!hasSurface) {
             hasSurface = true;
             initCamera(holder);
-            System.out.println("surface created and init camera");
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
-        hasSurface = false;
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
-        System.out.println("start camera~~~~~~~~~~~~~~~~");
         if (surfaceHolder == null) {
             throw new IllegalStateException("No SurfaceHolder provided");
         }

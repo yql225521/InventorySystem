@@ -51,7 +51,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     private ArrayAdapter<String> organSpinnerArrayAdapter;
     private ArrayList<OrganModel> organs = new ArrayList<OrganModel>();
     private ListView listView;
-//    private AssetListAdapter assetListAdapter;
+    //    private AssetListAdapter assetListAdapter;
     private OfflineInvListAdapter assetListAdapter = null;
     private LinearLayout inventoryProgressBar = null;
     private DBManager dbManager = new DBManager();
@@ -113,8 +113,9 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             if (organList.isEmpty()) {
 
             } else {
-                for (int i = 1; i < organList.size(); i++) {
+                for (int i = 0; i < organList.size(); i++) {
                     organs.add(organList.get(i));
+                    System.out.println(organList.get(i).getOrganIDParent());
                     organSpinnerArrayAdapter.add(organList.get(i).getOrganName());
                 }
             }
@@ -175,9 +176,20 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                         DialogFragment dialogFragment = new OfflineInvExistedAssetDialogUtil().newInstance(msg);
                         dialogFragment.show(getFragmentManager(), "inv_offline_existed_asset");
                     } else {
-                        currAssetModel.setAssetCode(codes[0]);
-                        currAssetModel.setAssetName(codes[1]);
-                        currAssetModel.setOrganName(codes[2].substring(2, codes[2].length()));
+                        for (int i = 0; i < codes.length; i++) {
+                            if (i == 0) {
+                                currAssetModel.setAssetCode(codes[0]);
+                            }
+                            if (i == 1) {
+                                currAssetModel.setAssetName(codes[1]);
+                            }
+                            if (i == 2) {
+                                currAssetModel.setOperator(codes[2]);
+                            }
+                            if (i == 3) {
+                                currAssetModel.setOrganName(codes[3]);
+                            }
+                        }
                         currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
                         currAssetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
                         currAssetModel.setUserId(AppContext.currUser.getAccounts());

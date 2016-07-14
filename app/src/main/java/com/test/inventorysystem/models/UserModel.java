@@ -12,6 +12,8 @@ public class UserModel {
     @DatabaseField(id = true)
     private String accounts;
     @DatabaseField
+    private String userId = "";
+    @DatabaseField
     private String username;
     @DatabaseField
     private String isValid;
@@ -19,6 +21,16 @@ public class UserModel {
     private String password;
     @DatabaseField
     private String departmentId;
+    @DatabaseField
+    private String departmentName = "";
+    @DatabaseField
+    private String employeeName = "";
+    @DatabaseField
+    private String employeeId = "";
+    @DatabaseField
+    private int securityLevel;
+    @DatabaseField
+    private String organCode = "";
 
     public void setUsername(String username) {
         this.username = username;
@@ -60,15 +72,63 @@ public class UserModel {
         this.departmentId = departmentId;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("accounts: ").append(accounts);
-        sb.append(", ").append("username: ").append(username);
-        sb.append(", ").append("isValid: ").append(isValid);
-        sb.append(", ").append("departmentId: ").append(departmentId);
-
-        return sb.toString();
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setSecurityLevel(int securityLevel) {
+        this.securityLevel = securityLevel;
+    }
+
+    public int getSecurityLevel() {
+        return securityLevel;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setOrganCode(String organCode) {
+        this.organCode = organCode;
+    }
+
+    public String getOrganCode() {
+        return organCode;
+    }
+
+//    @Override
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//
+//        sb.append("accounts: ").append(accounts);
+//        sb.append(", ").append("username: ").append(username);
+//        sb.append(", ").append("isValid: ").append(isValid);
+//        sb.append(", ").append("departmentId: ").append(departmentId);
+//
+//        return sb.toString();
+//    }
 }

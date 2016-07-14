@@ -99,7 +99,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             if (organList.isEmpty()) {
 
             } else {
-                for (int i = 1; i < organList.size(); i++) {
+                for (int i = 0; i < organList.size(); i++) {
                     organs.add(organList.get(i));
                     organSpinnerArrayAdapter.add(organList.get(i).getOrganName());
                 }
@@ -153,6 +153,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             String barcode = bundle.getString("barcode");
             if (!"".equals(barcode)) {
                 String[] codes = Sysconfig.getCodes(barcode);
+                System.out.println("code_0 " + codes[0]);
                 selectAssetInfo(codes[0], "1");
             }
         } else if (resultCode == InventoryUpdate.RESULT_CODE) {
@@ -198,7 +199,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 System.out.println("assetModel " + asset.toString());
 
                 if (success == 1) {
-                    currAssetModel = new AssetModel(asset, "inv_asset");
+                    currAssetModel = new AssetModel(asset);
                     currAssetModel.setInvMsg(invMsg);
                     currAssetModel.setDisCodes("");
                     currAssetModel.setPdfs(pdfs);
@@ -254,15 +255,18 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
 
         hashMap.put("methodName", methodName);
         hashMap.put("organCode", organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
-//        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
+        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
         hashMap.put("username", AppContext.currUser.getAccounts());
-        hashMap.put("assetJson", this.getAssetJson(assetModel));
+        hashMap.put("assetCode", assetModel.getAssetCode());
+        hashMap.put("addr", AppContext.address);
+        hashMap.put("simId", AppContext.simId);
+        hashMap.put("disCodes", assetModel.getDisCodes());
+        hashMap.put("pdfs", assetModel.getPdfs());
+
+//        hashMap.put("assetJson", this.getAssetJson(assetModel));
         System.out.println(this.getAssetJson(assetModel));
 //        System.out.println(asset1);
 //        hashMap.put("assetCode", assetCode);
-//        hashMap.put("addr", AppContext.address);
-//        hashMap.put("simId", AppContext.simId);
-//        hashMap.put("disCodes", disCodes);
         loadDoInventoryInfo(hashMap);
     }
 
@@ -281,7 +285,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 String message = jsonObject.get("message").getAsString();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
 
-                AssetModel assetModel = new AssetModel(asset, "inv_asset");
+                AssetModel assetModel = new AssetModel(asset);
 
                 if (success == 1) {
                     assetListAdapter.replace(assetModel);

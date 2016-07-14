@@ -127,7 +127,7 @@ public class AssetQRShow extends AppCompatActivity implements AssetQRDialogUtil.
 //                AssetModel assetModel = new AssetModel(asset, "inv_asset");
 
                 if (success == 1) {
-                    currAssetModel = new AssetModel(asset, "inv_asset");
+                    currAssetModel = new AssetModel(asset);
                     assetListAdapter.add(currAssetModel);
                     currAssetModel.setInvMsg(invMsg);
                     currAssetModel.setDisCodes("");

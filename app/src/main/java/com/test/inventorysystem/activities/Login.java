@@ -92,9 +92,12 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 loginTips.setVisibility(View.VISIBLE);
                 try {
                     UserModel loginUser = dbManager.findUser(getHelper().getUserDao(), loginUsr.getText().toString());
-                    System.out.println(loginUser);
                     if (loginUser != null) {
-                        OrganModel loginOrgan = dbManager.findOrgan(getHelper().getOrganDao(), loginUser.getDepartmentId());
+                        OrganModel loginOrgan = dbManager.findOrgan(getHelper().getOrganDao(), loginUser.getOrganCode());
+                        List<OrganModel> listttt = dbManager.findOrgans(getHelper().getOrganDao(), loginUser.getAccounts(), null);
+                        for (OrganModel organModel : listttt) {
+                            System.out.println(organModel.getOrganName());
+                        }
                         AppContext.offlineLogin = true;
                         AppContext.currUser = loginUser;
                         AppContext.currOrgan = loginOrgan;
@@ -131,43 +134,60 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
                 JsonObject org = jsonObject.get("org").getAsJsonObject();
                 JsonObject user = jsonObject.get("user").getAsJsonObject();
 
-                userAccount = user.get("accounts").getAsString();
-                userName = user.get("username").getAsString();
-                String userIsValid = user.get("isValid").getAsString();
-                userDepartmentId = user.get("departmentId").getAsString();
+                if (success == 1) {
+                    userAccount = user.get("accounts").getAsString();
+                    userName = user.get("username").getAsString();
+                    String userIsValid = user.get("isValid").getAsString();
+                    userDepartmentId = user.get("departmentId").getAsString();
 
-                UserModel userModel = new UserModel();
-                userModel.setAccounts(user.get("accounts").getAsString());
-                userModel.setUsername(user.get("username").getAsString());
-                userModel.setDepartmentId(user.get("departmentId").getAsString());
+                    UserModel userModel = new UserModel();
+                    userModel.setAccounts(user.get("accounts").getAsString());
+                    userModel.setUsername(user.get("username").getAsString());
+                    userModel.setDepartmentId(user.get("departmentId").getAsString());
+                    userModel.setIsValid(user.get("isValid").getAsString());
+                    userModel.setSecurityLevel(1);
+                    userModel.setOrganCode(org.get("organCode").getAsString());
 
-                OrganModel organModel = new OrganModel();
-                organModel.setOrganId(org.get("organID").getAsString());
-                organModel.setOrganCode(org.get("organCode").getAsString());
-                organModel.setOrganName(org.get("organName").getAsString());
+                    if (user.get("userId") != null) {
+                        userModel.setUserId(user.get("userId").getAsString());
+                    }
+                    if (user.get("departmentName") != null) {
+                        userModel.setDepartmentName(user.get("departmentName").getAsString());
+                    }
+                    if (user.get("employeeId") != null) {
+                        userModel.setEmployeeId(user.get("employeeId").getAsString());
+                    }
+                    if (user.get("employeeName") != null) {
+                        userModel.setEmployeeName(user.get("employeeName").getAsString());
+                    }
 
-                AppContext.currUser = userModel;
-                AppContext.currOrgan = organModel;
-                AppContext.address = "none";
-                AppContext.simId = "460024065533470";
+                    OrganModel organModel = new OrganModel(org);
+                    organModel.setUserAccount(userModel.getAccounts());
 
-                try {
-                    dbManager.saveUser(getHelper().getUserDao(), userAccount, userModel, userName, userIsValid, userDepartmentId);
+                    AppContext.currUser = userModel;
+                    AppContext.currOrgan = organModel;
+                    AppContext.address = "none";
+                    AppContext.simId = "460024065533470";
+
+                    try {
+                        System.out.println("before save: " + userModel.getDepartmentId());
+                        dbManager.saveUser(getHelper().getUserDao(), userModel);
+                        dbManager.saveOrgan(getHelper().getOrganDao(), organModel, userModel.getAccounts());
 //                    currentUser = dbManager.findUser(getHelper().getUserDao(), userAccount);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
 
-                HashMap<String, String> hashMap = new HashMap<String, String>();
-                hashMap.put("methodName", "getAssetInventoryBase");
-                hashMap.put("organCode", org.get("organCode").getAsString());
-                loadBaseData(hashMap);
+                    HashMap<String, String> hashMap = new HashMap<String, String>();
+                    hashMap.put("methodName", "getAssetInventoryBase");
+                    hashMap.put("organCode", org.get("organCode").getAsString());
+                    loadBaseData(hashMap);
+                }
             }
         });
     }
@@ -182,6 +202,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+//                System.out.println(jsonObject);
 
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();

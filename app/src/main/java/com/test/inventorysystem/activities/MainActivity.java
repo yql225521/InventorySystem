@@ -24,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
     private String userAccount = "";
     private String userDepartmentId = "";
 
-    String[] mainGridTitles = {"资产查询", "资产盘点", "盘点情况", "资产扫描", "拍照上传", "离线盘点管理", "帮助"};
+    String[] mainGridTitles = {"资产查询", "资产盘点", "盘点情况", "资产扫描", "拍照上传", "离线盘点管理", "离线数据下载", "帮助"};
     int[] mainGridIcons = {R.drawable.ic_search_black_24dp, R.drawable.ic_local_atm_black_24dp,
             R.drawable.ic_content_paste_black_24dp, R.drawable.ic_crop_free_black_24dp,
             R.drawable.ic_camera_alt_black_24dp, R.drawable.ic_format_list_numbered_black_24dp,
-            R.drawable.ic_help_black_24dp};
+            R.drawable.ic_vertical_align_bottom_black_24dp, R.drawable.ic_help_black_24dp};
 
-    String[] offlineMainGridTitle = {"离线盘点", "离线扫描", "离线盘点管理", "离线数据下载", "帮助"};
-    int[] offlineMainGridIcons = {R.drawable.ic_local_atm_black_24dp, R.drawable.ic_crop_free_black_24dp,
+    String[] offlineMainGridTitle = {"离线资产查询", "离线盘点", "离线扫描", "离线盘点管理", "离线数据下载", "帮助"};
+    int[] offlineMainGridIcons = {R.drawable.ic_search_black_24dp, R.drawable.ic_local_atm_black_24dp, R.drawable.ic_crop_free_black_24dp,
             R.drawable.ic_format_list_numbered_black_24dp, R.drawable.ic_vertical_align_bottom_black_24dp, R.drawable.ic_help_black_24dp};
 
     List<String> mainItems = new ArrayList<String>();
@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
                         case 5:
                             goToOfflineInventoryMgr();
                             break;
+                        case 6:
+                            goToDownloadOfflineData();
+                            break;
                     }
                 }
             });
@@ -76,16 +79,16 @@ public class MainActivity extends AppCompatActivity {
                                         int position, long id) {
                     switch (position) {
                         case 0:
-                            goToOfflineAssetInventory();
+                            goToAssetSearch();
                             break;
                         case 1:
-                            goToCodeScanner();
+                            goToOfflineAssetInventory();
                             break;
                         case 2:
-                            goToOfflineInventoryMgr();
+                            goToCodeScanner();
                             break;
                         case 3:
-                            goToDownloadOfflineData();
+                            goToOfflineInventoryMgr();
                             break;
                     }
                 }
@@ -125,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToDownloadOfflineData() {
-
+        Intent intent = new Intent(this, DownloadOfflineData.class);
+        startActivity(intent);
     }
 
 
@@ -150,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showUserInfo () {
-        System.out.println(AppContext.currUser.getAccounts());
         UserInfoDialogUtil userInfo = UserInfoDialogUtil.newInstance(AppContext.currUser);
         userInfo.show(getFragmentManager(), "user_info");
     }

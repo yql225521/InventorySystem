@@ -15,8 +15,8 @@
     <color name="result_view">#b0a3e1a2</color>
     <color name="status_text">#ffffffff</color>
     <color name="transparent">#00000000</color>
-    <color name="viewfinder_laser">#ffcc0000</color>
-    <color name="viewfinder_mask">#9c494949</color>
+    <color name="viewfinder_laser">#30cc00</color>
+    <color name="viewfinder_mask">#9c9e9c9c</color>
     <color name="capture_text_cover_bg">#99535353</color>
     <color name="seek_bar_text">#fff6f6f6</color>
     <!-- ZXing Android (end) -->

@@ -3,8 +3,10 @@ package com.test.inventorysystem.models;
 import com.google.gson.JsonObject;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.test.inventorysystem.utils.AppContext;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by youmengli on 6/12/16.
@@ -30,21 +32,9 @@ public class AssetModel implements Serializable {
     @DatabaseField
     private String cateID = "";
     @DatabaseField
-    private String createdBy = "";
-    @DatabaseField
-    private String deprType = "";
-    @DatabaseField
-    private String lastUpdateBy = "";
-    @DatabaseField
-    private String liablePerson = "";
-    @DatabaseField
-    private String mgrOrganID = "";
-    @DatabaseField
     private String organID = "";
     @DatabaseField
     private String spec = "";
-    @DatabaseField
-    private String unit = "";
     @DatabaseField
     private String assetName = "";
     @DatabaseField
@@ -97,31 +87,92 @@ public class AssetModel implements Serializable {
     private String invNote;
     @DatabaseField
     private Boolean offlineInv;
+    @DatabaseField
+    private String lastUpdateBy = "";
+    @DatabaseField
+    private String deprType = "";
+    @DatabaseField
+    private String liablePerson = "";
+    @DatabaseField
+    private String mgrOrganID = "";
+    @DatabaseField
+    private String unit = "";
+    @DatabaseField
+    private String createdBy = "";
+    @DatabaseField
+    private Date buyDate;
+    @DatabaseField
+    private Date creationDate;
+    @DatabaseField
+    private Date lastUpdateDate;
+    @DatabaseField
+    private Date enableDate;
+    @DatabaseField
+    private Date actDate;
+    @DatabaseField
+    private String delFlag;
 
-    public AssetModel () { super(); }
-
-    public AssetModel (JsonObject jsonObject) {
+    public AssetModel() {
         super();
-        setAssetName(jsonObject.get("assetName").getAsString());
-        setEnableDateString(jsonObject.get("enableDateString").getAsString());
-        setStatus(jsonObject.get("status").getAsString());
-        setUseAge(jsonObject.get("useAge").getAsString());
-        setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
-        setOriginalValue(jsonObject.get("originalValue").getAsDouble());
-        setAssetCode(jsonObject.get("assetCode").getAsString());
-        setStorageDescr(jsonObject.get("storageDescr").getAsString());
-        setOperator(jsonObject.get("operator").getAsString());
-        setFindCode(jsonObject.get("findCode").getAsString());
-        setAssetTypeName(jsonObject.get("assetTypeName").getAsString());
-//        setAssetId(jsonObject.get("assetID").getAsString());
-        setCateID(jsonObject.get("cateId").getAsString());
-        setOrganName(jsonObject.get("organName").getAsString());
-        setCateName(jsonObject.get("cateName").getAsString());
     }
 
-    // if current object is inventory result
-    public AssetModel (JsonObject jsonObject, String string) {
+    public AssetModel(JsonObject jsonObject) {
         super();
+        // essential properties
+        setAssetCode(jsonObject.get("assetCode").getAsString());
+        setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
+        setOrganName(jsonObject.get("organName").getAsString());
+
+        // optional properties
+        if (jsonObject.get("organCode") != null) {
+            setOrganCode(jsonObject.get("organCode").getAsString());
+        }
+        if (jsonObject.get("assetName") != null) {
+            setAssetName(jsonObject.get("assetName").getAsString());
+        }
+        if (jsonObject.get("enableDateString") != null) {
+            setEnableDateString(jsonObject.get("enableDateString").getAsString());
+        }
+        if (jsonObject.get("status") != null) {
+            setStatus(jsonObject.get("status").getAsString());
+        }
+        if (jsonObject.get("originalValue") != null) {
+            setOriginalValue(jsonObject.get("originalValue").getAsDouble());
+        }
+        if (jsonObject.get("storageDescr") != null) {
+            setStorageDescr(jsonObject.get("storageDescr").getAsString());
+        }
+        if (jsonObject.get("assetTypeName") != null) {
+            setAssetTypeName(jsonObject.get("assetTypeName").getAsString());
+        }
+        if (jsonObject.get("cateID") != null) {
+            setCateID(jsonObject.get("cateID").getAsString());
+        }
+        if (jsonObject.get("cateName") != null) {
+            setCateName(jsonObject.get("cateName").getAsString());
+        }
+        if (jsonObject.get("useAge") != null) {
+            setUseAge(jsonObject.get("useAge").getAsString());
+        }
+        if (jsonObject.get("operator") != null) {
+            setOperator(jsonObject.get("operator").getAsString());
+        }
+        if (jsonObject.get("findCode") != null) {
+            setFindCode(jsonObject.get("findCode").getAsString());
+        }
+        if (jsonObject.get("finCode") != null) {
+            setFinCode(jsonObject.get("finCode").getAsString());
+        }
+        if (jsonObject.get("spec") != null) {
+            setSpec(jsonObject.get("spec").getAsString());
+        }
+//        setAssetId(jsonObject.get("assetID").getAsString());
+    }
+
+    // if current object is inventory result (asset)
+    public AssetModel(JsonObject jsonObject, String inv_asset) {
+        super();
+//        if (model.equals("assetmgr")) {
         setAssetName(jsonObject.get("assetName").getAsString());
         setEnableDateString(jsonObject.get("enableDateString").getAsString());
         setStatus(jsonObject.get("status").getAsString());
@@ -137,7 +188,12 @@ public class AssetModel implements Serializable {
         setOrganName(jsonObject.get("organName").getAsString());
         setCateName(jsonObject.get("cateName").getAsString());
         setSpec(jsonObject.get("spec").getAsString());
+//        } else if (model.equals("ams")) {
+
+//        }
     }
+
+    //
 
     public void setPid(String pid) {
         this.pid = pid;
@@ -483,4 +539,51 @@ public class AssetModel implements Serializable {
         return upid;
     }
 
+    public void setActDate(Date actDate) {
+        this.actDate = actDate;
+    }
+
+    public Date getActDate() {
+        return actDate;
+    }
+
+    public void setBuyDate(Date buyDate) {
+        this.buyDate = buyDate;
+    }
+
+    public Date getBuyDate() {
+        return buyDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
+    }
+
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    public Date getEnableDate() {
+        return enableDate;
+    }
+
+    public void setEnableDate(Date enableDate) {
+        this.enableDate = enableDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
 }

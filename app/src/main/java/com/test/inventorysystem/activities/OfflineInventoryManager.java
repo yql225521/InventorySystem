@@ -71,7 +71,7 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
 
         try {
             List<OrganModel> list = dbManager.findOrgans(this.getHelper().getOrganDao(), AppContext.currUser.getAccounts(), null);
-            for (int i = 1; i < list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 organList.add(list.get(i));
             }
             for (int i = 0; i < organList.size(); i++) {
@@ -207,6 +207,7 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
             hashMap.put("methodName", "doUpLoadInventory");
             hashMap.put("username", AppContext.currUser.getAccounts());
             hashMap.put("organCode", AppContext.currOrgan.getOrganCode());
+            System.out.println("brefore upload " + getUploadData(organ.getOrganCode()));
             hashMap.put("assetJson", TransUtil.encode(getUploadData(organ.getOrganCode())));
 
             final SOAPActions sa = new SOAPActions(hashMap);
@@ -215,11 +216,13 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
             sa.sendRequest(this, xmlRequest, new CallbackInterface() {
                 @Override
                 public void callBackFunction() {
-                    response = TransUtil.decode(sa.getResponse());
+                    response = TransUtil.decode(sa.getResponse().toString());
+                    response = response.replace("&quot;", "\"");
                     JsonParser jsonParser = new JsonParser();
+                    System.out.println(response);
                     JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-
                     String success = jsonObject.get("success").toString();
+
                     if (success.equals("1")) {
                         offlineInvListMgrAdapter.remove();
                         iterator.remove();

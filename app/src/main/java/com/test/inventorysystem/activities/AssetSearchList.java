@@ -19,14 +19,18 @@ import com.test.inventorysystem.R;
 import com.test.inventorysystem.adapters.AssetListAdapter;
 import com.test.inventorysystem.adapters.MainListAdapter;
 import com.test.inventorysystem.db.DBHelper;
+import com.test.inventorysystem.db.DBManager;
 import com.test.inventorysystem.interfaces.CallbackInterface;
 import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.services.SOAPActions;
+import com.test.inventorysystem.utils.AppContext;
 import com.test.inventorysystem.utils.AssetInfoDialogUtil;
 import com.test.inventorysystem.utils.TransUtil;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
 
@@ -44,6 +48,8 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
     private boolean isFirstLoad = true;
     private boolean endLoading = false;
     private LinearLayout mProgressBar;
+
+    private DBManager dbManager = new DBManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,48 +104,70 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
     private void loadMoreAssets(HashMap<String, String> hashMap) {
         mProgressBar.setVisibility(LinearLayout.VISIBLE);
         currPageIndex++;
-        hashMap.put("pageSize", String.valueOf(pageSize));
-        hashMap.put("pageNo", String.valueOf(currPageIndex));
 
-        final SOAPActions sa = new SOAPActions(hashMap);
-        String xmlRequest = sa.getXmlRequest();
+        if (AppContext.offlineLogin) {
+            findLocalData(hashMap);
+        } else {
+            hashMap.put("pageSize", String.valueOf(pageSize));
+            hashMap.put("pageNo", String.valueOf(currPageIndex));
 
-        sa.sendRequest(this, xmlRequest, new CallbackInterface() {
-            @Override
-            public void callBackFunction() {
-                response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                int success = jsonObject.get("success").getAsInt();
-                JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
-                recordCount = jsonObject.get("recordcount").getAsInt();
+            final SOAPActions sa = new SOAPActions(hashMap);
+            String xmlRequest = sa.getXmlRequest();
 
-                if (success == 1) {
-                    if (assetListString.size() != 0) {
-                        assetList.clear();
-                        for (int i = 0; i < assetListString.size(); i++) {
-                            AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
-                            assetList.add(assetModel);
+            sa.sendRequest(this, xmlRequest, new CallbackInterface() {
+                @Override
+                public void callBackFunction() {
+                    response = TransUtil.decode(sa.getResponse());
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    System.out.println(jsonObject);
+                    int success = jsonObject.get("success").getAsInt();
+                    JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
+                    recordCount = jsonObject.get("recordcount").getAsInt();
+
+                    if (success == 1) {
+                        if (assetListString.size() != 0) {
+                            assetList.clear();
+                            for (int i = 0; i < assetListString.size(); i++) {
+                                AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
+                                assetList.add(assetModel);
+                            }
+                            listAdapter.addAll(assetList);
+                            if (isFirstLoad) {
+                                isFirstLoad = false;
+                            }
+                            mProgressBar.setVisibility(LinearLayout.GONE);
+                            isLoading = false;
+                            totalCount = AssetSearchList.this.getListAdapter().getCount();
+                            countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
+                        } else {
+                            mProgressBar.setVisibility(LinearLayout.GONE);
+                            endLoading = true;
+                            Toast.makeText(AssetSearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                         }
-                        listAdapter.addAll(assetList);
-                        if (isFirstLoad) {
-                            isFirstLoad = false;
-                        }
-                        mProgressBar.setVisibility(LinearLayout.GONE);
-                        isLoading = false;
-                        totalCount = AssetSearchList.this.getListAdapter().getCount();
-                        countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
-                    } else {
-                        mProgressBar.setVisibility(LinearLayout.GONE);
-                        endLoading = true;
-                        Toast.makeText(AssetSearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                     }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     private AssetListAdapter getListAdapter() {
         return this.listAdapter;
+    }
+
+    private void findLocalData(HashMap hashMap) {
+        System.out.println("local searching...");
+        try {
+            List<AssetModel> assetList = dbManager.findOfflineAssets(getHelper().getAssetDao(), hashMap);
+            if (assetList.size() == 0) {
+                Toast.makeText(this, "没有搜索到查询结果...", Toast.LENGTH_SHORT).show();
+            }
+            listAdapter.addAll(assetList);
+            mProgressBar.setVisibility(View.GONE);
+            countInfo.setText("已加载" + assetList.size() + "条-共" + assetList.size() + "条");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

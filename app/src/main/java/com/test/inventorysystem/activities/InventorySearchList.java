@@ -109,7 +109,6 @@ public class InventorySearchList extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println(jsonObject);
                 int success = jsonObject.get("success").getAsInt();
                 JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
                 recordCount = jsonObject.get("recordcount").getAsInt();

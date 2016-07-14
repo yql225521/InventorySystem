@@ -27,7 +27,7 @@ public class UserInfoDialogUtil extends DialogFragment {
         Bundle args = new Bundle();
         args.putString("account", userModel.getAccounts());
         args.putString("username", userModel.getUsername());
-        args.putString("departmentId", userModel.getDepartmentId());
+        args.putString("departmentName", userModel.getDepartmentName());
         UserInfoDialogUtil frag = new UserInfoDialogUtil();
         frag.setArguments(args);
 
@@ -38,7 +38,7 @@ public class UserInfoDialogUtil extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String account = getArguments().getString("account");
         String username = getArguments().getString("username");
-        String departmentId = getArguments().getString("departmentId");
+        String departmentName = getArguments().getString("departmentName");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
@@ -47,7 +47,9 @@ public class UserInfoDialogUtil extends DialogFragment {
 
         userAccount.setText(account);
         userName.setText(username);
-        userDepartmentId.setText(departmentId);
+        if (departmentName != null) {
+            userDepartmentId.setText(departmentName);
+        }
 
         // Use the Builder class for convenient dialog construction
         builder.setView(view)
@@ -62,6 +64,6 @@ public class UserInfoDialogUtil extends DialogFragment {
     private void Initialization (View view) {
         userAccount = (TextView) view.findViewById(R.id.textView_dialog_user_account);
         userName = (TextView) view.findViewById(R.id.textView_dialog_user_name);
-        userDepartmentId = (TextView) view.findViewById(R.id.textView_dialog_user_departmentId);
+        userDepartmentId = (TextView) view.findViewById(R.id.textView_dialog_user_departmentName);
     }
 }

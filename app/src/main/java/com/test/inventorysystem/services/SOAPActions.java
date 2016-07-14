@@ -20,7 +20,7 @@ import com.test.inventorysystem.interfaces.CallbackInterface;
 
 public class SOAPActions {
     // create new SOAP request
-    private String xmlRequest_header = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://ws.assetmgr.rstco.com/\">" +
+    private String xmlRequest_header = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://ws.ams.rstco.com/\">" +
             "<soapenv:Header/>" + "<soapenv:Body>";
     private String xmlRequest_body = "";
     private String xmlRequest_rear = "</soapenv:Body>" + "</soapenv:Envelope>";
@@ -29,8 +29,8 @@ public class SOAPActions {
 
     // http services parameters
     private String soapAction = "";
-    private String serviceUrl = "http://192.168.0.3:8088/assetmgr/ws/DataAccess?wsdl";
-    private String nameSpace = "http://ws.assetmgr.rstco.com/";
+    private String serviceUrl = "http://192.168.0.191:82/ams/ws/DataAccess?wsdl";
+    private String nameSpace = "http://ws.ams.rstco.com/";
     //final response get from server side
     private String response = "";
 
@@ -62,6 +62,9 @@ public class SOAPActions {
                 break;
             case "doUpLoadInventory":
                 this.doUploadInventory(hashMap);
+                break;
+            case "getAssetDatas":
+                this.downloadOfflineData(hashMap);
                 break;
         }
     }
@@ -103,18 +106,19 @@ public class SOAPActions {
 
     private void doInventory(HashMap hashMap) {
         String organCode = hashMap.get("organCode").toString();
-//        String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
+        String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
         String username = hashMap.get("username").toString();
-//        String assetCode = hashMap.get("assetCode").toString();
-//        String addr = hashMap.get("addr").toString();
-//        String simId = hashMap.get("simId").toString();
-//        String disCodes = hashMap.get("disCodes").toString();
-        String asset = hashMap.get("assetJson").toString();
-//        this.xmlRequest_body = "<ws:doInventory><organCode>" + organCode + "</organCode><mgrOrganCode>" + mgrOrganCode +
-//                "</mgrOrganCode><username>" + username + "</username><assetCode>" + assetCode + "</assetCode><addr>" + addr +
-//                "</addr><simId>" + simId + "</simId><disCodes>" + disCodes + "</disCodes></ws:doInventory>";
-        this.xmlRequest_body = "<ws:doInventory><username>" + username + "</username><organCode>" + organCode + "</organCode><assetJson>" + asset +
-                "</assetJson></ws:doInventory>";
+        String assetCode = hashMap.get("assetCode").toString();
+        String addr = hashMap.get("addr").toString();
+        String simId = hashMap.get("simId").toString();
+        String disCodes = hashMap.get("disCodes").toString();
+//        String asset = hashMap.get("assetJson").toString();
+        String pdfs = hashMap.get("pdfs").toString();
+        this.xmlRequest_body = "<ws:doInventory><organCode>" + organCode + "</organCode><mgrOrganCode>" + mgrOrganCode +
+                "</mgrOrganCode><username>" + username + "</username><assetCode>" + assetCode + "</assetCode><addr>" + addr +
+                "</addr><simId>" + simId + "</simId><disCodes>" + disCodes + "</disCodes><pdfs>" + pdfs + "</pdfs></ws:doInventory>";
+//        this.xmlRequest_body = "<ws:doInventory><username>" + username + "</username><organCode>" + organCode + "</organCode><assetJson>" + asset +
+//                "</assetJson></ws:doInventory>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
@@ -141,6 +145,13 @@ public class SOAPActions {
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
+    private void downloadOfflineData(HashMap hashMap) {
+        String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
+        this.xmlRequest_body = "<ws:getAssetDatas><mgrOrganCode>" + mgrOrganCode + "</mgrOrganCode></ws:getAssetDatas>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+
+    }
+
     public void sendRequest(Context ctx, String xmlRequest, final CallbackInterface callback) {
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -156,8 +167,8 @@ public class SOAPActions {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                System.out.println("获取数据成功...");
                 String res = new String(responseBody);
+                System.out.println("获取数据成功...");
                 response = res.substring(res.indexOf("<return>") + 8, res.indexOf("</return>"));
                 callback.callBackFunction();
             }
@@ -166,6 +177,7 @@ public class SOAPActions {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 System.out.println("服务器请求失败,没有返回值...");
                 System.out.println(error);
+                response = String.valueOf(0);
             }
         });
     }

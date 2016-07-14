@@ -17,7 +17,7 @@ public class OrganModel {
     @DatabaseField
     private String userAccount;
     @DatabaseField
-    private String organId;
+    private String organID;
     @DatabaseField
     private String organCode;
     @DatabaseField
@@ -28,6 +28,12 @@ public class OrganModel {
     private String shortName;
     @DatabaseField
     private String inUse;
+    @DatabaseField
+    private String organLayer;
+    @DatabaseField
+    private String organIDParent;
+    @DatabaseField
+    private String flag;
 
     public OrganModel () { super(); }
 
@@ -38,6 +44,20 @@ public class OrganModel {
         setOrganName(jsonObject.get("organName").getAsString());
         setShortName(jsonObject.get("shortName").getAsString());
         setInUse(jsonObject.get("inUse").getAsString());
+
+        if (jsonObject.get("organType") != null) {
+            setOrganType(jsonObject.get("organType").getAsString());
+        }
+        if (jsonObject.get("organLayer") != null) {
+            setOrganLayer(jsonObject.get("organLayer").getAsString());
+        }
+        if (jsonObject.get("organIDParent") != null) {
+            setOrganIDParent(jsonObject.get("organIDParent").getAsString());
+        }
+        if (jsonObject.get("flag") != null) {
+            setFlag(jsonObject.get("flag").getAsString());
+        }
+
     }
 
     public void setPid(String pid) {
@@ -56,12 +76,12 @@ public class OrganModel {
         return userAccount;
     }
 
-    public void setOrganId(String organId) {
-        this.organId = organId;
+    public void setOrganId(String organID) {
+        this.organID = organID;
     }
 
     public String getOrganId() {
-        return organId;
+        return organID;
     }
 
     public void setOrganCode(String organCode) {
@@ -102,5 +122,37 @@ public class OrganModel {
 
     public String getInUse() {
         return inUse;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setOrganID(String organID) {
+        this.organID = organID;
+    }
+
+    public String getOrganID() {
+        return organID;
+    }
+
+    public void setOrganIDParent(String organIDParent) {
+        this.organIDParent = organIDParent;
+    }
+
+    public String getOrganIDParent() {
+        return organIDParent;
+    }
+
+    public void setOrganLayer(String organLayer) {
+        this.organLayer = organLayer;
+    }
+
+    public String getOrganLayer() {
+        return organLayer;
     }
 }
