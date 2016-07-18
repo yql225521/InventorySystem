@@ -153,7 +153,9 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             String barcode = bundle.getString("barcode");
             if (!"".equals(barcode)) {
                 String[] codes = Sysconfig.getCodes(barcode);
-                System.out.println("code_0 " + codes[0]);
+                for (int i = 0; i < codes.length; i++) {
+                    System.out.println(codes[i]);
+                }
                 selectAssetInfo(codes[0], "1");
             }
         } else if (resultCode == InventoryUpdate.RESULT_CODE) {
@@ -172,12 +174,12 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         }
     }
 
-    private void selectAssetInfo(String assetCode, final String pdfs) {
+    private void selectAssetInfo(String finCode, final String pdfs) {
         inventoryProgressBar.setVisibility(LinearLayout.VISIBLE);
         String methodName = "getAssetInfoWithInv";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put("methodName", methodName);
-        hashMap.put("assetCode", assetCode);
+        hashMap.put("finCode", finCode);
         loadAssetInfo(hashMap, pdfs);
     }
 
@@ -199,7 +201,9 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 System.out.println("assetModel " + asset.toString());
 
                 if (success == 1) {
-                    currAssetModel = new AssetModel(asset);
+                    Gson gson=new Gson();
+                    currAssetModel = gson.fromJson(jsonObject.get("asset"), AssetModel.class);
+//                    currAssetModel = new AssetModel(asset);
                     currAssetModel.setInvMsg(invMsg);
                     currAssetModel.setDisCodes("");
                     currAssetModel.setPdfs(pdfs);
@@ -253,18 +257,18 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         assetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
         assetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
 
+//        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
+//        hashMap.put("assetCode", assetModel.getAssetCode());
+//        hashMap.put("addr", AppContext.address);
+//        hashMap.put("simId", AppContext.simId);
+//        hashMap.put("disCodes", assetModel.getDisCodes());
+//        hashMap.put("pdfs", assetModel.getPdfs());
+
         hashMap.put("methodName", methodName);
         hashMap.put("organCode", organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
-        hashMap.put("mgrOrganCode", AppContext.currOrgan.getOrganCode());
         hashMap.put("username", AppContext.currUser.getAccounts());
-        hashMap.put("assetCode", assetModel.getAssetCode());
-        hashMap.put("addr", AppContext.address);
-        hashMap.put("simId", AppContext.simId);
-        hashMap.put("disCodes", assetModel.getDisCodes());
-        hashMap.put("pdfs", assetModel.getPdfs());
-
-//        hashMap.put("assetJson", this.getAssetJson(assetModel));
-        System.out.println(this.getAssetJson(assetModel));
+        hashMap.put("assetJson", this.getAssetJson(assetModel));
+        System.out.println("****" + this.getAssetJson(assetModel));
 //        System.out.println(asset1);
 //        hashMap.put("assetCode", assetCode);
         loadDoInventoryInfo(hashMap);

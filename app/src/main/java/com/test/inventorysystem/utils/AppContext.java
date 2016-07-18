@@ -11,8 +11,9 @@ public class AppContext {
     public static UserModel currUser = null;
     public static OrganModel currOrgan = null;
     public static String address = "none";
-    public static String simId = "460024065533470";
+    public static String simId = "";
 
     public static Boolean offlineLogin = false;
+    public static Boolean hasOfflineData = false;
 }
 

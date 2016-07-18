@@ -59,7 +59,7 @@
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView_asset_code"
+            android:id="@+id/textView_asset_fincode"
             android:layout_weight="1"
             android:background="#ffffff"
             android:textColor="@color/bright_foreground_inverse_material_dark"

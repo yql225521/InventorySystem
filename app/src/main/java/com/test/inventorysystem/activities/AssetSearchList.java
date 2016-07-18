@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -92,6 +93,7 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AssetModel assetModel = (AssetModel) listView.getItemAtPosition(i);
+                System.out.println("02 " + assetModel.getAssetCode());
                 DialogFragment dialogFragment = AssetInfoDialogUtil.newInstance(assetModel);
                 dialogFragment.show(getFragmentManager(), "dialog_asset_info");
             }
@@ -163,6 +165,8 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
             if (assetList.size() == 0) {
                 Toast.makeText(this, "没有搜索到查询结果...", Toast.LENGTH_SHORT).show();
             }
+            System.out.println(assetList.get(0).getFinCode() + "| " + assetList.get(0).getAssetType() + "| " + assetList.get(0).getCateName() + "| " +
+                    assetList.get(0).getMgrOrganCode());
             listAdapter.addAll(assetList);
             mProgressBar.setVisibility(View.GONE);
             countInfo.setText("已加载" + assetList.size() + "条-共" + assetList.size() + "条");

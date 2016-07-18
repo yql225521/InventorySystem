@@ -10,6 +10,7 @@ import com.j256.ormlite.stmt.Where;
 import com.test.inventorysystem.adapters.OfflineInvListAdapter;
 import com.test.inventorysystem.interfaces.CallbackInterface;
 import com.test.inventorysystem.models.AssetModel;
+import com.test.inventorysystem.models.CfgModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.models.TypeModel;
 import com.test.inventorysystem.models.UserModel;
@@ -52,8 +53,7 @@ public class DBManager {
     }
 
     public void saveOrgan(Dao<OrganModel, String> organDao, OrganModel organModel, String userAccount) throws SQLException {
-        organModel.setPid(userAccount + "_" + organModel.getOrganId());
-        System.out.println(organModel.getOrganCode());
+        organModel.setPid(userAccount + "_" + organModel.getOrganID());
         organDao.createOrUpdate(organModel);
     }
 
@@ -64,7 +64,7 @@ public class DBManager {
             if (StringUtils.isBlank(organModel.getOrganType())) {
                 organModel.setOrganType("0");
             }
-            organModel.setPid(userAccount + "_" + organModel.getOrganId());
+            organModel.setPid(userAccount + "_" + organModel.getOrganID());
             organDao.createOrUpdate(organModel);
         }
     }
@@ -139,11 +139,6 @@ public class DBManager {
         return upid;
     }
 
-//    public List<AssetModel> findOfflineInvAssetsByOrgan(Dao<AssetModel, String> assetDao, String organCode) throws SQLException {
-//        Map<String, Object> fmap = new HashMap<>();
-//        fmap.put("organCode", or)
-//    }
-
     public Boolean findExistedOfflineInvAsset(Dao<AssetModel, String> assetDao, String assetCode) throws SQLException {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
         queryBuilder.where().eq("assetCode", assetCode);
@@ -186,6 +181,18 @@ public class DBManager {
         callback.callBackFunction();
     }
 
+    public AssetModel findOfflineAsset(Dao<AssetModel, String> assetDao, String finCode, String dt) throws SQLException{
+        QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
+        queryBuilder.where().eq("finCode", finCode).and().eq("dt", dt);
+        AssetModel assetModel = queryBuilder.queryForFirst();
+        System.out.println("found it " + assetModel);
+        if (assetModel == null) {
+            return null;
+        } else  {
+            return assetModel;
+        }
+    }
+
     public List<AssetModel> findOfflineAssets(Dao<AssetModel, String> assetDao, HashMap<String, String> hashMap) throws SQLException{
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
         Where<AssetModel, String> where = queryBuilder.where();
@@ -194,11 +201,10 @@ public class DBManager {
         String assetName = hashMap.get("assetName");
         String organCode = hashMap.get("organCode");
         String category = hashMap.get("category");
-            System.out.println("assetCode" + assetCode);
 
         where.isNotNull("assetCode");
         if (StringUtils.isNotBlank(assetCode)) {
-            where.and().eq("assetCode", assetCode);
+            where.and().eq("organCode", assetCode);
         }
         if (StringUtils.isNotBlank(assetName)) {
             where.and().like("assetName", "%" + assetName + "%");
@@ -212,5 +218,21 @@ public class DBManager {
         ArrayList<AssetModel> assetList = new ArrayList<>(queryBuilder.query());
 
         return assetList;
+    }
+
+    public void deleteCfg(Dao<CfgModel, String> cfgDao, String userAccount) throws SQLException {
+        DeleteBuilder<CfgModel, String> deleteBuilder = cfgDao.deleteBuilder();
+        deleteBuilder.where().eq("userAccount", userAccount).prepare();
+        deleteBuilder.delete();
+    }
+
+    public void saveCfg(Dao<CfgModel, String> cfgDao, CfgModel cfgModel, String userAccount, String name) throws SQLException {
+        this.deleteCfg(cfgDao, userAccount);
+        cfgModel.setCfgId(userAccount + "_" + name);
+        cfgDao.createOrUpdate(cfgModel);
+    }
+
+    public CfgModel findCfg(Dao<CfgModel, String> cfgDao, String userAccount, String name) throws SQLException {
+        return cfgDao.queryForId(userAccount + "_" + name);
     }
 }

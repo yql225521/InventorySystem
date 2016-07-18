@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.test.inventorysystem.models.AssetModel;
+import com.test.inventorysystem.models.CfgModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.models.TypeModel;
 import com.test.inventorysystem.models.UserModel;
@@ -30,6 +31,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
     private Dao<OrganModel, String> organDao = null;
     private Dao<TypeModel, String> typeDao = null;
     private Dao<AssetModel, String> assetDao = null;
+    private Dao<CfgModel, String> cfgDao = null;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,6 +45,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, OrganModel.class);
             TableUtils.createTable(connectionSource, TypeModel.class);
             TableUtils.createTable(connectionSource, AssetModel.class);
+            TableUtils.createTable(connectionSource, CfgModel.class);
             Log.e(DBHelper.class.getName(), "创建数据库成功");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,6 +60,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, OrganModel.class, true);
             TableUtils.dropTable(connectionSource, TypeModel.class, true);
             TableUtils.dropTable(connectionSource, AssetModel.class, true);
+            TableUtils.dropTable(connectionSource, CfgModel.class, true);
             onCreate(sqLiteDatabase, connectionSource);
             Log.e(DBHelper.class.getName(), "更新数据库成功");
         } catch (SQLException e) {
@@ -93,6 +97,13 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         return assetDao;
     }
 
+    public Dao<CfgModel, String> getCfgDao() throws SQLException {
+        if (cfgDao == null) {
+            cfgDao = getDao(CfgModel.class);
+        }
+        return cfgDao;
+    }
+
     /**
      * Close the database connections and clear any cached DAOs.
      */
@@ -103,5 +114,6 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
         organDao = null;
         typeDao = null;
         assetDao = null;
+        cfgDao = null;
     }
 }

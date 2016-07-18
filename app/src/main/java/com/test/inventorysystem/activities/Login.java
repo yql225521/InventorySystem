@@ -1,8 +1,9 @@
 package com.test.inventorysystem.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ import com.test.inventorysystem.R;
 import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.db.DBManager;
 import com.test.inventorysystem.interfaces.CallbackInterface;
+import com.test.inventorysystem.models.CfgModel;
 import com.test.inventorysystem.models.OrganModel;
 import com.test.inventorysystem.models.TypeModel;
 import com.test.inventorysystem.models.UserModel;
@@ -80,6 +82,9 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 hashMap.put("username", loginUsr.getText().toString());
                 hashMap.put("password", loginPwd.getText().toString());
                 hashMap.put("addr", AppContext.address);
+
+                TelephonyManager tm = (TelephonyManager) Login.this.getSystemService(Context.TELEPHONY_SERVICE);
+                AppContext.simId = tm.getSubscriberId();
                 hashMap.put("simId", AppContext.simId);
                 doLogin(hashMap);
             }
@@ -101,6 +106,12 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                         AppContext.offlineLogin = true;
                         AppContext.currUser = loginUser;
                         AppContext.currOrgan = loginOrgan;
+                        TelephonyManager tm = (TelephonyManager) Login.this.getSystemService(Context.TELEPHONY_SERVICE);
+                        AppContext.simId = tm.getSubscriberId();
+                        CfgModel cfgModel = dbManager.findCfg(getHelper().getCfgDao(), loginUser.getAccounts(), "offline_flag");
+                        if (cfgModel != null) {
+                            AppContext.hasOfflineData = true;
+                        }
                         buildMainFunction();
                     }
                 } catch (SQLException e) {
@@ -124,7 +135,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
         });
     }
 
-    private void doLogin(HashMap hashMap) {
+    private void doLogin(final HashMap hashMap) {
         final SOAPActions sa = new SOAPActions(hashMap);
         String xmlRequest = sa.getXmlRequest();
 
@@ -134,6 +145,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                System.out.println("user info " + jsonObject);
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
                 JsonObject org = jsonObject.get("org").getAsJsonObject();
@@ -169,10 +181,11 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                     OrganModel organModel = new OrganModel(org);
                     organModel.setUserAccount(userModel.getAccounts());
 
+
                     AppContext.currUser = userModel;
                     AppContext.currOrgan = organModel;
                     AppContext.address = "none";
-                    AppContext.simId = "460024065533470";
+                    AppContext.simId = hashMap.get("simId").toString();
 
                     try {
                         System.out.println("before save: " + userModel.getDepartmentId());
@@ -202,7 +215,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-//                System.out.println(jsonObject);
+                System.out.println(jsonObject);
 
                 int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
@@ -215,22 +228,22 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 if (success == 1) {
                     try {
                         ArrayList<OrganModel> organList = new ArrayList<OrganModel>();
-                        for (int i = 0; i < organListString.size(); i ++) {
+                        for (int i = 0; i < organListString.size(); i++) {
                             OrganModel organModel = new OrganModel(organListString.get(i).getAsJsonObject());
                             organList.add(organModel);
                         }
                         dbManager.saveOrganList(getHelper().getOrganDao(), userAccount, organList);
 
                         ArrayList<TypeModel> typeList = new ArrayList<TypeModel>();
-                        for (int i = 0; i < typeListString.size(); i ++) {
+                        for (int i = 0; i < typeListString.size(); i++) {
                             TypeModel typeModel = new TypeModel(typeListString.get(i).getAsJsonObject());
                             typeList.add(typeModel);
                         }
-                        for (int i = 0; i < matchTypeListString.size(); i ++) {
+                        for (int i = 0; i < matchTypeListString.size(); i++) {
                             TypeModel typeModel = new TypeModel(matchTypeListString.get(i).getAsJsonObject());
                             typeList.add(typeModel);
                         }
-                        for (int i = 0; i < completeTypeListString.size(); i ++) {
+                        for (int i = 0; i < completeTypeListString.size(); i++) {
                             TypeModel typeModel = new TypeModel(completeTypeListString.get(i).getAsJsonObject());
                             typeList.add(typeModel);
                         }

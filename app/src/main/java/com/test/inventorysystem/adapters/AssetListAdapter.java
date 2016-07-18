@@ -25,7 +25,7 @@ public class AssetListAdapter extends BaseAdapter {
 
     public AssetListAdapter (Context ctx, ArrayList<AssetModel> assetList) {
         this.mContext = ctx;
-        this.assetList = new ArrayList<AssetModel>(assetList);
+        this.assetList = new ArrayList<>(assetList);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AssetListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = this.assetListInflater.inflate(R.layout.adapter_asset_list_item, null);
             holder.serial_num = (TextView) convertView.findViewById(R.id.textView_serial_number);
-            holder.asset_code = (TextView) convertView.findViewById(R.id.textView_asset_code);
+            holder.asset_fincode = (TextView) convertView.findViewById(R.id.textView_asset_fincode);
             holder.asset_name = (TextView) convertView.findViewById(R.id.textView_asset_name);
             holder.asset_type = (TextView) convertView.findViewById(R.id.textView_asset_type);
             holder.asset_place = (TextView) convertView.findViewById(R.id.textView_asset_place);
@@ -89,12 +89,18 @@ public class AssetListAdapter extends BaseAdapter {
         }
 
         String serialNum = String.valueOf(position + 1);
-        String assetCode = this.assetList.get(position).getAssetCode();
+        if (this.assetList.get(position).getFinCode() != null) {
+            String assetFinCode = this.assetList.get(position).getFinCode();
+            holder.asset_fincode.setText(assetFinCode);
+        } else {
+            String assetCode = this.assetList.get(position).getAssetCode();
+            holder.asset_fincode.setText(assetCode);
+        }
+
         String assetName = this.assetList.get(position).getAssetName();
         String assetType = this.assetList.get(position).getCateName();
         String assetPlace = this.assetList.get(position).getStorageDescr();
         holder.serial_num.setText(serialNum);
-        holder.asset_code.setText(assetCode);
         holder.asset_name.setText(assetName);
         holder.asset_type.setText(assetType);
         holder.asset_place.setText(assetPlace);
@@ -103,7 +109,7 @@ public class AssetListAdapter extends BaseAdapter {
 
     class ViewHolder {
         public TextView serial_num;
-        public TextView asset_code;
+        public TextView asset_fincode;
         public TextView asset_name;
         public TextView asset_type;
         public TextView asset_place;

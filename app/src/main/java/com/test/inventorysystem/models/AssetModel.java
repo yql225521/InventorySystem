@@ -111,6 +111,13 @@ public class AssetModel implements Serializable {
     private Date actDate;
     @DatabaseField
     private String delFlag;
+    @DatabaseField
+    private String assetID;
+
+    /**  */
+    private String batchID;
+    /**  */
+    private String note;
 
     public AssetModel() {
         super();
@@ -118,12 +125,15 @@ public class AssetModel implements Serializable {
 
     public AssetModel(JsonObject jsonObject) {
         super();
-        // essential properties
-        setAssetCode(jsonObject.get("assetCode").getAsString());
-        setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
-        setOrganName(jsonObject.get("organName").getAsString());
-
-        // optional properties
+        if (jsonObject.get("assetCode") != null) {
+            setAssetCode(jsonObject.get("assetCode").getAsString());
+        }
+        if (jsonObject.get("organName") != null) {
+            setOrganName(jsonObject.get("organName").getAsString());
+        }
+        if (jsonObject.get("mgrOrganName") != null) {
+            setMgrOrganName(jsonObject.get("mgrOrganName").getAsString());
+        }
         if (jsonObject.get("organCode") != null) {
             setOrganCode(jsonObject.get("organCode").getAsString());
         }
@@ -298,14 +308,6 @@ public class AssetModel implements Serializable {
     public String getAssetTypeName() {
         return assetTypeName;
     }
-
-//    public void setAssetId(String assetId) {
-//        this.assetId = assetId;
-//    }
-//
-//    public String getAssetId() {
-//        return assetId;
-//    }
 
     public void setOrganName(String organName) {
         this.organName = organName;
@@ -586,4 +588,29 @@ public class AssetModel implements Serializable {
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
+
+    public void setAssetID(String assetID) {
+        this.assetID = assetID;
+    }
+
+    public String getAssetID() {
+        return assetID;
+    }
+
+    public void setBatchID(String batchID) {
+        this.batchID = batchID;
+    }
+
+    public String getBatchID() {
+        return batchID;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
+    }
 }
+

@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                         case 3:
                             goToOfflineInventoryMgr();
                             break;
+                        case 4:
+                            goToDownloadOfflineData();
+                            break;
                     }
                 }
             });

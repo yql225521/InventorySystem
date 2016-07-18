@@ -103,8 +103,13 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AssetModel assetModel = (AssetModel) listView.getItemAtPosition(i);
-                DialogFragment dialogFragment = AssetInfoDialogUtil.newInstace(assetModel, "offline");
-                dialogFragment.show(getFragmentManager(), "inv_asset_update_info");
+                if (AppContext.offlineLogin && AppContext.hasOfflineData) {
+                    DialogFragment dialogFragment = AssetInfoDialogUtil.newInstance(assetModel);
+                    dialogFragment.show(getFragmentManager(), "inv_asset_update_info");
+                } else {
+                    DialogFragment dialogFragment = AssetInfoDialogUtil.newInstace(assetModel, "offline");
+                    dialogFragment.show(getFragmentManager(), "inv_asset_update_info");
+                }
             }
         });
 
@@ -167,6 +172,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             String barcode = bundle.getString("barcode");
             if (!"".equals(barcode)) {
                 String[] codes = Sysconfig.getCodes(barcode);
+                String assetFinCode = codes[0];
                 currAssetModel = new AssetModel();
                 try {
                     Boolean isExisted = dbManager.findExistedOfflineInvAsset(getHelper().getAssetDao(), codes[0]);
@@ -176,33 +182,47 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                         DialogFragment dialogFragment = new OfflineInvExistedAssetDialogUtil().newInstance(msg);
                         dialogFragment.show(getFragmentManager(), "inv_offline_existed_asset");
                     } else {
-                        for (int i = 0; i < codes.length; i++) {
-                            if (i == 0) {
-                                currAssetModel.setAssetCode(codes[0]);
+                        if (AppContext.offlineLogin && AppContext.hasOfflineData) {
+                            System.out.println("here " + assetFinCode);
+                            currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), assetFinCode, "2");
+                            ExtDate nowdate = new ExtDate();
+                            currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                            if (StringUtils.isBlank(currAssetModel.getPdfs())) {
+                                currAssetModel.setPdfs("1");
                             }
-                            if (i == 1) {
-                                currAssetModel.setAssetName(codes[1]);
+                            currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                            currAssetModel.setSimId(AppContext.simId);
+                            DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel);
+                            dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
+                        } else {
+                            for (int i = 0; i < codes.length; i++) {
+                                if (i == 0) {
+                                    currAssetModel.setAssetCode(codes[0]);
+                                }
+                                if (i == 1) {
+                                    currAssetModel.setAssetName(codes[1]);
+                                }
+                                if (i == 2) {
+                                    currAssetModel.setOperator(codes[2]);
+                                }
+                                if (i == 3) {
+                                    currAssetModel.setOrganName(codes[3]);
+                                }
                             }
-                            if (i == 2) {
-                                currAssetModel.setOperator(codes[2]);
+                            currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                            currAssetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                            currAssetModel.setUserId(AppContext.currUser.getAccounts());
+                            currAssetModel.setAddr(AppContext.address);
+                            currAssetModel.setSimId(AppContext.simId);
+                            ExtDate nowdate = new ExtDate();
+                            currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                            if (StringUtils.isBlank(currAssetModel.getPdfs())) {
+                                currAssetModel.setPdfs("1");
                             }
-                            if (i == 3) {
-                                currAssetModel.setOrganName(codes[3]);
-                            }
-                        }
-                        currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
-                        currAssetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
-                        currAssetModel.setUserId(AppContext.currUser.getAccounts());
-                        currAssetModel.setAddr(AppContext.address);
-                        currAssetModel.setSimId(AppContext.simId);
-                        ExtDate nowdate = new ExtDate();
-                        currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
-                        if (StringUtils.isBlank(currAssetModel.getPdfs())) {
-                            currAssetModel.setPdfs("1");
-                        }
 
-                        DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel, "offline");
-                        dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
+                            DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel, "offline");
+                            dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
+                        }
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

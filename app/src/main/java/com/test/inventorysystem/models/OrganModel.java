@@ -39,7 +39,7 @@ public class OrganModel {
 
     public OrganModel (JsonObject jsonObject) {
         super();
-        setOrganId(jsonObject.get("organID").getAsString());
+        setOrganID(jsonObject.get("organID").getAsString());
         setOrganCode(jsonObject.get("organCode").getAsString());
         setOrganName(jsonObject.get("organName").getAsString());
         setShortName(jsonObject.get("shortName").getAsString());
@@ -74,14 +74,6 @@ public class OrganModel {
 
     public String getUserAccount() {
         return userAccount;
-    }
-
-    public void setOrganId(String organID) {
-        this.organID = organID;
-    }
-
-    public String getOrganId() {
-        return organID;
     }
 
     public void setOrganCode(String organCode) {

@@ -20,8 +20,10 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 
@@ -56,6 +58,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private static final int PARSE_BARCODE_FAIL = 300;
     public final static int RESULT_CODE = 1;
     private boolean firstInitCamera = true;
+    private ImageButton flashLigth = null;
 
     private Camera camera;
     /**
@@ -87,7 +90,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private ViewfinderView viewfinderView;
     private CaptureActivityHandler handler;
     private Result lastResult;
-    private boolean isFlashlightOpen;
+    private boolean isFlashlightOpen = false;
 
     /**
      * 【辅助解码的参数(用作MultiFormatReader的参数)】 编码类型，该参数告诉扫描器采用何种编码方式解码，即EAN-13，QR
@@ -172,6 +175,20 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
                     new String[] {Manifest.permission.CAMERA},
                     Config.USER_PERMISSIONS_REQUEST_CAMERA);
         }
+
+        flashLigth = (ImageButton) findViewById(R.id.imageButton_flashlight);
+        flashLigth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isFlashlightOpen) {
+                    cameraManager.setTorch(false);
+                    isFlashlightOpen = false;
+                } else {
+                    cameraManager.setTorch(true);
+                    isFlashlightOpen = true;
+                }
+            }
+        });
     }
 
     @Override

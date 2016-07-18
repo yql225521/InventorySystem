@@ -111,7 +111,8 @@
         app:layout_constraintTop_toTopOf="@+id/activity_offline_inventory_manager"
         app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
         app:layout_constraintBottom_toBottomOf="@+id/activity_offline_inventory_manager"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:background="@android:color/background_light">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
