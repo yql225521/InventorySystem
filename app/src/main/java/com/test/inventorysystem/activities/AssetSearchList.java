@@ -30,6 +30,8 @@ import com.test.inventorysystem.utils.TransUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,7 +95,6 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AssetModel assetModel = (AssetModel) listView.getItemAtPosition(i);
-                System.out.println("02 " + assetModel.getAssetCode());
                 DialogFragment dialogFragment = AssetInfoDialogUtil.newInstance(assetModel);
                 dialogFragment.show(getFragmentManager(), "dialog_asset_info");
             }
@@ -134,6 +135,16 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
                                 AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
                                 assetList.add(assetModel);
                             }
+                            Collections.sort(assetList, new Comparator<AssetModel>() {
+                                @Override
+                                public int compare(AssetModel t2, AssetModel t1) {
+                                    if (t1.getFinCode() != null) {
+                                        return t2.getFinCode().compareTo(t1.getFinCode());
+                                    } else {
+                                        return t2.getAssetCode().compareTo(t1.getAssetCode());
+                                    }
+                                }
+                            });
                             listAdapter.addAll(assetList);
                             if (isFirstLoad) {
                                 isFirstLoad = false;
@@ -164,12 +175,24 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
             List<AssetModel> assetList = dbManager.findOfflineAssets(getHelper().getAssetDao(), hashMap);
             if (assetList.size() == 0) {
                 Toast.makeText(this, "没有搜索到查询结果...", Toast.LENGTH_SHORT).show();
+                mProgressBar.setVisibility(View.GONE);
+            } else {
+                System.out.println(assetList.get(0).getFinCode() + "| " + assetList.get(0).getAssetType() + "| " + assetList.get(0).getCateName() + "| " +
+                        assetList.get(0).getMgrOrganCode());
+                Collections.sort(assetList, new Comparator<AssetModel>() {
+                    @Override
+                    public int compare(AssetModel t2, AssetModel t1) {
+                        if (t1.getFinCode() != null) {
+                            return t2.getFinCode().compareTo(t1.getFinCode());
+                        } else {
+                            return t2.getAssetCode().compareTo(t1.getAssetCode());
+                        }
+                    }
+                });
+                listAdapter.addAll(assetList);
+                mProgressBar.setVisibility(View.GONE);
+                countInfo.setText("已加载" + assetList.size() + "条-共" + assetList.size() + "条");
             }
-            System.out.println(assetList.get(0).getFinCode() + "| " + assetList.get(0).getAssetType() + "| " + assetList.get(0).getCateName() + "| " +
-                    assetList.get(0).getMgrOrganCode());
-            listAdapter.addAll(assetList);
-            mProgressBar.setVisibility(View.GONE);
-            countInfo.setText("已加载" + assetList.size() + "条-共" + assetList.size() + "条");
         } catch (SQLException e) {
             e.printStackTrace();
         }

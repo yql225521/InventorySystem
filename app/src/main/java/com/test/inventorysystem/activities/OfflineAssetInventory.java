@@ -183,7 +183,6 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                         dialogFragment.show(getFragmentManager(), "inv_offline_existed_asset");
                     } else {
                         if (AppContext.offlineLogin && AppContext.hasOfflineData) {
-                            System.out.println("here " + assetFinCode);
                             currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), assetFinCode, "2");
                             ExtDate nowdate = new ExtDate();
                             currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
@@ -198,22 +197,26 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                             for (int i = 0; i < codes.length; i++) {
                                 if (i == 0) {
                                     currAssetModel.setAssetCode(codes[0]);
+                                    System.out.println("test");
                                 }
                                 if (i == 1) {
                                     currAssetModel.setAssetName(codes[1]);
+                                    System.out.println("test");
                                 }
                                 if (i == 2) {
                                     currAssetModel.setOperator(codes[2]);
+                                    System.out.println("test");
                                 }
                                 if (i == 3) {
                                     currAssetModel.setOrganName(codes[3]);
+                                    System.out.println("test");
                                 }
                             }
                             currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
                             currAssetModel.setOrganCode(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
                             currAssetModel.setUserId(AppContext.currUser.getAccounts());
                             currAssetModel.setAddr(AppContext.address);
-                            currAssetModel.setSimId(AppContext.simId);
+//                            currAssetModel.setSimId(AppContext.simId);
                             ExtDate nowdate = new ExtDate();
                             currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
                             if (StringUtils.isBlank(currAssetModel.getPdfs())) {

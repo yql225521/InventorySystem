@@ -56,18 +56,44 @@ public class AssetQRDialogUtil extends DialogFragment {
     public static AssetQRDialogUtil newInstance (AssetModel assetModel) {
         AssetQRDialogUtil frag = new AssetQRDialogUtil();
         Bundle args = new Bundle();
-        args.putString("code", assetModel.getAssetCode());
-        args.putString("name", assetModel.getAssetName());
-        args.putString("type", assetModel.getAssetTypeName());
-        args.putString("category", assetModel.getCateName());
-        args.putString("mgr_organ", assetModel.getMgrOrganName());
-        args.putString("organ", assetModel.getOrganName());
-        args.putString("place", assetModel.getStorageDescr());
-        args.putString("operator", assetModel.getOperator());
-        args.putDouble("original_value", assetModel.getOriginalValue());
-        args.putString("date", assetModel.getEnableDateString());
-        args.putString("use_age", assetModel.getUseAge());
-        args.putString("status", assetModel.getStatus());
+        if (assetModel.getFinCode() != null) {
+            args.putString("code", assetModel.getFinCode());
+        } else {
+            args.putString("code", assetModel.getAssetCode());
+        }
+        if (assetModel.getAssetName() != null) {
+            args.putString("name", assetModel.getAssetName());
+        }
+        if (assetModel.getAssetTypeName() != null) {
+            args.putString("type", assetModel.getAssetTypeName());
+        }
+        if (assetModel.getCateName() != null) {
+            args.putString("category", assetModel.getCateName());
+        }
+        if (assetModel.getMgrOrganName() != null) {
+            args.putString("mgr_organ", assetModel.getMgrOrganName());
+        }
+        if (assetModel.getOrganName() != null) {
+            args.putString("organ", assetModel.getOrganName());
+        }
+        if (assetModel.getStorageDescr() != null) {
+            args.putString("place", assetModel.getStorageDescr());
+        }
+        if (assetModel.getOperator() != null) {
+            args.putString("operator", assetModel.getOperator());
+        }
+        if (assetModel.getOriginalValue() != null) {
+            args.putDouble("original_value", assetModel.getOriginalValue());
+        }
+        if (assetModel.getEnableDateString() != null) {
+            args.putString("date", assetModel.getEnableDateString());
+        }
+        if (assetModel.getUseAge() != null) {
+            args.putString("use_age", assetModel.getUseAge());
+        }
+        if (assetModel.getStatus() != null) {
+            args.putString("status", assetModel.getStatus());
+        }
         frag.setArguments(args);
         return frag;
     }

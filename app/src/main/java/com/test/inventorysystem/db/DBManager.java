@@ -55,6 +55,7 @@ public class DBManager {
     public void saveOrgan(Dao<OrganModel, String> organDao, OrganModel organModel, String userAccount) throws SQLException {
         organModel.setPid(userAccount + "_" + organModel.getOrganID());
         organDao.createOrUpdate(organModel);
+        System.out.println("用户部门创建.....");
     }
 
     public void saveOrganList(Dao<OrganModel, String> organDao, String userAccount, ArrayList<OrganModel> organs) throws SQLException {
@@ -139,9 +140,9 @@ public class DBManager {
         return upid;
     }
 
-    public Boolean findExistedOfflineInvAsset(Dao<AssetModel, String> assetDao, String assetCode) throws SQLException {
+    public Boolean findExistedOfflineInvAsset(Dao<AssetModel, String> assetDao, String finCode) throws SQLException {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
-        queryBuilder.where().eq("assetCode", assetCode);
+        queryBuilder.where().eq("finCode", finCode).and().eq("offlineInv", true);
         AssetModel assetModel = queryBuilder.queryForFirst();
         if (assetModel != null) {
             return true;
@@ -185,7 +186,6 @@ public class DBManager {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
         queryBuilder.where().eq("finCode", finCode).and().eq("dt", dt);
         AssetModel assetModel = queryBuilder.queryForFirst();
-        System.out.println("found it " + assetModel);
         if (assetModel == null) {
             return null;
         } else  {
@@ -216,7 +216,7 @@ public class DBManager {
             where.and().eq("cateID", category);
         }
         ArrayList<AssetModel> assetList = new ArrayList<>(queryBuilder.query());
-
+        System.out.println(assetList);
         return assetList;
     }
 

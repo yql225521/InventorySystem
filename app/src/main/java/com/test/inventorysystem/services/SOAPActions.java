@@ -66,6 +66,9 @@ public class SOAPActions {
             case "getAssetDatas":
                 this.downloadOfflineData(hashMap);
                 break;
+            case "isInventory":
+                this.isInventory(hashMap);
+                break;
         }
     }
 
@@ -149,7 +152,12 @@ public class SOAPActions {
         String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
         this.xmlRequest_body = "<ws:getAssetDatas><mgrOrganCode>" + mgrOrganCode + "</mgrOrganCode></ws:getAssetDatas>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+    }
 
+    private void isInventory(HashMap hashMap) {
+        String organCode = hashMap.get("organCode").toString();
+        this.xmlRequest_body = "<ws:isInventory><organCode>" + organCode + "</organCode></ws:isInventory>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
     public void sendRequest(Context ctx, String xmlRequest, final CallbackInterface callback) {
@@ -175,9 +183,10 @@ public class SOAPActions {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                response = "error";
                 System.out.println("服务器请求失败,没有返回值...");
                 System.out.println(error);
-                response = String.valueOf(0);
+                callback.callBackFunction();
             }
         });
     }

@@ -43,7 +43,9 @@ public class AssetInfoDialogUtil extends DialogFragment {
         } else {
             args.putString("code", assetModel.getAssetCode());
         }
-        args.putString("name", assetModel.getAssetName());
+        if (assetModel.getAssetName() != null) {
+            args.putString("name", assetModel.getAssetName());
+        }
         if (assetModel.getAssetTypeName() != null) {
             args.putString("type", assetModel.getAssetTypeName());
         }

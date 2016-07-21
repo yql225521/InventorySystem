@@ -30,7 +30,7 @@ public class UserModel {
     @DatabaseField
     private int securityLevel;
     @DatabaseField
-    private String organCode = "";
+    private String organCode;
 
     public void setUsername(String username) {
         this.username = username;

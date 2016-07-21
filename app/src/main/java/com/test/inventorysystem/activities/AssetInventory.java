@@ -1,8 +1,10 @@
 package com.test.inventorysystem.activities;
 
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,12 +57,13 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     private ArrayList<OrganModel> organs = new ArrayList<OrganModel>();
     private ListView listView;
     private AssetListAdapter assetListAdapter;
-    private LinearLayout inventoryProgressBar = null;
+    private LinearLayout inventoryProgressBar;
     private DBManager dbManager = new DBManager();
 
     private String currAssetCode;
     private String response;
     private AssetModel currAssetModel;
+    private Boolean firstTimeOpen = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,20 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         organSpinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         organSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         inventoryOrganSpinner.setAdapter(organSpinnerArrayAdapter);
+        inventoryOrganSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!firstTimeOpen) {
+                    inventoryOrganSpinner.setEnabled(false);
+                }
+                firstTimeOpen = false;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         listView = (ListView) findViewById(R.id.listView_asset_inventory);
         assetListAdapter = new AssetListAdapter(this, new ArrayList<AssetModel>());
@@ -128,6 +145,15 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 assetMaunal();
             }
         });
+
+        endBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inventoryOrganSpinner.setEnabled(true);
+            }
+        });
+
+        isInventory();
     }
 
     private void startCodeScanner() {
@@ -145,6 +171,42 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         startActivityForResult(intent, REQUEST_CODE);
     }
 
+    private void isInventory() {
+        String methodName = "isInventory";
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("methodName", methodName);
+        hashMap.put("organCode", AppContext.currOrgan.getOrganCode());
+
+        final SOAPActions sa = new SOAPActions(hashMap);
+        String xmlRequest = sa.getXmlRequest();
+
+        sa.sendRequest(this, xmlRequest, new CallbackInterface() {
+            @Override
+            public void callBackFunction() {
+                response = TransUtil.decode(sa.getResponse());
+                JsonParser jsonParser = new JsonParser();
+                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                String message = jsonObject.get("message").getAsString();
+                int success = jsonObject.get("success").getAsInt();
+
+                if(success != 1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AssetInventory.this);
+                    builder.setMessage(message);
+
+                    builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            AssetInventory.this.finish();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -153,9 +215,6 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             String barcode = bundle.getString("barcode");
             if (!"".equals(barcode)) {
                 String[] codes = Sysconfig.getCodes(barcode);
-                for (int i = 0; i < codes.length; i++) {
-                    System.out.println(codes[i]);
-                }
                 selectAssetInfo(codes[0], "1");
             }
         } else if (resultCode == InventoryUpdate.RESULT_CODE) {
@@ -250,6 +309,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     }
 
     public void doInventory(AssetModel assetModel) {
+        inventoryProgressBar.setVisibility(View.VISIBLE);
         String methodName = "doInventory";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         assetModel.setSimId(AppContext.simId);
@@ -268,9 +328,6 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         hashMap.put("organCode", organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
         hashMap.put("username", AppContext.currUser.getAccounts());
         hashMap.put("assetJson", this.getAssetJson(assetModel));
-        System.out.println("****" + this.getAssetJson(assetModel));
-//        System.out.println(asset1);
-//        hashMap.put("assetCode", assetCode);
         loadDoInventoryInfo(hashMap);
     }
 
@@ -284,14 +341,14 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 response = TransUtil.decode(sa.getResponse());
                 JsonParser jsonParser = new JsonParser();
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println("new response " + jsonObject);
-                int success = jsonObject.get("success").getAsInt();
                 String message = jsonObject.get("message").getAsString();
+                int success = jsonObject.get("success").getAsInt();
                 JsonObject asset = jsonObject.get("asset").getAsJsonObject();
 
                 AssetModel assetModel = new AssetModel(asset);
 
                 if (success == 1) {
+                    inventoryProgressBar.setVisibility(View.GONE);
                     assetListAdapter.replace(assetModel);
                     message = "[" + assetModel.getAssetCode() + "] " + assetModel.getAssetName() + "盘点成功";
                     DialogFragment dialogFragment = InvContinueDialogUtil.newInstance(message);

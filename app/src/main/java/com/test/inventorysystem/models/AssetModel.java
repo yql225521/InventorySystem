@@ -1,5 +1,8 @@
 package com.test.inventorysystem.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.JsonObject;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -13,7 +16,7 @@ import java.util.Date;
  */
 
 @DatabaseTable(tableName = "asset")
-public class AssetModel implements Serializable {
+public class AssetModel implements Serializable, Parcelable {
 
     @DatabaseField(id = true)
     private String pid = "";
@@ -611,6 +614,16 @@ public class AssetModel implements Serializable {
 
     public String getNote() {
         return note;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }
 

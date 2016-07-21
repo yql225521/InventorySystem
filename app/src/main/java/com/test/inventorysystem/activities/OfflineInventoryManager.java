@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -89,6 +90,13 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
         offlineInvListMgrAdapter = new OfflineInvListMgrAdapter(this, organUploadList, offlineInvAssetList);
         listView.setAdapter(offlineInvListMgrAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                System.out.println("heheda");
+            }
+        });
+
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,9 +144,6 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
     private void deleteCheckedItems() {
         organUploadQueue = offlineInvListMgrAdapter.getUploadOrganQueue();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-//        builder.setMessage("确定要删除已选盘点数据?...")
-//                .setTitle(R.string.offline_asset_inventory_delete);
 
         builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

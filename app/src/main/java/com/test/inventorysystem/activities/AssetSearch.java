@@ -87,6 +87,7 @@ public class AssetSearch extends OrmLiteBaseActivity<DBHelper> {
                 searchList.putExtra("assetName", assetName.getText().toString().trim());
                 searchList.putExtra("assetCode", assetCode.getText().toString().trim());
                 searchList.putExtra("organCode", organs.get(assetOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                System.out.println("*** " + types.get(assetTypeSpinner.getSelectedItemPosition()).getTypeCode());
                 searchList.putExtra("category", types.get(assetTypeSpinner.getSelectedItemPosition()).getTypeCode());
                 startActivity(searchList);
             }

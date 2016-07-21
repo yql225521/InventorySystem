@@ -10,14 +10,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
-import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.db.DBManager;
+import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.interfaces.CallbackInterface;
 import com.test.inventorysystem.models.CfgModel;
 import com.test.inventorysystem.models.OrganModel;
@@ -37,20 +38,14 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
     private EditText loginUsr = null;
     private EditText loginPwd = null;
     private TextView loginTips = null;
-    private Button loginBtn = null;
-    private Button loginOffBtn = null;
-    private ImageButton deleteUsrBtn = null;
-    private ImageButton deletePwdBtn = null;
     private ProgressBar loginProgressBar = null;
     private boolean offline_flag = false;
 
     private String response = "";
 
     private DBManager dbManager = new DBManager();
-    private String userAccount = "";
-    private String userName = "";
-    private String userDepartmentId = "";
-//    private String currentUser = "";
+    private UserModel loginUser;
+    private OrganModel loginOrgan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +60,13 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
         this.loginUsr = (EditText) findViewById(R.id.editText_usr);
         this.loginPwd = (EditText) findViewById(R.id.editText_pwd);
         this.loginTips = (TextView) findViewById(R.id.textView_login_tips);
-        this.loginBtn = (Button) findViewById(R.id.button_login);
-        this.loginOffBtn = (Button) findViewById(R.id.button_login_offlilne);
-        this.deleteUsrBtn = (ImageButton) findViewById(R.id.imageButton_del_usr);
-        this.deletePwdBtn = (ImageButton) findViewById(R.id.imageButton_del_pwd);
         this.loginProgressBar = (ProgressBar) findViewById(R.id.progressBar_login);
+        final Button loginBtn = (Button) findViewById(R.id.button_login);
+        Button loginOffBtn = (Button) findViewById(R.id.button_login_offlilne);
+        ImageButton deleteUsrBtn = (ImageButton) findViewById(R.id.imageButton_del_usr);
+        ImageButton deletePwdBtn = (ImageButton) findViewById(R.id.imageButton_del_pwd);
 
-        this.loginBtn.setOnClickListener(new View.OnClickListener() {
+        loginBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -90,7 +85,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
             }
         });
 
-        this.loginOffBtn.setOnClickListener(new View.OnClickListener() {
+        loginOffBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginProgressBar.setVisibility(View.VISIBLE);
@@ -98,7 +93,8 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 try {
                     UserModel loginUser = dbManager.findUser(getHelper().getUserDao(), loginUsr.getText().toString());
                     if (loginUser != null) {
-                        OrganModel loginOrgan = dbManager.findOrgan(getHelper().getOrganDao(), loginUser.getOrganCode());
+                        loginOrgan = dbManager.findOrgan(getHelper().getOrganDao(), loginUser.getOrganCode());
+                        System.out.println(loginOrgan.getOrganCode());
                         List<OrganModel> listttt = dbManager.findOrgans(getHelper().getOrganDao(), loginUser.getAccounts(), null);
                         for (OrganModel organModel : listttt) {
                             System.out.println(organModel.getOrganName());
@@ -113,6 +109,10 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                             AppContext.hasOfflineData = true;
                         }
                         buildMainFunction();
+                    } else {
+                        Toast.makeText(Login.this, "用户名错误", Toast.LENGTH_SHORT).show();
+                        loginProgressBar.setVisibility(View.GONE);
+                        loginTips.setVisibility(View.GONE);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -120,14 +120,14 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
             }
         });
 
-        this.deleteUsrBtn.setOnClickListener(new View.OnClickListener() {
+        deleteUsrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginUsr.setText("");
             }
         });
 
-        this.deletePwdBtn.setOnClickListener(new View.OnClickListener() {
+        deletePwdBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginPwd.setText("");
@@ -147,51 +147,26 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
                 System.out.println("user info " + jsonObject);
                 int success = jsonObject.get("success").getAsInt();
-                String message = jsonObject.get("message").getAsString();
-                JsonObject org = jsonObject.get("org").getAsJsonObject();
-                JsonObject user = jsonObject.get("user").getAsJsonObject();
 
-                if (success == 1) {
-                    userAccount = user.get("accounts").getAsString();
-                    userName = user.get("username").getAsString();
-                    String userIsValid = user.get("isValid").getAsString();
-                    userDepartmentId = user.get("departmentId").getAsString();
+                // 用户名或密码错误,服务器无返回值
+                if (success == 2) {
+                    Toast.makeText(Login.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                    loginProgressBar.setVisibility(View.GONE);
+                }
+                // 获取用户数据成功
+                else if (success == 1) {
+                    JsonObject org = jsonObject.get("org").getAsJsonObject();
+                    JsonObject user = jsonObject.get("user").getAsJsonObject();
 
-                    UserModel userModel = new UserModel();
-                    userModel.setAccounts(user.get("accounts").getAsString());
-                    userModel.setUsername(user.get("username").getAsString());
-                    userModel.setDepartmentId(user.get("departmentId").getAsString());
-                    userModel.setIsValid(user.get("isValid").getAsString());
-                    userModel.setSecurityLevel(1);
-                    userModel.setOrganCode(org.get("organCode").getAsString());
+                    initUser(user, org.get("organCode").getAsString());
+                    initOrgan(org);
 
-                    if (user.get("userId") != null) {
-                        userModel.setUserId(user.get("userId").getAsString());
-                    }
-                    if (user.get("departmentName") != null) {
-                        userModel.setDepartmentName(user.get("departmentName").getAsString());
-                    }
-                    if (user.get("employeeId") != null) {
-                        userModel.setEmployeeId(user.get("employeeId").getAsString());
-                    }
-                    if (user.get("employeeName") != null) {
-                        userModel.setEmployeeName(user.get("employeeName").getAsString());
-                    }
-
-                    OrganModel organModel = new OrganModel(org);
-                    organModel.setUserAccount(userModel.getAccounts());
-
-
-                    AppContext.currUser = userModel;
-                    AppContext.currOrgan = organModel;
                     AppContext.address = "none";
                     AppContext.simId = hashMap.get("simId").toString();
 
                     try {
-                        System.out.println("before save: " + userModel.getDepartmentId());
-                        dbManager.saveUser(getHelper().getUserDao(), userModel);
-                        dbManager.saveOrgan(getHelper().getOrganDao(), organModel, userModel.getAccounts());
-//                    currentUser = dbManager.findUser(getHelper().getUserDao(), userAccount);
+                        dbManager.saveUser(getHelper().getUserDao(), loginUser);
+                        dbManager.saveOrgan(getHelper().getOrganDao(), loginOrgan, loginUser.getAccounts());
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -201,6 +176,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                     hashMap.put("organCode", org.get("organCode").getAsString());
                     loadBaseData(hashMap);
                 }
+
             }
         });
     }
@@ -223,7 +199,6 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 JsonArray typeListString = jsonObject.get("typeList").getAsJsonArray();
                 JsonArray matchTypeListString = jsonObject.get("matchTypeList").getAsJsonArray();
                 JsonArray completeTypeListString = jsonObject.get("completeTypeList").getAsJsonArray();
-//                List<OrganModel> currOrganlist = null;
 
                 if (success == 1) {
                     try {
@@ -232,7 +207,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                             OrganModel organModel = new OrganModel(organListString.get(i).getAsJsonObject());
                             organList.add(organModel);
                         }
-                        dbManager.saveOrganList(getHelper().getOrganDao(), userAccount, organList);
+                        dbManager.saveOrganList(getHelper().getOrganDao(), AppContext.currUser.getAccounts(), organList);
 
                         ArrayList<TypeModel> typeList = new ArrayList<TypeModel>();
                         for (int i = 0; i < typeListString.size(); i++) {
@@ -247,7 +222,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                             TypeModel typeModel = new TypeModel(completeTypeListString.get(i).getAsJsonObject());
                             typeList.add(typeModel);
                         }
-                        dbManager.saveTypeList(getHelper().getTypeDao(), userAccount, typeList);
+                        dbManager.saveTypeList(getHelper().getTypeDao(), AppContext.currUser.getAccounts(), typeList);
 
                         buildMainFunction();
                     } catch (SQLException e) {
@@ -256,6 +231,39 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                 }
             }
         });
+    }
+
+    private void initUser(JsonObject user, String organCode) {
+        loginUser = new UserModel();
+        loginUser.setAccounts(user.get("accounts").getAsString());
+        loginUser.setUsername(user.get("username").getAsString());
+        loginUser.setDepartmentId(user.get("departmentId").getAsString());
+        loginUser.setIsValid(user.get("isValid").getAsString());
+        loginUser.setSecurityLevel(1);
+        System.out.println(organCode);
+        loginUser.setOrganCode(organCode);
+
+        if (user.get("userId") != null) {
+            loginUser.setUserId(user.get("userId").getAsString());
+        }
+        if (user.get("departmentName") != null) {
+            loginUser.setDepartmentName(user.get("departmentName").getAsString());
+        }
+        if (user.get("employeeId") != null) {
+            loginUser.setEmployeeId(user.get("employeeId").getAsString());
+        }
+        if (user.get("employeeName") != null) {
+            loginUser.setEmployeeName(user.get("employeeName").getAsString());
+        }
+
+        AppContext.currUser = loginUser;
+    }
+
+    private void initOrgan(JsonObject organ) {
+        loginOrgan = new OrganModel(organ);
+        loginOrgan.setUserAccount(AppContext.currUser.getAccounts());
+        System.out.println("login organ " + loginOrgan.getOrganCode());
+        AppContext.currOrgan = loginOrgan;
     }
 
     private void buildMainFunction() {
