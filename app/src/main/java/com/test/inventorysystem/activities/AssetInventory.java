@@ -16,11 +16,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
@@ -40,9 +36,7 @@ import com.test.inventorysystem.utils.TransUtil;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.lang.reflect.Type;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

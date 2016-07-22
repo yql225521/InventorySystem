@@ -14,14 +14,25 @@ import java.util.List;
  */
 
 public class Sysconfig {
+    private static Sysconfig m_intance = null;
     private static String ServiceUrl = null;
     private static String Verbz = null;
     private static String LocalAdm = null;
     private static String NameSpace = null;
     private static String AutoUpdateUrl = null;
     private static String ModelID = null;
+    private static String XMLRequestHeader = null;
+    private static String XMLRequestRear = null;
     private static Context _context = null;
     private static String areaID = null;
+
+    synchronized public static Sysconfig getInstance(Context c) {
+        if (m_intance == null) {
+            m_intance = new Sysconfig();
+            _context = c;
+        }
+        return m_intance;
+    }
 
     public static String getServiceUrl() {
         PropertiesUtil p = new PropertiesUtil(_context.getResources()
@@ -47,7 +58,7 @@ public class Sysconfig {
     public static void setLocalAdm(String localAdm) {
         LocalAdm = localAdm;
         PreferencesUtil pu = new PreferencesUtil(_context);
-        pu.Write("SysConfig", "LocalAdm", localAdm);
+        pu.Write("Sysconfig", "LocalAdm", localAdm);
     }
 
     /**
@@ -57,7 +68,7 @@ public class Sysconfig {
      */
     public static String getLocalAdm() {
         PreferencesUtil pu = new PreferencesUtil(_context);
-        LocalAdm = pu.Read("SysConfig", "LocalAdm");
+        LocalAdm = pu.Read("Sysconfig", "LocalAdm");
         if (LocalAdm.equals("")) {
             PropertiesUtil p = new PropertiesUtil(_context.getResources()
                     .openRawResource(R.raw.config));
@@ -74,7 +85,7 @@ public class Sysconfig {
     public static void setNameSpace(String nameSpace) {
         NameSpace = nameSpace;
         PreferencesUtil pu = new PreferencesUtil(_context);
-        pu.Write("SysConfig", "NameSpace", nameSpace);
+        pu.Write("Sysconfig", "NameSpace", nameSpace);
     }
 
     /**
@@ -84,7 +95,7 @@ public class Sysconfig {
      */
     public static String getNameSpace() {
         PreferencesUtil pu = new PreferencesUtil(_context);
-        NameSpace = pu.Read("SysConfig", "NameSpace");
+        NameSpace = pu.Read("Sysconfig", "NameSpace");
         if (NameSpace.equals("")) {
             PropertiesUtil p = new PropertiesUtil(_context.getResources()
                     .openRawResource(R.raw.config));
@@ -94,6 +105,20 @@ public class Sysconfig {
         return NameSpace;
     }
 
+    public static String getXMLRequestHeader() {
+        PropertiesUtil p = new PropertiesUtil(_context.getResources()
+                .openRawResource(R.raw.config));
+        XMLRequestHeader = p.Read("XMLRequestHeader");
+        return XMLRequestHeader;
+    }
+
+    public static String getXMLRequestRear() {
+        PropertiesUtil p = new PropertiesUtil(_context.getResources()
+                .openRawResource(R.raw.config));
+        XMLRequestRear = p.Read("XMLRequestRear");
+        return XMLRequestRear;
+    }
+
     /**
      * @param autoUpdateUrl
      *            the autoUpdateUrl to set
@@ -101,7 +126,7 @@ public class Sysconfig {
     public static void setAutoUpdateUrl(String autoUpdateUrl) {
         AutoUpdateUrl = autoUpdateUrl;
         PreferencesUtil pu = new PreferencesUtil(_context);
-        pu.Write("SysConfig", "AutoUpdateUrl", autoUpdateUrl);
+        pu.Write("Sysconfig", "AutoUpdateUrl", autoUpdateUrl);
     }
 
     /**
@@ -121,7 +146,7 @@ public class Sysconfig {
     public static void setModelID(String modelID) {
         ModelID = modelID;
         PreferencesUtil pu = new PreferencesUtil(_context);
-        pu.Write("SysConfig", "ModelID", modelID);
+        pu.Write("Sysconfig", "ModelID", modelID);
     }
 
     /**
@@ -129,7 +154,7 @@ public class Sysconfig {
      */
     public static String getModelID() {
         PreferencesUtil pu = new PreferencesUtil(_context);
-        ModelID = pu.Read("SysConfig", "ModelID");
+        ModelID = pu.Read("Sysconfig", "ModelID");
         if (ModelID.equals("")) {
             PropertiesUtil p = new PropertiesUtil(_context.getResources()
                     .openRawResource(R.raw.config));

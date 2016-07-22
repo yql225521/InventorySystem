@@ -20,11 +20,8 @@ import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.services.SOAPActions;
 import com.test.inventorysystem.utils.AssetInfoDialogUtil;
 import com.test.inventorysystem.utils.AssetQRDialogUtil;
-import com.test.inventorysystem.utils.InvAssetInfoDialogUtil;
 import com.test.inventorysystem.utils.Sysconfig;
 import com.test.inventorysystem.utils.TransUtil;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -2,7 +2,6 @@ package com.test.inventorysystem.activities;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,32 +12,24 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
-import com.test.inventorysystem.adapters.AssetListAdapter;
 import com.test.inventorysystem.adapters.OfflineInvListAdapter;
 import com.test.inventorysystem.db.DBHelper;
 import com.test.inventorysystem.db.DBManager;
-import com.test.inventorysystem.interfaces.CallbackInterface;
 import com.test.inventorysystem.models.AssetModel;
 import com.test.inventorysystem.models.OrganModel;
-import com.test.inventorysystem.services.SOAPActions;
 import com.test.inventorysystem.utils.AppContext;
 import com.test.inventorysystem.utils.AssetInfoDialogUtil;
 import com.test.inventorysystem.utils.ExtDate;
 import com.test.inventorysystem.utils.InvAssetInfoDialogUtil;
-import com.test.inventorysystem.utils.InvContinueDialogUtil;
 import com.test.inventorysystem.utils.OfflineInvExistedAssetDialogUtil;
 import com.test.inventorysystem.utils.Sysconfig;
-import com.test.inventorysystem.utils.TransUtil;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> implements InvAssetInfoDialogUtil.NoticeDialogListener, OfflineInvExistedAssetDialogUtil.NoticeDialogListener {
@@ -82,15 +73,15 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (!firstTimeOpen) {
                     inventoryOrganSpinner.setEnabled(false);
-                    assetListAdapter.clear();
-                    try {
-                        List<AssetModel> list = dbManager.findOfflineInvAssetsByOrgan(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
-                        assetListAdapter.addAll(list);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
                 }
                 firstTimeOpen = false;
+                assetListAdapter.clear();
+                try {
+                    List<AssetModel> list = dbManager.findOfflineInvAssetsByOrgan(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
+                    assetListAdapter.addAll(list);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

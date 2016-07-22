@@ -26,6 +26,7 @@ import com.test.inventorysystem.models.TypeModel;
 import com.test.inventorysystem.models.UserModel;
 import com.test.inventorysystem.services.SOAPActions;
 import com.test.inventorysystem.utils.AppContext;
+import com.test.inventorysystem.utils.Sysconfig;
 import com.test.inventorysystem.utils.TransUtil;
 
 import java.sql.SQLException;
@@ -55,7 +56,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
     }
 
     private void Initialization() {
-
+        Sysconfig.getInstance(this);
         AppContext.offlineLogin = false;
         this.loginUsr = (EditText) findViewById(R.id.editText_usr);
         this.loginPwd = (EditText) findViewById(R.id.editText_pwd);
@@ -95,10 +96,6 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                     if (loginUser != null) {
                         loginOrgan = dbManager.findOrgan(getHelper().getOrganDao(), loginUser.getOrganCode());
                         System.out.println(loginOrgan.getOrganCode());
-                        List<OrganModel> listttt = dbManager.findOrgans(getHelper().getOrganDao(), loginUser.getAccounts(), null);
-                        for (OrganModel organModel : listttt) {
-                            System.out.println(organModel.getOrganName());
-                        }
                         AppContext.offlineLogin = true;
                         AppContext.currUser = loginUser;
                         AppContext.currOrgan = loginOrgan;
@@ -165,6 +162,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                         AppContext.address = "none";
                         AppContext.simId = hashMap.get("simId").toString();
 
+                        //将当前登录用户和其所属管理部门信息存入本地数据,以便离线登录
                         try {
                             dbManager.saveUser(getHelper().getUserDao(), loginUser);
                             dbManager.saveOrgan(getHelper().getOrganDao(), loginOrgan, loginUser.getAccounts());
@@ -186,6 +184,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
         });
     }
 
+    // 获取当前登录管理部门下所属的所有使用部门
     private void loadBaseData(HashMap hashMap) {
         final SOAPActions sa = new SOAPActions(hashMap);
         String xmlRequest = sa.getXmlRequest();
@@ -200,7 +199,6 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                     System.out.println(jsonObject);
 
                     int success = jsonObject.get("success").getAsInt();
-                    String message = jsonObject.get("message").getAsString();
                     JsonArray organListString = jsonObject.get("organList").getAsJsonArray();
                     JsonArray typeListString = jsonObject.get("typeList").getAsJsonArray();
                     JsonArray matchTypeListString = jsonObject.get("matchTypeList").getAsJsonArray();

@@ -13,6 +13,7 @@ import cz.msebera.android.httpclient.protocol.HTTP;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.test.inventorysystem.interfaces.CallbackInterface;
+import com.test.inventorysystem.utils.Sysconfig;
 
 /**
  * Created by youmengli on 6/2/16.
@@ -20,17 +21,15 @@ import com.test.inventorysystem.interfaces.CallbackInterface;
 
 public class SOAPActions {
     // create new SOAP request
-    private String xmlRequest_header = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://ws.assetmgr.rstco.com/\">" +
-            "<soapenv:Header/>" + "<soapenv:Body>";
+    private String serviceUrl = Sysconfig.getServiceUrl();
+    private String nameSpace = Sysconfig.getNameSpace();
+    private String xmlRequest_header = Sysconfig.getXMLRequestHeader();
+    private String xmlRequest_rear = Sysconfig.getXMLRequestRear();
     private String xmlRequest_body = "";
-    private String xmlRequest_rear = "</soapenv:Body>" + "</soapenv:Envelope>";
     private String xmlRequest = "";
     private String methodName = "";
-
     // http services parameters
     private String soapAction = "";
-    private String serviceUrl = "http://192.168.0.181:8080/assetmgr/ws/DataAccess?wsdl";
-    private String nameSpace = "http://http://ws.assetmgr.rstco.com/";
     //final response get from server side
     private String response = "";
 
@@ -109,20 +108,20 @@ public class SOAPActions {
 
     private void doInventory(HashMap hashMap) {
         String organCode = hashMap.get("organCode").toString();
-//        String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
         String username = hashMap.get("username").toString();
+        String asset = hashMap.get("assetJson").toString();
+        this.xmlRequest_body = "<ws:doInventory><username>" + username + "</username><organCode>" + organCode + "</organCode><assetJson>" + asset +
+                "</assetJson></ws:doInventory>";
+        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
+//        String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
 //        String assetCode = hashMap.get("assetCode").toString();
 //        String addr = hashMap.get("addr").toString();
 //        String simId = hashMap.get("simId").toString();
 //        String disCodes = hashMap.get("disCodes").toString();
-        String asset = hashMap.get("assetJson").toString();
 //        String pdfs = hashMap.get("pdfs").toString();
 //        this.xmlRequest_body = "<ws:doInventory><organCode>" + organCode + "</organCode><mgrOrganCode>" + mgrOrganCode +
 //                "</mgrOrganCode><username>" + username + "</username><assetCode>" + assetCode + "</assetCode><addr>" + addr +
 //                "</addr><simId>" + simId + "</simId><disCodes>" + disCodes + "</disCodes><pdfs>" + pdfs + "</pdfs></ws:doInventory>";
-        this.xmlRequest_body = "<ws:doInventory><username>" + username + "</username><organCode>" + organCode + "</organCode><assetJson>" + asset +
-                "</assetJson></ws:doInventory>";
-        this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
     private void inventorySearchList(HashMap hashMap) {
