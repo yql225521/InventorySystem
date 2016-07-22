@@ -90,13 +90,6 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
         offlineInvListMgrAdapter = new OfflineInvListMgrAdapter(this, organUploadList, offlineInvAssetList);
         listView.setAdapter(offlineInvListMgrAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                System.out.println("heheda");
-            }
-        });
-
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,6 +124,8 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
                 finish();
             }
         });
+
+        isInventory();
     }
 
     private void checkAll() {
@@ -173,6 +168,47 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+    }
+
+    private void isInventory() {
+        String methodName = "isInventory";
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("methodName", methodName);
+        hashMap.put("organCode", AppContext.currOrgan.getOrganCode());
+
+        final SOAPActions sa = new SOAPActions(hashMap);
+        String xmlRequest = sa.getXmlRequest();
+
+        sa.sendRequest(this, xmlRequest, new CallbackInterface() {
+            @Override
+            public void callBackFunction() {
+                response = TransUtil.decode(sa.getResponse());
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    String message = jsonObject.get("message").getAsString();
+                    int success = jsonObject.get("success").getAsInt();
+
+                    if(success != 1) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(OfflineInventoryManager.this);
+                        builder.setMessage(message);
+
+                        builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                OfflineInventoryManager.this.finish();
+                            }
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.setCancelable(false);
+                        dialog.show();
+                    }
+                } else {
+                    Toast.makeText(OfflineInventoryManager.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void upload() {
@@ -222,22 +258,27 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
                 @Override
                 public void callBackFunction() {
                     response = TransUtil.decode(sa.getResponse().toString());
-                    response = response.replace("&quot;", "\"");
-                    JsonParser jsonParser = new JsonParser();
-                    System.out.println(response);
-                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                    String success = jsonObject.get("success").toString();
+                    if (!response.equals("error")) {
+                        response = response.replace("&quot;", "\"");
+                        JsonParser jsonParser = new JsonParser();
+                        System.out.println(response);
+                        JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                        String success = jsonObject.get("success").toString();
 
-                    if (success.equals("1")) {
-                        offlineInvListMgrAdapter.remove();
-                        iterator.remove();
-                        try {
-                            dbManager.deleteOfflineInvAssetsWithOrgan(getHelper().getAssetDao(), AppContext.currUser.getAccounts(), organ.getOrganCode());
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        if (success.equals("1")) {
+                            offlineInvListMgrAdapter.remove();
+                            iterator.remove();
+                            try {
+                                dbManager.deleteOfflineInvAssetsWithOrgan(getHelper().getAssetDao(), AppContext.currUser.getAccounts(), organ.getOrganCode());
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        uploadData(organUploadQueue);
+                    } else {
+                        Toast.makeText(OfflineInventoryManager.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
                     }
-                    uploadData(organUploadQueue);
                 }
             });
         } catch (SQLException e) {

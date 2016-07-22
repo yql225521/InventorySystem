@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -115,26 +116,30 @@ public class AssetQRShow extends AppCompatActivity implements AssetQRDialogUtil.
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println(jsonObject);
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    System.out.println(jsonObject);
 
-                int success = jsonObject.get("success").getAsInt();
-                JsonObject asset = jsonObject.get("asset").getAsJsonObject();
-                String invMsg = jsonObject.get("invMsg").getAsString();
-                currAssetCode = asset.get("assetCode").getAsString();
+                    int success = jsonObject.get("success").getAsInt();
+                    JsonObject asset = jsonObject.get("asset").getAsJsonObject();
+                    String invMsg = jsonObject.get("invMsg").getAsString();
+                    currAssetCode = asset.get("assetCode").getAsString();
 
 //                AssetModel assetModel = new AssetModel(asset, "inv_asset");
 
-                if (success == 1) {
-                    currAssetModel = new AssetModel(asset);
-                    assetListAdapter.add(currAssetModel);
-                    currAssetModel.setInvMsg(invMsg);
-                    currAssetModel.setDisCodes("");
-                    currAssetModel.setPdfs(pdfs);
-                    inventoryProgressBar.setVisibility(LinearLayout.GONE);
-                    DialogFragment dialogFragment = AssetQRDialogUtil.newInstance(currAssetModel);
-                    dialogFragment.show(getFragmentManager(), "asset_qr_show");
+                    if (success == 1) {
+                        currAssetModel = new AssetModel(asset);
+                        assetListAdapter.add(currAssetModel);
+                        currAssetModel.setInvMsg(invMsg);
+                        currAssetModel.setDisCodes("");
+                        currAssetModel.setPdfs(pdfs);
+                        inventoryProgressBar.setVisibility(LinearLayout.GONE);
+                        DialogFragment dialogFragment = AssetQRDialogUtil.newInstance(currAssetModel);
+                        dialogFragment.show(getFragmentManager(), "asset_qr_show");
+                    }
+                } else {
+                    Toast.makeText(AssetQRShow.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
                 }
             }
         });

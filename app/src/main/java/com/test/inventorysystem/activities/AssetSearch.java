@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
@@ -83,13 +84,17 @@ public class AssetSearch extends OrmLiteBaseActivity<DBHelper> {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent searchList = new Intent(AssetSearch.this, AssetSearchList.class);
-                searchList.putExtra("assetName", assetName.getText().toString().trim());
-                searchList.putExtra("assetCode", assetCode.getText().toString().trim());
-                searchList.putExtra("organCode", organs.get(assetOrganSpinner.getSelectedItemPosition()).getOrganCode());
-                System.out.println("*** " + types.get(assetTypeSpinner.getSelectedItemPosition()).getTypeCode());
-                searchList.putExtra("category", types.get(assetTypeSpinner.getSelectedItemPosition()).getTypeCode());
-                startActivity(searchList);
+                if (AppContext.offlineLogin && !AppContext.hasOfflineData) {
+                    Toast.makeText(AssetSearch.this, "请先下载离线数据", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent searchList = new Intent(AssetSearch.this, AssetSearchList.class);
+                    searchList.putExtra("assetName", assetName.getText().toString().trim());
+                    searchList.putExtra("assetCode", assetCode.getText().toString().trim());
+                    searchList.putExtra("organCode", organs.get(assetOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                    System.out.println("*** " + types.get(assetTypeSpinner.getSelectedItemPosition()).getTypeCode());
+                    searchList.putExtra("category", types.get(assetTypeSpinner.getSelectedItemPosition()).getTypeCode());
+                    startActivity(searchList);
+                }
             }
         });
     }

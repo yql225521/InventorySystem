@@ -132,6 +132,7 @@ public class AssetInfoDialogUtil extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                     }
                 });
+        builder.setCancelable(false);
         return builder.create();
     }
 

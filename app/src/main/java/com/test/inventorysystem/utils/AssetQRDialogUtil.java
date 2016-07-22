@@ -144,7 +144,7 @@ public class AssetQRDialogUtil extends DialogFragment {
                         mListener.onDialogNegativeClick(AssetQRDialogUtil.this);
                     }
                 });
-
+        builder.setCancelable(false);
         return builder.create();
     }
 

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,7 +58,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     private ArrayList<OrganModel> organs = new ArrayList<OrganModel>();
     private ListView listView;
     private AssetListAdapter assetListAdapter;
-    private LinearLayout inventoryProgressBar;
+    private LinearLayout mProgressBar;
     private DBManager dbManager = new DBManager();
 
     private String currAssetCode;
@@ -77,7 +78,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         inventoryBtn = (Button) findViewById(R.id.button_inventory_inventory);
         manualBtn = (Button) findViewById(R.id.button_inventory_manual);
         endBtn = (Button) findViewById(R.id.button_inventory_end);
-        inventoryProgressBar = (LinearLayout) findViewById(R.id.linearLayout_progress_bar);
+        mProgressBar = (LinearLayout) findViewById(R.id.linearLayout_progress_bar);
 
         inventoryOrganSpinner = (Spinner) findViewById(R.id.offline_spinner_inventory_organ);
         organSpinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
@@ -184,24 +185,29 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                String message = jsonObject.get("message").getAsString();
-                int success = jsonObject.get("success").getAsInt();
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    String message = jsonObject.get("message").getAsString();
+                    int success = jsonObject.get("success").getAsInt();
 
-                if(success != 1) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AssetInventory.this);
-                    builder.setMessage(message);
+                    if(success != 1) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(AssetInventory.this);
+                        builder.setMessage(message);
 
-                    builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User clicked OK button
-                            AssetInventory.this.finish();
-                        }
-                    });
+                        builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                AssetInventory.this.finish();
+                            }
+                        });
 
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                        AlertDialog dialog = builder.create();
+                        dialog.setCancelable(false);
+                        dialog.show();
+                    }
+                } else {
+                    Toast.makeText(AssetInventory.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -234,7 +240,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     }
 
     private void selectAssetInfo(String finCode, final String pdfs) {
-        inventoryProgressBar.setVisibility(LinearLayout.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
         String methodName = "getAssetInfoWithInv";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put("methodName", methodName);
@@ -250,25 +256,34 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
 
-                int success = jsonObject.get("success").getAsInt();
-                JsonObject asset = jsonObject.get("asset").getAsJsonObject();
-                String invMsg = jsonObject.get("invMsg").getAsString();
+                    int success = jsonObject.get("success").getAsInt();
+                    JsonObject asset = jsonObject.get("asset").getAsJsonObject();
+                    String invMsg = jsonObject.get("invMsg").getAsString();
 //                currAssetCode = asset.get("assetCode").getAsString();
-                System.out.println("assetModel " + asset.toString());
+                    System.out.println("assetModel " + asset.toString());
 
-                if (success == 1) {
-                    Gson gson=new Gson();
-                    currAssetModel = gson.fromJson(jsonObject.get("asset"), AssetModel.class);
-//                    currAssetModel = new AssetModel(asset);
-                    currAssetModel.setInvMsg(invMsg);
-                    currAssetModel.setDisCodes("");
-                    currAssetModel.setPdfs(pdfs);
-                    inventoryProgressBar.setVisibility(LinearLayout.GONE);
-                    DialogFragment dialogFragment = InvAssetInfoDialogUtil.newInstance(currAssetModel);
-                    dialogFragment.show(getFragmentManager(), "inv_asset_info");
+                    if (success == 1) {
+                        Gson gson=new Gson();
+                        currAssetModel = gson.fromJson(jsonObject.get("asset"), AssetModel.class);
+                        if (currAssetModel.getMgrOrganID() != AppContext.currOrgan.getOrganID()) {
+                            Toast.makeText(AssetInventory.this, "当前扫描资产与登录用户管理部门不一致", Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.GONE);
+                        } else {
+                            currAssetModel.setInvMsg(invMsg);
+                            currAssetModel.setDisCodes("");
+                            currAssetModel.setPdfs(pdfs);
+                            mProgressBar.setVisibility(View.GONE);
+                            DialogFragment dialogFragment = InvAssetInfoDialogUtil.newInstance(currAssetModel);
+                            dialogFragment.show(getFragmentManager(), "inv_asset_info");
+                        }
+                    }
+                } else {
+                    Toast.makeText(AssetInventory.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.GONE);
                 }
             }
         });
@@ -309,7 +324,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     }
 
     public void doInventory(AssetModel assetModel) {
-        inventoryProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
         String methodName = "doInventory";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         assetModel.setSimId(AppContext.simId);
@@ -339,20 +354,25 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                String message = jsonObject.get("message").getAsString();
-                int success = jsonObject.get("success").getAsInt();
-                JsonObject asset = jsonObject.get("asset").getAsJsonObject();
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    String message = jsonObject.get("message").getAsString();
+                    int success = jsonObject.get("success").getAsInt();
+                    JsonObject asset = jsonObject.get("asset").getAsJsonObject();
 
-                AssetModel assetModel = new AssetModel(asset);
+                    AssetModel assetModel = new AssetModel(asset);
 
-                if (success == 1) {
-                    inventoryProgressBar.setVisibility(View.GONE);
-                    assetListAdapter.replace(assetModel);
-                    message = "[" + assetModel.getAssetCode() + "] " + assetModel.getAssetName() + "盘点成功";
-                    DialogFragment dialogFragment = InvContinueDialogUtil.newInstance(message);
-                    dialogFragment.show(getFragmentManager(), "continue");
+                    if (success == 1) {
+                        mProgressBar.setVisibility(View.GONE);
+                        assetListAdapter.replace(assetModel);
+                        message = "[" + assetModel.getAssetCode() + "] " + assetModel.getAssetName() + "盘点成功";
+                        DialogFragment dialogFragment = InvContinueDialogUtil.newInstance(message);
+                        dialogFragment.show(getFragmentManager(), "continue");
+                    }
+                } else {
+                    Toast.makeText(AssetInventory.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.GONE);
                 }
 
             }

@@ -20,7 +20,7 @@ import com.test.inventorysystem.interfaces.CallbackInterface;
 
 public class SOAPActions {
     // create new SOAP request
-    private String xmlRequest_header = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://ws.ams.rstco.com/\">" +
+    private String xmlRequest_header = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://ws.assetmgr.rstco.com/\">" +
             "<soapenv:Header/>" + "<soapenv:Body>";
     private String xmlRequest_body = "";
     private String xmlRequest_rear = "</soapenv:Body>" + "</soapenv:Envelope>";
@@ -29,8 +29,8 @@ public class SOAPActions {
 
     // http services parameters
     private String soapAction = "";
-    private String serviceUrl = "http://192.168.0.181:8080/ams/ws/DataAccess?wsdl";
-    private String nameSpace = "http://ws.ams.rstco.com/";
+    private String serviceUrl = "http://192.168.0.181:8080/assetmgr/ws/DataAccess?wsdl";
+    private String nameSpace = "http://http://ws.assetmgr.rstco.com/";
     //final response get from server side
     private String response = "";
 
@@ -150,7 +150,7 @@ public class SOAPActions {
 
     private void downloadOfflineData(HashMap hashMap) {
         String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
-        this.xmlRequest_body = "<ws:getAssetDatas><mgrOrganCode>" + mgrOrganCode + "</mgrOrganCode></ws:getAssetDatas>";
+        this.xmlRequest_body = "<ws:getAssetDatas><organCode>" + mgrOrganCode + "</organCode></ws:getAssetDatas>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
@@ -177,6 +177,7 @@ public class SOAPActions {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String res = new String(responseBody);
                 System.out.println("获取数据成功...");
+                System.out.println(res);
                 response = res.substring(res.indexOf("<return>") + 8, res.indexOf("</return>"));
                 callback.callBackFunction();
             }

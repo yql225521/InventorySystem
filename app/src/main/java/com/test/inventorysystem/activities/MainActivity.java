@@ -1,8 +1,11 @@
 package com.test.inventorysystem.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private String userAccount = "";
     private String userDepartmentId = "";
 
-    String[] mainGridTitles = {"资产查询", "资产盘点", "盘点情况", "资产扫描", "拍照上传", "离线盘点管理", "离线数据下载", "帮助"};
+    String[] mainGridTitles = {"资产查询", "资产盘点", "盘点情况", "资产扫描", "离线盘点管理", "离线数据下载", "帮助"};
     int[] mainGridIcons = {R.drawable.ic_search_black_24dp, R.drawable.ic_local_atm_black_24dp,
             R.drawable.ic_content_paste_black_24dp, R.drawable.ic_crop_free_black_24dp,
-            R.drawable.ic_camera_alt_black_24dp, R.drawable.ic_format_list_numbered_black_24dp,
+            R.drawable.ic_format_list_numbered_black_24dp,
             R.drawable.ic_vertical_align_bottom_black_24dp, R.drawable.ic_help_black_24dp};
 
     String[] offlineMainGridTitle = {"离线资产查询", "离线盘点", "离线扫描", "离线盘点管理", "离线数据下载", "帮助"};
@@ -63,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
                         case 3:
                             goToCodeScanner();
                             break;
-                        case 5:
+                        case 4:
                             goToOfflineInventoryMgr();
                             break;
-                        case 6:
+                        case 5:
                             goToDownloadOfflineData();
                             break;
                     }
@@ -159,5 +162,30 @@ public class MainActivity extends AppCompatActivity {
     private void showUserInfo () {
         UserInfoDialogUtil userInfo = UserInfoDialogUtil.newInstance(AppContext.currUser);
         userInfo.show(getFragmentManager(), "user_info");
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exitApp();// 退出程序
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+}
+
+    private void exitApp() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage("确定要退出吗?");
+
+        builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                MainActivity.this.finish();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

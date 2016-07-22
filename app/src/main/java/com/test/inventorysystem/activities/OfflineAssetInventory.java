@@ -51,14 +51,14 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     private ArrayAdapter<String> organSpinnerArrayAdapter;
     private ArrayList<OrganModel> organs = new ArrayList<OrganModel>();
     private ListView listView;
-    //    private AssetListAdapter assetListAdapter;
     private OfflineInvListAdapter assetListAdapter = null;
-    private LinearLayout inventoryProgressBar = null;
+    private LinearLayout mProgressBar = null;
     private DBManager dbManager = new DBManager();
 
     private String currAssetCode;
     private String response;
     private AssetModel currAssetModel;
+    private Boolean firstTimeOpen = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         scanBtn = (Button) findViewById(R.id.button_offline_inventory_scan);
         manualBtn = (Button) findViewById(R.id.button_offline_inventory_manual);
         endBtn = (Button) findViewById(R.id.button_offline_inventory_end);
-        inventoryProgressBar = (LinearLayout) findViewById(R.id.linearLayout_offline_progress_bar);
+        mProgressBar = (LinearLayout) findViewById(R.id.linearLayout_offline_progress_bar);
 
         inventoryOrganSpinner = (Spinner) findViewById(R.id.offline_spinner_inventory_organ);
         organSpinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
@@ -80,13 +80,17 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         inventoryOrganSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                assetListAdapter.clear();
-                try {
-                    List<AssetModel> list = dbManager.findOfflineInvAssetsByOrgan(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
-                    assetListAdapter.addAll(list);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (!firstTimeOpen) {
+                    inventoryOrganSpinner.setEnabled(false);
+                    assetListAdapter.clear();
+                    try {
+                        List<AssetModel> list = dbManager.findOfflineInvAssetsByOrgan(getHelper().getAssetDao(), organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode(), true);
+                        assetListAdapter.addAll(list);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
+                firstTimeOpen = false;
             }
 
             @Override
@@ -145,7 +149,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         endBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                endOfflineInventory();
+                inventoryOrganSpinner.setEnabled(true);
             }
         });
     }
@@ -160,13 +164,10 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         startActivityForResult(intent, REQUEST_CODE);
     }
 
-    private void endOfflineInventory() {
-        this.finish();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        mProgressBar.setVisibility(View.VISIBLE);
         if (resultCode == CaptureActivity.RESULT_CODE) {
             Bundle bundle = data.getExtras();
             String barcode = bundle.getString("barcode");
@@ -184,15 +185,21 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                     } else {
                         if (AppContext.offlineLogin && AppContext.hasOfflineData) {
                             currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), assetFinCode, "2");
-                            ExtDate nowdate = new ExtDate();
-                            currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
-                            if (StringUtils.isBlank(currAssetModel.getPdfs())) {
-                                currAssetModel.setPdfs("1");
+                            if (currAssetModel.getMgrOrganID() != AppContext.currOrgan.getOrganID()) {
+                                Toast.makeText(OfflineAssetInventory.this, "当前扫描资产与登录用户管理部门不一致", Toast.LENGTH_SHORT).show();
+                                mProgressBar.setVisibility(View.GONE);
+                            } else {
+                                ExtDate nowdate = new ExtDate();
+                                currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                                if (StringUtils.isBlank(currAssetModel.getPdfs())) {
+                                    currAssetModel.setPdfs("1");
+                                }
+                                currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                                currAssetModel.setSimId(AppContext.simId);
+                                DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel);
+                                dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
+                                mProgressBar.setVisibility(View.GONE);
                             }
-                            currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
-                            currAssetModel.setSimId(AppContext.simId);
-                            DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel);
-                            dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
                         } else {
                             for (int i = 0; i < codes.length; i++) {
                                 if (i == 0) {
@@ -222,7 +229,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                             if (StringUtils.isBlank(currAssetModel.getPdfs())) {
                                 currAssetModel.setPdfs("1");
                             }
-
+                            mProgressBar.setVisibility(View.GONE);
                             DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel, "offline");
                             dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
                         }
@@ -237,6 +244,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             if (null != asset) {
                 doInventory(asset, asset.getOrganCode());
             }
+            mProgressBar.setVisibility(View.GONE);
         } else if (resultCode == AssetManual.RESULT_CODE) {
             Bundle bundle = data.getExtras();
             String code = bundle.getString("code");
@@ -259,8 +267,10 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                         assetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
                         assetModel.setPdfs("2");
                         doInventory(assetModel, organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                        mProgressBar.setVisibility(View.GONE);
                     } else {
                         System.out.println("覆盖?");
+                        mProgressBar.setVisibility(View.GONE);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

@@ -143,38 +143,43 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println("user info " + jsonObject);
-                int success = jsonObject.get("success").getAsInt();
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    System.out.println("user info " + jsonObject);
+                    int success = jsonObject.get("success").getAsInt();
 
-                // 用户名或密码错误,服务器无返回值
-                if (success == 2) {
-                    Toast.makeText(Login.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-                    loginProgressBar.setVisibility(View.GONE);
-                }
-                // 获取用户数据成功
-                else if (success == 1) {
-                    JsonObject org = jsonObject.get("org").getAsJsonObject();
-                    JsonObject user = jsonObject.get("user").getAsJsonObject();
-
-                    initUser(user, org.get("organCode").getAsString());
-                    initOrgan(org);
-
-                    AppContext.address = "none";
-                    AppContext.simId = hashMap.get("simId").toString();
-
-                    try {
-                        dbManager.saveUser(getHelper().getUserDao(), loginUser);
-                        dbManager.saveOrgan(getHelper().getOrganDao(), loginOrgan, loginUser.getAccounts());
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    // 用户名或密码错误,服务器无返回值
+                    if (success == 2) {
+                        Toast.makeText(Login.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                        loginProgressBar.setVisibility(View.GONE);
                     }
+                    // 获取用户数据成功
+                    else if (success == 1) {
+                        JsonObject org = jsonObject.get("org").getAsJsonObject();
+                        JsonObject user = jsonObject.get("user").getAsJsonObject();
 
-                    HashMap<String, String> hashMap = new HashMap<String, String>();
-                    hashMap.put("methodName", "getAssetInventoryBase");
-                    hashMap.put("organCode", org.get("organCode").getAsString());
-                    loadBaseData(hashMap);
+                        initUser(user, org.get("organCode").getAsString());
+                        initOrgan(org);
+
+                        AppContext.address = "none";
+                        AppContext.simId = hashMap.get("simId").toString();
+
+                        try {
+                            dbManager.saveUser(getHelper().getUserDao(), loginUser);
+                            dbManager.saveOrgan(getHelper().getOrganDao(), loginOrgan, loginUser.getAccounts());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        HashMap<String, String> hashMap = new HashMap<String, String>();
+                        hashMap.put("methodName", "getAssetInventoryBase");
+                        hashMap.put("organCode", org.get("organCode").getAsString());
+                        loadBaseData(hashMap);
+                    }
+                } else {
+                    Toast.makeText(Login.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                    loginProgressBar.setVisibility(View.GONE);
                 }
 
             }
@@ -189,45 +194,50 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                System.out.println(jsonObject);
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    System.out.println(jsonObject);
 
-                int success = jsonObject.get("success").getAsInt();
-                String message = jsonObject.get("message").getAsString();
-                JsonArray organListString = jsonObject.get("organList").getAsJsonArray();
-                JsonArray typeListString = jsonObject.get("typeList").getAsJsonArray();
-                JsonArray matchTypeListString = jsonObject.get("matchTypeList").getAsJsonArray();
-                JsonArray completeTypeListString = jsonObject.get("completeTypeList").getAsJsonArray();
+                    int success = jsonObject.get("success").getAsInt();
+                    String message = jsonObject.get("message").getAsString();
+                    JsonArray organListString = jsonObject.get("organList").getAsJsonArray();
+                    JsonArray typeListString = jsonObject.get("typeList").getAsJsonArray();
+                    JsonArray matchTypeListString = jsonObject.get("matchTypeList").getAsJsonArray();
+                    JsonArray completeTypeListString = jsonObject.get("completeTypeList").getAsJsonArray();
 
-                if (success == 1) {
-                    try {
-                        ArrayList<OrganModel> organList = new ArrayList<OrganModel>();
-                        for (int i = 0; i < organListString.size(); i++) {
-                            OrganModel organModel = new OrganModel(organListString.get(i).getAsJsonObject());
-                            organList.add(organModel);
-                        }
-                        dbManager.saveOrganList(getHelper().getOrganDao(), AppContext.currUser.getAccounts(), organList);
+                    if (success == 1) {
+                        try {
+                            ArrayList<OrganModel> organList = new ArrayList<OrganModel>();
+                            for (int i = 0; i < organListString.size(); i++) {
+                                OrganModel organModel = new OrganModel(organListString.get(i).getAsJsonObject());
+                                organList.add(organModel);
+                            }
+                            dbManager.saveOrganList(getHelper().getOrganDao(), AppContext.currUser.getAccounts(), organList);
 
-                        ArrayList<TypeModel> typeList = new ArrayList<TypeModel>();
-                        for (int i = 0; i < typeListString.size(); i++) {
-                            TypeModel typeModel = new TypeModel(typeListString.get(i).getAsJsonObject());
-                            typeList.add(typeModel);
-                        }
-                        for (int i = 0; i < matchTypeListString.size(); i++) {
-                            TypeModel typeModel = new TypeModel(matchTypeListString.get(i).getAsJsonObject());
-                            typeList.add(typeModel);
-                        }
-                        for (int i = 0; i < completeTypeListString.size(); i++) {
-                            TypeModel typeModel = new TypeModel(completeTypeListString.get(i).getAsJsonObject());
-                            typeList.add(typeModel);
-                        }
-                        dbManager.saveTypeList(getHelper().getTypeDao(), AppContext.currUser.getAccounts(), typeList);
+                            ArrayList<TypeModel> typeList = new ArrayList<TypeModel>();
+                            for (int i = 0; i < typeListString.size(); i++) {
+                                TypeModel typeModel = new TypeModel(typeListString.get(i).getAsJsonObject());
+                                typeList.add(typeModel);
+                            }
+                            for (int i = 0; i < matchTypeListString.size(); i++) {
+                                TypeModel typeModel = new TypeModel(matchTypeListString.get(i).getAsJsonObject());
+                                typeList.add(typeModel);
+                            }
+                            for (int i = 0; i < completeTypeListString.size(); i++) {
+                                TypeModel typeModel = new TypeModel(completeTypeListString.get(i).getAsJsonObject());
+                                typeList.add(typeModel);
+                            }
+                            dbManager.saveTypeList(getHelper().getTypeDao(), AppContext.currUser.getAccounts(), typeList);
 
-                        buildMainFunction();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                            buildMainFunction();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
+                } else {
+                    Toast.makeText(Login.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                    loginProgressBar.setVisibility(View.GONE);
                 }
             }
         });

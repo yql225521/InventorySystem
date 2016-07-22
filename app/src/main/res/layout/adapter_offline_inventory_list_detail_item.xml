@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
 
     <LinearLayout
         android:orientation="vertical"
@@ -24,7 +25,6 @@
             android:layout_height="30dp"
             android:id="@+id/asset_update_list_info"
             android:textColor="@android:color/black" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -36,10 +36,17 @@
         android:id="@+id/linearLayout_with_checkbox"
         android:gravity="right|center">
 
+        <Button
+            android:text="@string/offline_asset_inventory_list_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_offline_inv_detail"
+            android:layout_weight="1" />
+
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/checkBox_asset_update_list" />
+            android:id="@+id/checkBox_asset_update_list"
+            android:layout_marginLeft="8dp" />
     </LinearLayout>
-
 </LinearLayout>

@@ -107,31 +107,36 @@ public class InventorySearchList extends OrmLiteBaseActivity<DBHelper> {
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                int success = jsonObject.get("success").getAsInt();
-                JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
-                recordCount = jsonObject.get("recordcount").getAsInt();
-                if (success == 1) {
-                    if (assetListString.size() != 0) {
-                        assetList.clear();
-                        for (int i = 0; i < assetListString.size(); i++) {
-                            AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
-                            assetList.add(assetModel);
+                if (!response.equals("error")) {
+                    JsonParser jsonParser = new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                    int success = jsonObject.get("success").getAsInt();
+                    JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
+                    recordCount = jsonObject.get("recordcount").getAsInt();
+                    if (success == 1) {
+                        if (assetListString.size() != 0) {
+                            assetList.clear();
+                            for (int i = 0; i < assetListString.size(); i++) {
+                                AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
+                                assetList.add(assetModel);
+                            }
+                            listAdapter.addAll(assetList);
+                            if (isFirstLoad) {
+                                isFirstLoad = false;
+                            }
+                            mProgressBar.setVisibility(LinearLayout.GONE);
+                            isLoading = false;
+                            totalCount = InventorySearchList.this.getListAdapter().getCount();
+                            countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
+                        } else {
+                            mProgressBar.setVisibility(LinearLayout.GONE);
+                            endLoading = true;
+                            Toast.makeText(InventorySearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                         }
-                        listAdapter.addAll(assetList);
-                        if (isFirstLoad) {
-                            isFirstLoad = false;
-                        }
-                        mProgressBar.setVisibility(LinearLayout.GONE);
-                        isLoading = false;
-                        totalCount = InventorySearchList.this.getListAdapter().getCount();
-                        countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
-                    } else {
-                        mProgressBar.setVisibility(LinearLayout.GONE);
-                        endLoading = true;
-                        Toast.makeText(InventorySearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                     }
+                } else {
+                    Toast.makeText(InventorySearchList.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(LinearLayout.GONE);
                 }
             }
         });

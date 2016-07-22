@@ -71,6 +71,7 @@ public class InvContinueDialogUtil extends DialogFragment {
                         mListener.onDialogNegativeClick(InvContinueDialogUtil.this);
                     }
                 });
+        builder.setCancelable(false);
         return builder.create();
     }
 

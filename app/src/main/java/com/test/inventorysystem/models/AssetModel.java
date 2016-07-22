@@ -16,7 +16,7 @@ import java.util.Date;
  */
 
 @DatabaseTable(tableName = "asset")
-public class AssetModel implements Serializable, Parcelable {
+public class AssetModel implements Serializable {
 
     @DatabaseField(id = true)
     private String pid = "";
@@ -616,14 +616,14 @@ public class AssetModel implements Serializable, Parcelable {
         return note;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel parcel, int i) {
+//
+//    }
 }
 

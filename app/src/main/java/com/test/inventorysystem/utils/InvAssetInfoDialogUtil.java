@@ -168,6 +168,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
                         mListener.onDialogNegativeClick(InvAssetInfoDialogUtil.this);
                     }
                 });
+        builder.setCancelable(false);
         return builder.create();
     }
 

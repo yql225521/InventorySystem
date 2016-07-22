@@ -3,6 +3,7 @@ package com.test.inventorysystem.activities;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -121,43 +122,48 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
                 @Override
                 public void callBackFunction() {
                     response = TransUtil.decode(sa.getResponse());
-                    JsonParser jsonParser = new JsonParser();
-                    JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-                    System.out.println(jsonObject);
-                    int success = jsonObject.get("success").getAsInt();
-                    JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
-                    recordCount = jsonObject.get("recordcount").getAsInt();
+                    if (!response.equals("error")) {
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
+                        System.out.println(jsonObject);
+                        int success = jsonObject.get("success").getAsInt();
+                        JsonArray assetListString = jsonObject.get("list").getAsJsonArray();
+                        recordCount = jsonObject.get("recordcount").getAsInt();
 
-                    if (success == 1) {
-                        if (assetListString.size() != 0) {
-                            assetList.clear();
-                            for (int i = 0; i < assetListString.size(); i++) {
-                                AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
-                                assetList.add(assetModel);
-                            }
-                            Collections.sort(assetList, new Comparator<AssetModel>() {
-                                @Override
-                                public int compare(AssetModel t2, AssetModel t1) {
-                                    if (t1.getFinCode() != null) {
-                                        return t2.getFinCode().compareTo(t1.getFinCode());
-                                    } else {
-                                        return t2.getAssetCode().compareTo(t1.getAssetCode());
-                                    }
+                        if (success == 1) {
+                            if (assetListString.size() != 0) {
+                                assetList.clear();
+                                for (int i = 0; i < assetListString.size(); i++) {
+                                    AssetModel assetModel = new AssetModel(assetListString.get(i).getAsJsonObject());
+                                    assetList.add(assetModel);
                                 }
-                            });
-                            listAdapter.addAll(assetList);
-                            if (isFirstLoad) {
-                                isFirstLoad = false;
+                                Collections.sort(assetList, new Comparator<AssetModel>() {
+                                    @Override
+                                    public int compare(AssetModel t2, AssetModel t1) {
+                                        if (t1.getFinCode() != null) {
+                                            return t2.getFinCode().compareTo(t1.getFinCode());
+                                        } else {
+                                            return t2.getAssetCode().compareTo(t1.getAssetCode());
+                                        }
+                                    }
+                                });
+                                listAdapter.addAll(assetList);
+                                if (isFirstLoad) {
+                                    isFirstLoad = false;
+                                }
+                                mProgressBar.setVisibility(LinearLayout.GONE);
+                                isLoading = false;
+                                totalCount = AssetSearchList.this.getListAdapter().getCount();
+                                countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
+                            } else {
+                                mProgressBar.setVisibility(LinearLayout.GONE);
+                                endLoading = true;
+                                Toast.makeText(AssetSearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                             }
-                            mProgressBar.setVisibility(LinearLayout.GONE);
-                            isLoading = false;
-                            totalCount = AssetSearchList.this.getListAdapter().getCount();
-                            countInfo.setText("已加载" + totalCount + "条-共" + recordCount + "条");
-                        } else {
-                            mProgressBar.setVisibility(LinearLayout.GONE);
-                            endLoading = true;
-                            Toast.makeText(AssetSearchList.this, "没有更多数据了...", Toast.LENGTH_LONG).show();
                         }
+                    } else {
+                        Toast.makeText(AssetSearchList.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                        mProgressBar.setVisibility(LinearLayout.GONE);
                     }
                 }
             });
