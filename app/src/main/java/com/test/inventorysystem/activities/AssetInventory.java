@@ -238,7 +238,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         String methodName = "getAssetInfoWithInv";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put("methodName", methodName);
-        hashMap.put("finCode", finCode);
+        hashMap.put("assetCode", finCode);
         loadAssetInfo(hashMap, pdfs);
     }
 
@@ -263,7 +263,8 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                     if (success == 1) {
                         Gson gson=new Gson();
                         currAssetModel = gson.fromJson(jsonObject.get("asset"), AssetModel.class);
-                        if (currAssetModel.getMgrOrganID() != AppContext.currOrgan.getOrganID()) {
+                        System.out.println(currAssetModel.getMgrOrganID() + " ** " + AppContext.currOrgan.getOrganID());
+                        if (!currAssetModel.getMgrOrganID().equals(AppContext.currOrgan.getOrganID())) {
                             Toast.makeText(AssetInventory.this, "当前扫描资产与登录用户管理部门不一致", Toast.LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.GONE);
                         } else {

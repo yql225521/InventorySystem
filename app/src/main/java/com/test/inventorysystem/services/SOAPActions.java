@@ -101,8 +101,8 @@ public class SOAPActions {
     }
 
     private void getAssetInfo(HashMap hashMap) {
-        String finCode = hashMap.get("finCode").toString();
-        this.xmlRequest_body = "<ws:getAssetInfoWithInv><assetCode>" + finCode + "</assetCode></ws:getAssetInfoWithInv>";
+        String assetCode = hashMap.get("assetCode").toString();
+        this.xmlRequest_body = "<ws:getAssetInfoWithInv><assetCode>" + assetCode + "</assetCode></ws:getAssetInfoWithInv>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 
@@ -149,7 +149,7 @@ public class SOAPActions {
 
     private void downloadOfflineData(HashMap hashMap) {
         String mgrOrganCode = hashMap.get("mgrOrganCode").toString();
-        this.xmlRequest_body = "<ws:getAssetDatas><organCode>" + mgrOrganCode + "</organCode></ws:getAssetDatas>";
+        this.xmlRequest_body = "<ws:getAssetDatas><mgrOrganCode>" + mgrOrganCode + "</mgrOrganCode></ws:getAssetDatas>";
         this.setHttpRequest(this.nameSpace, this.methodName, this.xmlRequest_header, this.xmlRequest_body, this.xmlRequest_rear);
     }
 

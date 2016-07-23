@@ -176,21 +176,17 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                     } else {
                         if (AppContext.offlineLogin && AppContext.hasOfflineData) {
                             currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), assetFinCode, "2");
-                            if (currAssetModel.getMgrOrganID() != AppContext.currOrgan.getOrganID()) {
-                                Toast.makeText(OfflineAssetInventory.this, "当前扫描资产与登录用户管理部门不一致", Toast.LENGTH_SHORT).show();
-                                mProgressBar.setVisibility(View.GONE);
-                            } else {
-                                ExtDate nowdate = new ExtDate();
-                                currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
-                                if (StringUtils.isBlank(currAssetModel.getPdfs())) {
-                                    currAssetModel.setPdfs("1");
-                                }
-                                currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
-                                currAssetModel.setSimId(AppContext.simId);
-                                DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel);
-                                dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
-                                mProgressBar.setVisibility(View.GONE);
+                            mProgressBar.setVisibility(View.GONE);
+                            ExtDate nowdate = new ExtDate();
+                            currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                            if (StringUtils.isBlank(currAssetModel.getPdfs())) {
+                                currAssetModel.setPdfs("1");
                             }
+                            currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                            currAssetModel.setSimId(AppContext.simId);
+                            DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel);
+                            dialogFragment.show(getFragmentManager(), "inv_offline_asset_info");
+                            mProgressBar.setVisibility(View.GONE);
                         } else {
                             for (int i = 0; i < codes.length; i++) {
                                 if (i == 0) {
