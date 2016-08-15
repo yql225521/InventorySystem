@@ -29,7 +29,7 @@
 
     <!-- Strings related to asset search -->
     <string name="asset_search_title">资产查询</string>
-    <string name="asset_search_name">资产名称</string>
+    <string name="asset_search_fincode">财务编码</string>
     <string name="asset_search_code">资产编码</string>
     <string name="asset_search_department">使用部门</string>
     <string name="asset_search_type">资产类别</string>
@@ -47,6 +47,7 @@
     <string name="asset_info_title">物品详情:</string>
     <string name="inv_asset_info_title">盘点信息:</string>
     <string name="asset_info_code">资产编码:</string>
+    <string name="asset_info_fincode">财务编码:</string>
     <string name="asset_info_name">资产名称:</string>
     <string name="asset_info_specification">规格型号:</string>
     <string name="asset_info_type">资产类型:</string>
@@ -77,7 +78,7 @@
     <string name="asset_inventory_continue_title">盘点成功</string>
     <string name="continue_dialog_continue">继续盘点</string>
     <string name="continue_dialog_stop">终止盘点</string>
-    <string name="asset_update_title">资产盘点信息更新</string>
+    <!--<string name="asset_update_title">资产盘点</string>-->
 
     <!-- Strings related to asset inventory records -->
     <string name="asset_inv_records_title">资产盘点记录查询</string>
@@ -88,6 +89,7 @@
 
     <!-- Strings related to asset inventory records -->
     <string name="asset_manual_title">手动录入</string>
+    <string name="asset_manual_subTitle">请输入资产编码或财务编码</string>
 
     <!-- Strings related to QR show -->
     <string name="QR_scan_title">扫描二维码</string>

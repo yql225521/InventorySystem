@@ -164,7 +164,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             String barcode = bundle.getString("barcode");
             if (!"".equals(barcode)) {
                 String[] codes = Sysconfig.getCodes(barcode);
-                String assetFinCode = codes[0];
+                String assetCode = codes[0];
                 currAssetModel = new AssetModel();
                 try {
                     Boolean isExisted = dbManager.findExistedOfflineInvAsset(getHelper().getAssetDao(), codes[0]);
@@ -173,9 +173,10 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                     if (isExisted) {
                         DialogFragment dialogFragment = new OfflineInvExistedAssetDialogUtil().newInstance(msg);
                         dialogFragment.show(getFragmentManager(), "inv_offline_existed_asset");
+                        mProgressBar.setVisibility(View.GONE);
                     } else {
                         if (AppContext.offlineLogin && AppContext.hasOfflineData) {
-                            currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), assetFinCode, "2");
+                            currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), assetCode);
                             mProgressBar.setVisibility(View.GONE);
                             ExtDate nowdate = new ExtDate();
                             currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
@@ -235,29 +236,37 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         } else if (resultCode == AssetManual.RESULT_CODE) {
             Bundle bundle = data.getExtras();
             String code = bundle.getString("code");
-            String name = bundle.getString("name");
+            currAssetModel = new AssetModel();
+//            String name = bundle.getString("name");
             if (StringUtils.isNotBlank(code)) {
 //                selectAssetInfo(code, "2");
                 try {
                     Boolean isExisted = dbManager.findExistedOfflineInvAsset(getHelper().getAssetDao(), code);
                     if (!isExisted) {
-                        AssetModel assetModel = new AssetModel();
-                        assetModel.setAddr(AppContext.address);
-                        assetModel.setSimId(AppContext.simId);
-                        assetModel.setUserId(AppContext.currUser.getAccounts());
-                        assetModel.setAssetCode(code);
-                        assetModel.setAssetName(name);
-                        assetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
-                        assetModel.setOrganName(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganName());
-                        assetModel.setOfflineInv(true);
-                        ExtDate nowdate = new ExtDate();
-                        assetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
-                        assetModel.setPdfs("2");
-                        doInventory(assetModel, organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
-                        mProgressBar.setVisibility(View.GONE);
+                        AssetModel assetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), code);
+                        if (assetModel != null) {
+                            assetModel.setAddr(AppContext.address);
+                            assetModel.setSimId(AppContext.simId);
+                            assetModel.setUserId(AppContext.currUser.getAccounts());
+                            assetModel.setAssetCode(code);
+//                        assetModel.setAssetName(name);
+                            assetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                            assetModel.setOrganName(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganName());
+                            assetModel.setOfflineInv(true);
+                            ExtDate nowdate = new ExtDate();
+                            assetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                            assetModel.setPdfs("2");
+                            doInventory(assetModel, organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                            mProgressBar.setVisibility(View.GONE);
+                        } else {
+                            Toast.makeText(OfflineAssetInventory.this, "资产或财政编码输入错误", Toast.LENGTH_LONG).show();
+                            mProgressBar.setVisibility(View.GONE);
+                        }
                     } else {
-                        System.out.println("覆盖?");
                         mProgressBar.setVisibility(View.GONE);
+                        String msg = "该资产已经离线盘点";
+                        DialogFragment dialogFragment = new OfflineInvExistedAssetDialogUtil().newInstance(msg);
+                        dialogFragment.show(getFragmentManager(), "inv_offline_existed_asset");
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -301,6 +310,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             e.printStackTrace();
         }
         assetListAdapter.add(assetModel);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     private void replaceDuplicate(AssetModel assetModel, String organCode) {
@@ -309,6 +319,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        mProgressBar.setVisibility(View.GONE);
     }
 
     private void updateInventory(AssetModel assetModel) {

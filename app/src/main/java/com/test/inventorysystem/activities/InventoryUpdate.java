@@ -45,7 +45,7 @@ public class InventoryUpdate extends AppCompatActivity {
         Button btnCancel = (Button) findViewById(R.id.button_asset_update_cancel);
         TextView textViewCode = (TextView) findViewById(R.id.textView_asset_update_code);
         TextView textViewName = (TextView) findViewById(R.id.textView_asset_update_name);
-        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+//        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
         editTextNote = (EditText) findViewById(R.id.editText_inv_note);
 
         bundle = getIntent().getExtras();

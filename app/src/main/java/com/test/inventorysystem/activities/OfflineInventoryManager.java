@@ -276,7 +276,7 @@ public class OfflineInventoryManager extends OrmLiteBaseActivity<DBHelper> {
                         }
                         uploadData(organUploadQueue);
                     } else {
-                        Toast.makeText(OfflineInventoryManager.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OfflineInventoryManager.this, "上传失败,请查看网络情况", Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 }

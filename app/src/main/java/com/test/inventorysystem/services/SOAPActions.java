@@ -176,7 +176,7 @@ public class SOAPActions {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String res = new String(responseBody);
                 System.out.println("获取数据成功...");
-                System.out.println(res);
+                System.out.println("res " + res);
                 response = res.substring(res.indexOf("<return>") + 8, res.indexOf("</return>"));
                 callback.callBackFunction();
             }

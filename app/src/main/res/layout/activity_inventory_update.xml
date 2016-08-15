@@ -50,7 +50,7 @@
 
     <ListView
         android:layout_width="340dp"
-        android:layout_height="209dp"
+        android:layout_height="250dp"
         android:id="@+id/listView_asset_update_list"
         app:layout_constraintLeft_toLeftOf="@+id/activity_inventory_update"
         android:layout_marginStart="16dp"
@@ -62,29 +62,29 @@
         android:background="@drawable/back"
         android:elevation="2dp" />
 
-    <TextView
-        android:text="@string/asset_info_starbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView24"
-        android:textColor="@android:color/black"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_inventory_update"
-        android:layout_marginStart="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/listView_asset_update_list"
-        android:layout_marginTop="24dp" />
+    <!--<TextView-->
+        <!--android:text="@string/asset_info_starbar"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/textView24"-->
+        <!--android:textColor="@android:color/black"-->
+        <!--app:layout_constraintLeft_toLeftOf="@+id/activity_inventory_update"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/listView_asset_update_list"-->
+        <!--android:layout_marginTop="24dp" />-->
 
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratingBar"
-        android:numStars="5"
-        android:minHeight="30dp"
-        app:layout_constraintLeft_toRightOf="@+id/textView24"
-        android:layout_marginStart="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/listView_asset_update_list"
-        android:layout_marginTop="8dp"
-        app:layout_constraintRight_toRightOf="@+id/activity_inventory_update"
-        android:layout_marginEnd="16dp" />
+    <!--<RatingBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/ratingBar"-->
+        <!--android:numStars="5"-->
+        <!--android:minHeight="30dp"-->
+        <!--app:layout_constraintLeft_toRightOf="@+id/textView24"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/listView_asset_update_list"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--app:layout_constraintRight_toRightOf="@+id/activity_inventory_update"-->
+        <!--android:layout_marginEnd="16dp" />-->
 
     <LinearLayout
         android:orientation="vertical"

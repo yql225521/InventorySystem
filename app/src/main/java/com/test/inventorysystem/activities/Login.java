@@ -148,7 +148,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
 
                     // 用户名或密码错误,服务器无返回值
                     if (success == 2) {
-                        Toast.makeText(Login.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, "您输入的用户名或密码错误", Toast.LENGTH_SHORT).show();
                         loginProgressBar.setVisibility(View.GONE);
                     }
                     // 获取用户数据成功
@@ -176,7 +176,7 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                         loadBaseData(hashMap);
                     }
                 } else {
-                    Toast.makeText(Login.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "请确认用户名是否正确", Toast.LENGTH_SHORT).show();
                     loginProgressBar.setVisibility(View.GONE);
                 }
 

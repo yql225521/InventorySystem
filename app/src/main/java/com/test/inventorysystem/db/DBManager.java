@@ -140,14 +140,20 @@ public class DBManager {
         return upid;
     }
 
-    public Boolean findExistedOfflineInvAsset(Dao<AssetModel, String> assetDao, String finCode) throws SQLException {
+    public Boolean findExistedOfflineInvAsset(Dao<AssetModel, String> assetDao, String code) throws SQLException {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
-        queryBuilder.where().eq("finCode", finCode).and().eq("offlineInv", true);
+        queryBuilder.where().eq("finCode", code).and().eq("offlineInv", true);
         AssetModel assetModel = queryBuilder.queryForFirst();
         if (assetModel != null) {
             return true;
         } else {
-            return false;
+            queryBuilder.where().eq("assetCode", code).and().eq("offlineInv", true);
+            assetModel = queryBuilder.queryForFirst();
+            if (assetModel != null) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -160,7 +166,7 @@ public class DBManager {
 
     public void deleteOfflineInvAssetsWithOrgan(Dao<AssetModel, String> assetDao, String userid, String organCode) throws SQLException {
         DeleteBuilder<AssetModel, String> delBuilder = assetDao.deleteBuilder();
-        delBuilder.where().eq("userId", userid).and().eq("organCode", organCode).prepare();
+        delBuilder.where().eq("userId", userid).and().eq("organCode", organCode).and().eq("offlineInv", true).prepare();
         delBuilder.delete();
     }
 
@@ -182,18 +188,19 @@ public class DBManager {
         callback.callBackFunction();
     }
 
-    public AssetModel findOfflineAsset(Dao<AssetModel, String> assetDao, String finCode, String dt) throws SQLException{
+    public AssetModel findOfflineAsset(Dao<AssetModel, String> assetDao, String assetCode) throws SQLException {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
-        queryBuilder.where().eq("finCode", finCode).and().eq("dt", dt);
+        queryBuilder.where().eq("finCode", assetCode);
         AssetModel assetModel = queryBuilder.queryForFirst();
         if (assetModel == null) {
-            return null;
-        } else  {
+            AssetModel assetModel1 = assetDao.queryForFirst(queryBuilder.where().eq("assetCode", assetCode).prepare());
+            return assetModel1;
+        } else {
             return assetModel;
         }
     }
 
-    public List<AssetModel> findOfflineAssets(Dao<AssetModel, String> assetDao, HashMap<String, String> hashMap) throws SQLException{
+    public List<AssetModel> findOfflineAssets(Dao<AssetModel, String> assetDao, HashMap<String, String> hashMap) throws SQLException {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
         Where<AssetModel, String> where = queryBuilder.where();
 
@@ -202,6 +209,7 @@ public class DBManager {
         String organCode = hashMap.get("organCode");
         String category = hashMap.get("category");
 
+        System.out.println(assetCode + "..." + assetName + "..." + organCode + "..." + category);
         where.isNotNull("assetCode");
         if (StringUtils.isNotBlank(assetCode)) {
             where.and().eq("organCode", assetCode);
@@ -213,10 +221,11 @@ public class DBManager {
             where.and().eq("organCode", organCode);
         }
         if (StringUtils.isNotBlank(category)) {
-            where.and().eq("cateID", category);
+            if (!category.equals("0")) {
+                where.and().eq("cateID", category);
+            }
         }
         ArrayList<AssetModel> assetList = new ArrayList<>(queryBuilder.query());
-        System.out.println(assetList);
         return assetList;
     }
 

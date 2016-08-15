@@ -22,7 +22,7 @@
         app:layout_constraintRight_toRightOf="@+id/activity_asset_search" />
 
     <TextView
-        android:text="@string/asset_search_name"
+        android:text="@string/asset_search_fincode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"

@@ -8,13 +8,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.test.inventorysystem.R;
+import com.test.inventorysystem.db.DBHelper;
 
-public class AssetManual extends AppCompatActivity {
+public class AssetManual extends OrmLiteBaseActivity<DBHelper> {
 
-    public final static int RESULT_CODE=3;
+    public final static int RESULT_CODE = 3;
     private EditText editTextCode;
-    private EditText editTextName;
+    private EditText editTextFinCode;
     private Button btnConfirm;
     private Button btnCancel;
 
@@ -27,24 +29,24 @@ public class AssetManual extends AppCompatActivity {
 
     private void initialization() {
         editTextCode = (EditText) findViewById(R.id.editText_asset_manual_code);
-        editTextName = (EditText) findViewById(R.id.editText_asset_manual_name);
+        editTextFinCode = (EditText) findViewById(R.id.editText_asset_manual_fincode);
         btnConfirm = (Button) findViewById(R.id.button_asset_manual_confirm);
         btnCancel = (Button) findViewById(R.id.button_asset_manual_cancel);
 
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editTextCode.getText().toString().trim().equals("")) {
-                    Toast.makeText(AssetManual.this, "请输入资产编码...", Toast.LENGTH_SHORT).show();
+                if (editTextCode.getText().toString().trim().equals("") && editTextFinCode.getText().toString().trim().equals("")) {
+                    Toast.makeText(AssetManual.this, "请输入资产或者财务编码", Toast.LENGTH_LONG).show();
                     return;
                 }
-//                if (editTextName.getText().toString().trim().equals("")) {
-//                    Toast.makeText(AssetManual.this, "请输入资产名称...", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
                 Intent intent = new Intent();
-                intent.putExtra("code", editTextCode.getText().toString().trim());
-                intent.putExtra("name", editTextName.getText().toString().trim());
+                if (!editTextCode.getText().toString().trim().equals("")) {
+                    intent.putExtra("code", editTextCode.getText().toString().trim());
+                }
+                if (!editTextFinCode.getText().toString().trim().equals("")) {
+                    intent.putExtra("fincode", editTextFinCode.getText().toString().trim());
+                }
                 setResult(RESULT_CODE, intent);
                 finish();
             }

@@ -39,7 +39,7 @@
             android:label="@string/asset_inventory_scan_title" />
         <activity
             android:name=".activities.InventoryUpdate"
-            android:label="@string/asset_update_title"
+            android:label="@string/asset_inventory_title"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.InventorySearch" />
         <activity android:name=".activities.InventorySearchList" />

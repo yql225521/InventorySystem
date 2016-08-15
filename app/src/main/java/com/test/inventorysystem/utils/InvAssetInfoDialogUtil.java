@@ -3,7 +3,6 @@ package com.test.inventorysystem.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.test.inventorysystem.R;
-import com.test.inventorysystem.activities.AssetInventory;
 import com.test.inventorysystem.models.AssetModel;
 
 /**
@@ -22,6 +20,7 @@ import com.test.inventorysystem.models.AssetModel;
 public class InvAssetInfoDialogUtil extends DialogFragment {
     private TextView assetTitle;
     private TextView assetCode;
+    private TextView assetFinCode;
     private TextView assetName;
     //    private TextView assetSpecification;
     private TextView assetType;
@@ -47,10 +46,12 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
     public static InvAssetInfoDialogUtil newInstance(AssetModel assetModel) {
         InvAssetInfoDialogUtil frag = new InvAssetInfoDialogUtil();
         Bundle args = new Bundle();
-        if (assetModel.getFinCode() != null) {
-            args.putString("code", assetModel.getFinCode());
-        } else {
+        if (assetModel.getAssetCode() != null) {
             args.putString("code", assetModel.getAssetCode());
+        }
+        if (assetModel.getFinCode() != null) {
+            System.out.println(assetModel.getFinCode());
+            args.putString("finCode", assetModel.getFinCode());
         }
         if (assetModel.getAssetName() != null) {
             args.putString("name", assetModel.getAssetName());
@@ -122,6 +123,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String asset_code = getArguments().getString("code");
+        String asset_finCode = getArguments().getString("finCode");
         String asset_name = getArguments().getString("name");
         String asset_type = getArguments().getString("type");
         String asset_category = getArguments().getString("category");
@@ -143,6 +145,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
 
         assetTitle.setText(asset_name);
         assetCode.setText(asset_code);
+        assetFinCode.setText(asset_finCode);
         assetName.setText(asset_name);
         assetType.setText(asset_type);
         assetCategory.setText(asset_category);
@@ -175,6 +178,7 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
     private void Initialization(View view) {
         assetTitle = (TextView) view.findViewById(R.id.textView_asset_info_title);
         assetCode = (TextView) view.findViewById(R.id.textView_asset_info_code);
+        assetFinCode = (TextView) view.findViewById(R.id.textView_asset_info_fincode);
         assetName = (TextView) view.findViewById(R.id.textView_asset_info_name);
         assetType = (TextView) view.findViewById(R.id.textView_asset_info_type);
         assetCategory = (TextView) view.findViewById(R.id.textView_asset_info_category);

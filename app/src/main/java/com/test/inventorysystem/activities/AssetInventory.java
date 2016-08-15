@@ -226,19 +226,21 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
         } else if (resultCode == AssetManual.RESULT_CODE) {
             Bundle bundle = data.getExtras();
             String code = bundle.getString("code");
-            String name = bundle.getString("name");
+            String finCode = bundle.getString("fincode");
             if (StringUtils.isNotBlank(code)) {
                 selectAssetInfo(code, "2");
+            } else {
+                selectAssetInfo(finCode, "2");
             }
         }
     }
 
-    private void selectAssetInfo(String finCode, final String pdfs) {
+    private void selectAssetInfo(String code, final String pdfs) {
         mProgressBar.setVisibility(View.VISIBLE);
         String methodName = "getAssetInfoWithInv";
         HashMap<String, String> hashMap = new HashMap<String, String>();
         hashMap.put("methodName", methodName);
-        hashMap.put("assetCode", finCode);
+        hashMap.put("assetCode", code);
         loadAssetInfo(hashMap, pdfs);
     }
 
@@ -250,22 +252,22 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
             @Override
             public void callBackFunction() {
                 response = TransUtil.decode(sa.getResponse());
+
                 if (!response.equals("error")) {
                     JsonParser jsonParser = new JsonParser();
                     JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
-
                     int success = jsonObject.get("success").getAsInt();
-                    JsonObject asset = jsonObject.get("asset").getAsJsonObject();
-                    String invMsg = jsonObject.get("invMsg").getAsString();
-//                currAssetCode = asset.get("assetCode").getAsString();
-                    System.out.println("assetModel " + asset.toString());
-
+                    String message = jsonObject.get("message").getAsString();
                     if (success == 1) {
+                        JsonObject asset = jsonObject.get("asset").getAsJsonObject();
+                        String invMsg = jsonObject.get("invMsg").getAsString();
+//                currAssetCode = asset.get("assetCode").getAsString();
+                        System.out.println("assetModel " + asset.toString());
                         Gson gson=new Gson();
                         currAssetModel = gson.fromJson(jsonObject.get("asset"), AssetModel.class);
-                        System.out.println(currAssetModel.getMgrOrganID() + " ** " + AppContext.currOrgan.getOrganID());
-                        if (!currAssetModel.getMgrOrganID().equals(AppContext.currOrgan.getOrganID())) {
-                            Toast.makeText(AssetInventory.this, "当前扫描资产与登录用户管理部门不一致", Toast.LENGTH_SHORT).show();
+                        System.out.println(currAssetModel.getMgrOrganName() + " ** " + AppContext.currOrgan.getOrganName());
+                        if (!currAssetModel.getMgrOrganName().equals(AppContext.currOrgan.getOrganName())) {
+                            Toast.makeText(AssetInventory.this, "当前盘点资产与登录用户管理部门不一致", Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.GONE);
                         } else {
                             currAssetModel.setInvMsg(invMsg);
@@ -275,6 +277,9 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                             DialogFragment dialogFragment = InvAssetInfoDialogUtil.newInstance(currAssetModel);
                             dialogFragment.show(getFragmentManager(), "inv_asset_info");
                         }
+                    } else if (success == 2) {
+                        Toast.makeText(AssetInventory.this, message, Toast.LENGTH_LONG).show();
+                        mProgressBar.setVisibility(View.GONE);
                     }
                 } else {
                     Toast.makeText(AssetInventory.this, "服务器请求失败,请重试...", Toast.LENGTH_SHORT).show();

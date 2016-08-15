@@ -176,25 +176,30 @@ public class AssetSearchList extends OrmLiteBaseActivity<DBHelper> {
     }
 
     private void findLocalData(HashMap hashMap) {
-        System.out.println("local searching...");
+        System.out.println(hashMap);
         try {
             List<AssetModel> assetList = dbManager.findOfflineAssets(getHelper().getAssetDao(), hashMap);
             if (assetList.size() == 0) {
                 Toast.makeText(this, "没有搜索到查询结果...", Toast.LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.GONE);
             } else {
-                System.out.println(assetList.get(0).getFinCode() + "| " + assetList.get(0).getAssetType() + "| " + assetList.get(0).getCateName() + "| " +
+                System.out.println(assetList.get(0).getFinCode() + "| " + assetList.get(0).getAssetCode() + "| " + assetList.get(0).getCateName() + "| " +
                         assetList.get(0).getMgrOrganCode());
-                Collections.sort(assetList, new Comparator<AssetModel>() {
-                    @Override
-                    public int compare(AssetModel t2, AssetModel t1) {
-                        if (t1.getFinCode() != null) {
+                if (hashMap.get("category").toString().equals("01")) {
+                    Collections.sort(assetList, new Comparator<AssetModel>() {
+                        @Override
+                        public int compare(AssetModel t2, AssetModel t1) {
                             return t2.getFinCode().compareTo(t1.getFinCode());
-                        } else {
+                        }
+                    });
+                } else {
+                    Collections.sort(assetList, new Comparator<AssetModel>() {
+                        @Override
+                        public int compare(AssetModel t2, AssetModel t1) {
                             return t2.getAssetCode().compareTo(t1.getAssetCode());
                         }
-                    }
-                });
+                    });
+                }
                 listAdapter.addAll(assetList);
                 mProgressBar.setVisibility(View.GONE);
                 countInfo.setText("已加载" + assetList.size() + "条-共" + assetList.size() + "条");

@@ -62,6 +62,33 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:text="@string/asset_info_fincode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView14"
+            android:paddingLeft="10dp"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_asset_info_fincode"
+            android:layout_weight="1"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingLeft="5dp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
