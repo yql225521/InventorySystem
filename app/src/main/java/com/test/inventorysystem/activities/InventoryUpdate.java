@@ -90,7 +90,7 @@ public class InventoryUpdate extends AppCompatActivity {
                 }
                 asset.setInvNote(editTextNote.getText().toString().trim());
                 asset.setDisCodes(checkedItems);
-                asset.setStarNum(Double.parseDouble(String.valueOf(ratingBar.getRating())));
+//                asset.setStarNum(Double.parseDouble(String.valueOf(ratingBar.getRating())));
                 bundleBack.putSerializable("asset", asset);
                 intent.putExtras(bundleBack);
                 setResult(RESULT_CODE, intent);

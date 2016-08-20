@@ -59,6 +59,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     private String response;
     private AssetModel currAssetModel;
     private Boolean firstTimeOpen = true;
+    private Boolean manualInventory = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +153,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     }
 
     private void startCodeScanner() {
+        manualInventory = false;
         Intent intent = new Intent(this, CaptureActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
@@ -162,6 +164,7 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
     }
 
     private void assetMaunal() {
+        manualInventory = true;
         Intent intent = new Intent(this, AssetManual.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
@@ -298,7 +301,11 @@ public class AssetInventory extends OrmLiteBaseActivity<DBHelper> implements Inv
                 doInventory(currAssetModel);
                 break;
             case "continue":
-                startCodeScanner();
+                if (manualInventory) {
+                    assetMaunal();
+                } else {
+                    startCodeScanner();
+                }
         }
     }
 

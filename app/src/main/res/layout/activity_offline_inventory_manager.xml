@@ -22,7 +22,7 @@
         app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="343dp"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout3"
         app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
@@ -30,7 +30,9 @@
         app:layout_constraintTop_toBottomOf="@+id/textView11"
         android:layout_marginTop="8dp"
         app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
-        android:layout_marginEnd="16dp">
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
 
         <Button
             android:text="@string/offline_asset_inventory_upload"
@@ -50,7 +52,7 @@
 
     <ListView
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_height="0dp"
         android:id="@+id/listView_offline_inv"
         android:background="@drawable/back"
         app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
@@ -63,11 +65,13 @@
         android:layout_marginBottom="8dp"
         android:elevation="2dp"
         android:dividerHeight="2dp"
-        android:padding="1dp" />
+        android:padding="1dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="352dp"
+        android:layout_height="50dp"
         android:layout_weight="1"
         android:id="@+id/offline_inv_bottom_bar"
         app:layout_constraintLeft_toLeftOf="@+id/activity_offline_inventory_manager"
@@ -75,7 +79,9 @@
         app:layout_constraintRight_toRightOf="@+id/activity_offline_inventory_manager"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/activity_offline_inventory_manager"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
 
         <Button
             android:text="@string/offline_asset_inventory_check_all"

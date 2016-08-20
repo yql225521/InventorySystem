@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="220dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingTop="8dp">
@@ -34,19 +34,21 @@
         android:paddingTop="1dp"
         android:paddingBottom="1dp"
         android:id="@+id/linearLayout_with_checkbox"
-        android:gravity="right|center">
+        android:gravity="right|center"
+        android:weightSum="1">
 
         <Button
             android:text="@string/offline_asset_inventory_list_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/button_offline_inv_detail"
-            android:layout_weight="1" />
+            android:layout_weight="0.36" />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/checkBox_asset_update_list"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="30dp" />
     </LinearLayout>
 </LinearLayout>

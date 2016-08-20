@@ -144,14 +144,18 @@ public class DBManager {
         QueryBuilder<AssetModel, String> queryBuilder = assetDao.queryBuilder();
         queryBuilder.where().eq("finCode", code).and().eq("offlineInv", true);
         AssetModel assetModel = queryBuilder.queryForFirst();
+        System.out.println("hehe11");
         if (assetModel != null) {
+            System.out.println("hehe22");
             return true;
         } else {
             queryBuilder.where().eq("assetCode", code).and().eq("offlineInv", true);
             assetModel = queryBuilder.queryForFirst();
             if (assetModel != null) {
+                System.out.println("hehe333");
                 return true;
             } else {
+                System.out.println("hehe444");
                 return false;
             }
         }

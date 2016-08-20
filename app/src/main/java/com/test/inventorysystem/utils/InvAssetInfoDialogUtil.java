@@ -50,7 +50,6 @@ public class InvAssetInfoDialogUtil extends DialogFragment {
             args.putString("code", assetModel.getAssetCode());
         }
         if (assetModel.getFinCode() != null) {
-            System.out.println(assetModel.getFinCode());
             args.putString("finCode", assetModel.getFinCode());
         }
         if (assetModel.getAssetName() != null) {

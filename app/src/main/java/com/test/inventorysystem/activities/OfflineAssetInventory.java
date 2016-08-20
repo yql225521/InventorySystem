@@ -1,8 +1,10 @@
 package com.test.inventorysystem.activities;
 
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -50,6 +52,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
     private String response;
     private AssetModel currAssetModel;
     private Boolean firstTimeOpen = true;
+    private Boolean manualInventory = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
         manualBtn = (Button) findViewById(R.id.button_offline_inventory_manual);
         endBtn = (Button) findViewById(R.id.button_offline_inventory_end);
         mProgressBar = (LinearLayout) findViewById(R.id.linearLayout_offline_progress_bar);
+        mProgressBar.setVisibility(View.GONE);
 
         inventoryOrganSpinner = (Spinner) findViewById(R.id.offline_spinner_inventory_organ);
         organSpinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
@@ -234,6 +238,7 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             }
             mProgressBar.setVisibility(View.GONE);
         } else if (resultCode == AssetManual.RESULT_CODE) {
+            manualInventory = true;
             Bundle bundle = data.getExtras();
             String code = bundle.getString("code");
             currAssetModel = new AssetModel();
@@ -243,23 +248,25 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
                 try {
                     Boolean isExisted = dbManager.findExistedOfflineInvAsset(getHelper().getAssetDao(), code);
                     if (!isExisted) {
-                        AssetModel assetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), code);
-                        if (assetModel != null) {
-                            assetModel.setAddr(AppContext.address);
-                            assetModel.setSimId(AppContext.simId);
-                            assetModel.setUserId(AppContext.currUser.getAccounts());
-                            assetModel.setAssetCode(code);
+                        currAssetModel = dbManager.findOfflineAsset(getHelper().getAssetDao(), code);
+                        if (currAssetModel != null) {
+                            currAssetModel.setAddr(AppContext.address);
+                            currAssetModel.setSimId(AppContext.simId);
+                            currAssetModel.setUserId(AppContext.currUser.getAccounts());
+//                            currAssetModel.setAssetCode(code);
 //                        assetModel.setAssetName(name);
-                            assetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
-                            assetModel.setOrganName(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganName());
-                            assetModel.setOfflineInv(true);
+                            currAssetModel.setMgrOrganCode(AppContext.currOrgan.getOrganCode());
+                            currAssetModel.setOrganName(organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganName());
+                            currAssetModel.setOfflineInv(true);
                             ExtDate nowdate = new ExtDate();
-                            assetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
-                            assetModel.setPdfs("2");
-                            doInventory(assetModel, organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
+                            currAssetModel.setPdate(nowdate.format("yyyy-MM-dd HH:mm:ss SSS"));
+                            currAssetModel.setPdfs("2");
+                            DialogFragment dialogFragment = new InvAssetInfoDialogUtil().newInstance(currAssetModel);
+                            dialogFragment.show(getFragmentManager(), "manual_offline_asset_info");
+//                            doInventory(assetModel, organs.get(inventoryOrganSpinner.getSelectedItemPosition()).getOrganCode());
                             mProgressBar.setVisibility(View.GONE);
                         } else {
-                            Toast.makeText(OfflineAssetInventory.this, "资产或财政编码输入错误", Toast.LENGTH_LONG).show();
+                            Toast.makeText(OfflineAssetInventory.this, "请仔细核对资产编码或者财务编码是否录入准确", Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.GONE);
                         }
                     } else {
@@ -286,6 +293,8 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             case "inv_offline_existed_asset":
                 startCodeScanner();
                 break;
+            case "manual_offline_asset_info":
+                doInventory(currAssetModel, currAssetModel.getOrganCode());
         }
     }
 
@@ -299,6 +308,8 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             case "inv_offline_existed_asset":
                 replaceDuplicate(currAssetModel, currAssetModel.getOrganCode());
                 break;
+            case "manual_offline_asset_info":
+                updateInventory(currAssetModel);
         }
 
     }
@@ -310,6 +321,29 @@ public class OfflineAssetInventory extends OrmLiteBaseActivity<DBHelper> impleme
             e.printStackTrace();
         }
         assetListAdapter.add(assetModel);
+        if (manualInventory) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(OfflineAssetInventory.this);
+            builder.setMessage("是否继续进行手动盘点?");
+
+            builder.setPositiveButton(R.string.dialog_confirm, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    manualInventory = false;
+                    Intent intent = new Intent(OfflineAssetInventory.this, AssetManual.class);
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
         mProgressBar.setVisibility(View.GONE);
     }
 

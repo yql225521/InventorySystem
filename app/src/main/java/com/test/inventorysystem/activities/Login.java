@@ -176,8 +176,9 @@ public class Login extends OrmLiteBaseActivity<DBHelper> {
                         loadBaseData(hashMap);
                     }
                 } else {
-                    Toast.makeText(Login.this, "请确认用户名是否正确", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "无法连接到服务器,请重新登录", Toast.LENGTH_SHORT).show();
                     loginProgressBar.setVisibility(View.GONE);
+                    loginTips.setVisibility(View.GONE);
                 }
 
             }
